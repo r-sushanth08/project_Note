@@ -11,12 +11,20 @@ Calm, minimal, reflective, and distraction-free. The app is set against a **Dark
 - **Lexicon Count**: Displayed inside a sleek, semi-transparent boxed badge (`words logged`).
 - **Lexicon of the Day**: Displayed below the Lexicon count with a **vibrant orange underline** (`border-b-2 border-orange-500`) under the subheading, followed by the serif word title and white text meaning.
 
+## Screen Navigation Slide Transitions
+
+- **Smooth Slide In / Slide Out**: All screen transitions (`Home`, `Notes`, `Lists`, `Vocab`, `Calendar`, `Search`, and Editors) feature 60 FPS hardware-accelerated slide-in animations.
+- **Navigation Direction**:
+  - Navigating forward to a section or opening an editor triggers **Slide In Right**.
+  - Returning to Home or closing an editor triggers **Slide In Left**.
+- **Static Background**: The dark rainy lantern background image remains fixed and static while screens glide smoothly above it.
+
 ## Vocabulary Deck (Folder Stacking Cards Effect)
 
 - **Folder Deck Physics**: Vocab cards stack over each other as the user scrolls up (`sticky top-[...]`), creating an authentic physical folder/deck effect.
+- **2-Card Max Stack**: Capped at 2 visible card layers max (Current Card + Previous Card), completely hiding older cards underneath for infinite performance.
 - **Locked / Hidden Scrollbar**: Browser scrollbars are completely hidden (`no-scrollbar`) so no raw scrollbar disrupts the folder deck aesthetic.
 - **Structured Fields**: Cards display `Meaning:`, `Synonyms:`, `Antonyms:`, and orange tag pill buttons (`#PERSONAL`, `#LEARNING`).
-- **60 FPS Hardware Acceleration**: Driven by native CSS `position: sticky` and `transform: translateZ(0)` for zero lag on mobile touchscreens.
 
 ## App Structure
 

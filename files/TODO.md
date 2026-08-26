@@ -16,11 +16,11 @@ Implementation roadmap.
 - [x] Radial Control Dual Interaction Modes (Direct click = browse section, Drag & drop = create new entry)
 - [x] Note Sub-types (Diary, Brain Dump, Collections)
 - [x] Interactive Tappable Tag Pill System with custom tag creation
-- [x] **Vocab Folder Deck Stacking Cards Effect**:
-  - [x] Fixed-length glassmorphic folder cards stacking over each other (`sticky top-[...]`)
-  - [x] Locked/hidden scrollbars (`no-scrollbar`)
-  - [x] Structured card fields (`Meaning:`, `Synonyms:`, `Antonyms:`, `Tags`, `View Details ›`)
-  - [x] 60 FPS mobile hardware acceleration (`transform: translateZ(0)`)
+- [x] Vocab Folder Deck Stacking Cards Effect (2-card max stack, hidden scrollbar)
+- [x] **Hardware-Accelerated Screen Navigation Slide Transitions**:
+  - [x] Keyframe slide-in-right and slide-in-left CSS animations
+  - [x] Dynamic PageTransition wrapper component
+  - [x] Smooth 60 FPS transitions across all screens (Home, Notes, Lists, Vocab, Calendar, Search) and Editors
 - [x] Build List editor with checkable items, reordering, and endless appending (no done state)
 - [x] Build Calendar grid with per-day passive activity indicators and expanded day view
 - [x] Build unified full-text search across Notes, Lists, Vocab, and tags

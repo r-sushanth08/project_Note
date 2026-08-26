@@ -2,6 +2,7 @@ import React from 'react';
 import { EntryProvider, useEntries } from './context/EntryContext';
 import { Header } from './components/Header';
 import { RadialControl } from './components/RadialControl';
+import { PageTransition } from './components/PageTransition';
 import { HomeView } from './views/HomeView';
 import { VocabView } from './views/VocabView';
 import { VocabEditorView } from './views/VocabEditorView';
@@ -53,32 +54,47 @@ const MainContent: React.FC = () => {
       {currentView === 'lists' && <ListsView />}
       {currentView === 'calendar' && <CalendarView />}
       {currentView === 'search' && <SearchView />}
-
-      {/* Floating Radial Capture Dot present on all non-home views per UX.md */}
-      {currentView !== 'home' && <RadialControl isHomeCentered={false} />}
     </>
+  );
+};
+
+const AppContainer: React.FC = () => {
+  const { currentView, selectedEntry } = useEntries();
+
+  // Unique transition key per screen or editor view
+  const transitionKey = selectedEntry
+    ? `${selectedEntry.type}-editor-${selectedEntry.id}`
+    : currentView;
+
+  return (
+    <div className="relative min-h-[100dvh] h-[100dvh] text-slate-100 font-sans flex flex-col antialiased overflow-hidden">
+      {/* Full-screen Background Image with Responsive Positioning & Gradient Overlay */}
+      <div
+        className="fixed inset-0 bg-no-repeat bg-cover bg-center md:bg-[position:right_15%_center] z-0 transition-all duration-500"
+        style={{ backgroundImage: "url('/bg.jpg')" }}
+      />
+      <div className="fixed inset-0 bg-slate-950/40 md:bg-gradient-to-r md:from-slate-950/85 md:via-slate-950/50 md:to-slate-950/20 backdrop-blur-[0.5px] z-0 pointer-events-none" />
+
+      {/* Content Container */}
+      <div className="relative z-10 flex flex-col h-full overflow-y-auto">
+        <Header />
+        <main className="flex-1 w-full flex flex-col overflow-hidden">
+          <PageTransition transitionKey={transitionKey}>
+            <MainContent />
+          </PageTransition>
+        </main>
+      </div>
+
+      {/* Floating Radial Capture Control present on all non-home views per UX.md */}
+      {currentView !== 'home' && !selectedEntry && <RadialControl isHomeCentered={false} />}
+    </div>
   );
 };
 
 export const App: React.FC = () => {
   return (
     <EntryProvider>
-      <div className="relative min-h-[100dvh] h-[100dvh] text-slate-100 font-sans flex flex-col antialiased overflow-hidden">
-        {/* Full-screen Background Image with Responsive Positioning & Gradient Overlay */}
-        <div
-          className="fixed inset-0 bg-no-repeat bg-cover bg-center md:bg-[position:right_15%_center] z-0 transition-all duration-500"
-          style={{ backgroundImage: "url('/bg.jpg')" }}
-        />
-        <div className="fixed inset-0 bg-slate-950/40 md:bg-gradient-to-r md:from-slate-950/85 md:via-slate-950/50 md:to-slate-950/20 backdrop-blur-[0.5px] z-0 pointer-events-none" />
-
-        {/* Content Container */}
-        <div className="relative z-10 flex flex-col h-full overflow-y-auto">
-          <Header />
-          <main className="flex-1 w-full flex flex-col">
-            <MainContent />
-          </main>
-        </div>
-      </div>
+      <AppContainer />
     </EntryProvider>
   );
 };

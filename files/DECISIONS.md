@@ -42,5 +42,8 @@ Notes support 3 sub-types: **Diary** (chronological journal with prominent times
 Replaced text input tags with tappable pill buttons (`Work`, `Personal`, `Idea`, `Learning`, `Important`, `Reminder`, `People`, `Travel`, `Experience`, `Question`, `Favorite`, `Explore`) plus custom tag creation.
 
 ## 14. Vocab Folder Deck Stacking Cards & Locked Scrollbar
-**Decision:** Vocab cards stack over each other as the user scrolls up (`sticky top-[...]`), creating an authentic physical folder index card stack effect with hidden/locked scrollbars (`no-scrollbar`) and 60 FPS GPU hardware acceleration.
-**Why:** User requested a smooth physical folder card stacking effect without raw scrollbars interfering with the deck aesthetic.
+Vocab cards stack over each other as the user scrolls up (`sticky top-[...]`), creating an authentic physical folder index card stack effect with hidden/locked scrollbars (`no-scrollbar`), capped at 2 visible cards max.
+
+## 15. Hardware-Accelerated Screen Slide Transitions
+**Decision:** All screen and editor routing features smooth Slide In Right / Slide In Left CSS animations (`PageTransition.tsx`).
+**Why:** User requested fluid screen navigation transitions across all screens with 60 FPS mobile performance.

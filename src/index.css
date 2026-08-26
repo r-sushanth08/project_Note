@@ -28,6 +28,39 @@
   }
 }
 
+/* Screen Navigation Keyframe Animations */
+@keyframes slideInRight {
+  0% {
+    opacity: 0;
+    transform: translate3d(28px, 0, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes slideInLeft {
+  0% {
+    opacity: 0;
+    transform: translate3d(-28px, 0, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
 /* Custom scrollbars for general dark theme */
 ::-webkit-scrollbar {
   width: 6px;
