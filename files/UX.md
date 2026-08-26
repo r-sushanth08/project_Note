@@ -20,33 +20,23 @@ Four sections, plus Home:
 - **Vocab** — browse/view/edit existing vocab entries.
 - **Calendar** — month/year view with per-day activity indicators.
 
+## Radial Quick-Capture Control ("the dot") Interaction Modes
+
+The radial control features two distinct triggering mechanisms:
+
+1. **Direct Click (Tap button directly)**:
+   - Tapping **Notes** opens the **Notes section view** (`NotesView`).
+   - Tapping **Lists** opens the **Lists section view** (`ListsView`).
+   - Tapping **Vocab** opens the **Vocab section view** (`VocabView`).
+   - Tapping **Calendar** opens the **Calendar section view** (`CalendarView`).
+
+2. **Drag & Drop (Drag from center dot and release)**:
+   - Dragging towards **Notes** and releasing creates a **new blank Note** immediately.
+   - Dragging towards **Lists** and releasing creates a **new blank List** immediately.
+   - Dragging towards **Vocab** and releasing creates a **new blank Vocab entry** immediately.
+   - Dragging towards **Calendar** and releasing opens the **Calendar view**.
+
 ## Mobile Responsiveness & Touch Gestures
 
 - **Single Mobile Viewport (`100dvh`)**: The Home screen fits completely within a single mobile screen height without requiring scrolling.
-- **Mobile Touch Drag & Drop**: The radial quick-capture gesture supports native touch events (`onTouchStart`, `onTouchMove`, `onTouchEnd`) with `touch-action: none`, preventing mobile scroll conflicts while dragging towards Notes, Lists, Vocab, or Calendar.
-
-## The Radial Quick-Capture Control ("the dot")
-
-- Floating dot present on every screen.
-- Centered and positioned upper-middle on Home.
-- Dragging towards a direction (Notes, Lists, Vocab, Calendar) and releasing immediately opens a blank entry form of that type or Calendar view.
-- Single-stage gesture: release in dead zone cancels back to closed dot state.
-
-## Entry Creation & Editing
-
-### Note
-- Opens to title field with exact creation timestamp displayed above content (set automatically at creation).
-- Supports headings (`#`) and bullet points (`-`).
-- In-place auto-save, optional tagging, immediate permanent delete.
-
-### List
-- Title field, checkable list items, drag/manual reordering.
-- Endless appending (no "done" state; list stays open forever).
-
-### Vocab
-- Fixed fields: word, part of speech, meaning, synonyms, antonyms, example sentence(s).
-- Manual entry, auto-save, permanent delete.
-
-## Deletion
-
-- Simple and permanent deletion (no trash bin, no undo safety net).
+- **Mobile Touch Drag & Drop**: The radial quick-capture gesture supports native touch events (`onTouchStart`, `onTouchMove`, `onTouchEnd`) with `touch-action: none`, preventing mobile scroll conflicts while dragging.

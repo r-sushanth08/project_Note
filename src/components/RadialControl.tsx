@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { FileText, List, BookOpen, Calendar, Pencil } from 'lucide-react';
 import { useEntries } from '../context/EntryContext';
+import { ViewMode } from '../types/entry';
 
 interface RadialControlProps {
   isHomeCentered?: boolean;
@@ -66,15 +67,16 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
     }
   };
 
+  // Drag & Drop Release Handler -> Triggers New Entry Creation
   const handleDragRelease = () => {
     if (activeDirection) {
-      executeDirectionAction(activeDirection);
+      executeDragAction(activeDirection);
     }
     setIsOpen(false);
     setActiveDirection(null);
   };
 
-  const executeDirectionAction = (dir: Direction) => {
+  const executeDragAction = (dir: Direction) => {
     if (dir === 'notes') {
       openNewEntry('note');
     } else if (dir === 'lists') {
@@ -84,6 +86,13 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
     } else if (dir === 'calendar') {
       setCurrentView('calendar');
     }
+  };
+
+  // Direct Button Click Handler -> Triggers Section Browsing
+  const handleDirectClick = (dir: ViewMode) => {
+    setIsOpen(false);
+    setActiveDirection(null);
+    setCurrentView(dir);
   };
 
   // Close overlay on Escape key
@@ -129,10 +138,11 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
         >
           {/* TOP: Notes */}
           <button
-            onClick={() => executeDirectionAction('notes')}
+            onClick={() => handleDirectClick('notes')}
             className={`pointer-events-auto absolute -top-20 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 group transition-transform duration-150 ${
               activeDirection === 'notes' ? 'scale-110' : ''
             }`}
+            title="Click to browse Notes / Drag to create new Note"
           >
             <div
               className={`w-12 h-12 rounded-full flex items-center justify-center border transition-all ${
@@ -154,10 +164,11 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
 
           {/* RIGHT: Lists */}
           <button
-            onClick={() => executeDirectionAction('lists')}
+            onClick={() => handleDirectClick('lists')}
             className={`pointer-events-auto absolute top-1/2 -right-20 -translate-y-1/2 flex flex-col items-center gap-1 group transition-transform duration-150 ${
               activeDirection === 'lists' ? 'scale-110' : ''
             }`}
+            title="Click to browse Lists / Drag to create new List"
           >
             <div
               className={`w-12 h-12 rounded-full flex items-center justify-center border transition-all ${
@@ -179,10 +190,11 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
 
           {/* BOTTOM: Vocab */}
           <button
-            onClick={() => executeDirectionAction('vocab')}
+            onClick={() => handleDirectClick('vocab')}
             className={`pointer-events-auto absolute -bottom-20 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 group transition-transform duration-150 ${
               activeDirection === 'vocab' ? 'scale-110' : ''
             }`}
+            title="Click to browse Vocab / Drag to add new Vocab"
           >
             <div
               className={`w-12 h-12 rounded-full flex items-center justify-center border transition-all ${
@@ -204,10 +216,11 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
 
           {/* LEFT: Calendar */}
           <button
-            onClick={() => executeDirectionAction('calendar')}
+            onClick={() => handleDirectClick('calendar')}
             className={`pointer-events-auto absolute top-1/2 -left-20 -translate-y-1/2 flex flex-col items-center gap-1 group transition-transform duration-150 ${
               activeDirection === 'calendar' ? 'scale-110' : ''
             }`}
+            title="Click or Drag to view Calendar"
           >
             <div
               className={`w-12 h-12 rounded-full flex items-center justify-center border transition-all ${
@@ -228,7 +241,7 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
           </button>
         </div>
 
-        {/* Central Center Button (Restored Original Prominent w-16 h-16 Sizing) */}
+        {/* Central Center Button */}
         <button
           onPointerDown={(e) => {
             setIsOpen(true);
