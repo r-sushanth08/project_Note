@@ -14,15 +14,14 @@ Implementation roadmap.
   - [x] Fits completely inside `100dvh` mobile viewport without scrolling
 - [x] Fix mobile touchscreen drag & drop gesture (`onTouchStart`, `onTouchMove`, `onTouchEnd`, `touch-action: none`)
 - [x] Radial Control Dual Interaction Modes (Direct click = browse section, Drag & drop = create new entry)
-- [x] **Note Sub-types (Diary, Brain Dump, Collections)**:
-  - [x] **Diary**: Prominent Date/Day/Time header + spacious writing area
-  - [x] **Brain Dump**: Distraction-free, ultra-fast raw thought capture
-  - [x] **Collections**: Structured collection lists for artists, books, movies, places, topics with item management
-- [x] **Interactive Tappable Tag Pill System**:
-  - [x] Built-in tag pills (`Work`, `Personal`, `Idea`, `Learning`, `Important`, `Reminder`, `People`, `Travel`, `Experience`, `Question`, `Favorite`, `Explore`) with orange highlight when selected
-  - [x] Inline `+ Custom Tag` creation saving reusable tag buttons globally
+- [x] Note Sub-types (Diary, Brain Dump, Collections)
+- [x] Interactive Tappable Tag Pill System with custom tag creation
+- [x] **Vocab Folder Deck Stacking Cards Effect**:
+  - [x] Fixed-length glassmorphic folder cards stacking over each other (`sticky top-[...]`)
+  - [x] Locked/hidden scrollbars (`no-scrollbar`)
+  - [x] Structured card fields (`Meaning:`, `Synonyms:`, `Antonyms:`, `Tags`, `View Details ›`)
+  - [x] 60 FPS mobile hardware acceleration (`transform: translateZ(0)`)
 - [x] Build List editor with checkable items, reordering, and endless appending (no done state)
-- [x] Build Vocab editor with word, part of speech, meaning, synonyms, antonyms, and examples
 - [x] Build Calendar grid with per-day passive activity indicators and expanded day view
 - [x] Build unified full-text search across Notes, Lists, Vocab, and tags
 - [x] Verify unit tests (`vitest`), type checks (`tsc --noEmit`), and production build

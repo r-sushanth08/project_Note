@@ -17,7 +17,18 @@
   }
 }
 
-/* Custom scrollbars for dark theme */
+/* Hide scrollbars for folder stack effect */
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Custom scrollbars for general dark theme */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;

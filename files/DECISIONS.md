@@ -36,9 +36,11 @@ Integrated full-screen rainy lantern background (`public/bg.jpg`) with crisp whi
 Implemented native touch handlers (`onTouchStart`, `onTouchMove`, `onTouchEnd`) with `touch-action: none` and dynamic `100dvh` viewport layout.
 
 ## 12. Note Sub-types (Diary, Brain Dump, Collections)
-**Decision:** Notes support 3 sub-types: **Diary** (chronological journal with prominent timestamp), **Brain Dump** (distraction-free fast capture), and **Collections** (structured lists of artists, books, movies, places, etc.).
-**Why:** User requested explicit workflow separation between reflective daily journaling, fast mind dumping, and structured collections.
+Notes support 3 sub-types: **Diary** (chronological journal with prominent timestamp), **Brain Dump** (distraction-free fast capture), and **Collections** (structured lists of artists, books, movies, places, etc.).
 
 ## 13. Interactive Tappable Tag Pill Buttons & Custom Tag Creation
-**Decision:** Replaced text input tags with tappable pill buttons (`Work`, `Personal`, `Idea`, `Learning`, `Important`, `Reminder`, `People`, `Travel`, `Experience`, `Question`, `Favorite`, `Explore`) plus custom tag creation.
-**Why:** Tappable tag pills eliminate typing friction, provide visual clarity with orange highlights, and allow custom reusable tags.
+Replaced text input tags with tappable pill buttons (`Work`, `Personal`, `Idea`, `Learning`, `Important`, `Reminder`, `People`, `Travel`, `Experience`, `Question`, `Favorite`, `Explore`) plus custom tag creation.
+
+## 14. Vocab Folder Deck Stacking Cards & Locked Scrollbar
+**Decision:** Vocab cards stack over each other as the user scrolls up (`sticky top-[...]`), creating an authentic physical folder index card stack effect with hidden/locked scrollbars (`no-scrollbar`) and 60 FPS GPU hardware acceleration.
+**Why:** User requested a smooth physical folder card stacking effect without raw scrollbars interfering with the deck aesthetic.
