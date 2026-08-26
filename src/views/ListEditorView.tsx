@@ -74,17 +74,17 @@ export const ListEditorView: React.FC<ListEditorViewProps> = ({ list, onBack }) 
       <div className="flex items-center justify-between">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 text-sm text-ink-secondary hover:text-ink-primary transition-colors"
+          className="flex items-center gap-2 text-sm text-slate-300 hover:text-white transition-colors"
         >
           <span className="text-base font-semibold">‹</span>
           <span className="font-medium">All Lists</span>
         </button>
 
         <div className="flex items-center gap-4">
-          <span className="text-xs text-ink-muted">Ongoing living list</span>
+          <span className="text-xs text-slate-400">Ongoing living list</span>
           <button
             onClick={handleDeleteList}
-            className="text-red-500 hover:text-red-700 transition-colors p-1"
+            className="text-red-400 hover:text-red-300 transition-colors p-1"
             title="Delete List Permanently"
           >
             <Trash2 className="w-4 h-4" />
@@ -98,7 +98,7 @@ export const ListEditorView: React.FC<ListEditorViewProps> = ({ list, onBack }) 
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         placeholder="List Title"
-        className="w-full text-3xl font-serif font-medium bg-transparent border-b border-ink-border focus:border-sage-500 focus:outline-none pb-2 text-ink-primary placeholder:text-ink-muted"
+        className="w-full text-3xl font-serif font-medium bg-transparent border-b border-white/20 focus:border-orange-400 focus:outline-none pb-2 text-white placeholder:text-slate-500"
       />
 
       {/* Items Section */}
@@ -108,16 +108,16 @@ export const ListEditorView: React.FC<ListEditorViewProps> = ({ list, onBack }) 
           {items.map((item, index) => (
             <div
               key={item.id}
-              className="group flex items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-ink-border shadow-sm hover:border-sage-200 transition-all"
+              className="group flex items-center justify-between gap-3 bg-slate-900/80 backdrop-blur-md p-3.5 rounded-xl border border-white/15 shadow-sm hover:border-orange-400/50 transition-all"
             >
               <div className="flex items-center gap-3 flex-1 min-w-0">
-                <GripVertical className="w-4 h-4 text-ink-muted cursor-grab opacity-50 group-hover:opacity-100" />
-                
+                <GripVertical className="w-4 h-4 text-slate-500 cursor-grab opacity-60 group-hover:opacity-100" />
+
                 <input
                   type="checkbox"
                   checked={item.checked}
                   onChange={() => handleToggleCheck(item.id)}
-                  className="w-4 h-4 rounded text-sage-600 focus:ring-sage-500 border-ink-border cursor-pointer accent-sage-600"
+                  className="w-4 h-4 rounded text-orange-500 focus:ring-orange-400 border-white/20 cursor-pointer accent-orange-500"
                 />
 
                 <input
@@ -129,8 +129,8 @@ export const ListEditorView: React.FC<ListEditorViewProps> = ({ list, onBack }) 
                       prev.map((i) => (i.id === item.id ? { ...i, text: newText } : i))
                     );
                   }}
-                  className={`flex-1 bg-transparent border-none focus:outline-none text-sm text-ink-primary ${
-                    item.checked ? 'line-through text-ink-muted' : ''
+                  className={`flex-1 bg-transparent border-none focus:outline-none text-sm text-white ${
+                    item.checked ? 'line-through text-slate-500' : ''
                   }`}
                 />
               </div>
@@ -140,7 +140,7 @@ export const ListEditorView: React.FC<ListEditorViewProps> = ({ list, onBack }) 
                 <button
                   onClick={() => handleMove(index, 'up')}
                   disabled={index === 0}
-                  className="p-1 text-ink-muted hover:text-ink-primary disabled:opacity-20"
+                  className="p-1 text-slate-400 hover:text-white disabled:opacity-20"
                   title="Move Up"
                 >
                   <ArrowUp className="w-3.5 h-3.5" />
@@ -149,7 +149,7 @@ export const ListEditorView: React.FC<ListEditorViewProps> = ({ list, onBack }) 
                 <button
                   onClick={() => handleMove(index, 'down')}
                   disabled={index === items.length - 1}
-                  className="p-1 text-ink-muted hover:text-ink-primary disabled:opacity-20"
+                  className="p-1 text-slate-400 hover:text-white disabled:opacity-20"
                   title="Move Down"
                 >
                   <ArrowDown className="w-3.5 h-3.5" />
@@ -157,7 +157,7 @@ export const ListEditorView: React.FC<ListEditorViewProps> = ({ list, onBack }) 
 
                 <button
                   onClick={() => handleDeleteItem(item.id)}
-                  className="p-1 text-ink-muted hover:text-red-500"
+                  className="p-1 text-slate-400 hover:text-red-400"
                   title="Delete Item"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
@@ -174,11 +174,11 @@ export const ListEditorView: React.FC<ListEditorViewProps> = ({ list, onBack }) 
             value={newItemText}
             onChange={(e) => setNewItemText(e.target.value)}
             placeholder="Add new item..."
-            className="flex-1 px-4 py-3 bg-white border border-ink-border rounded-xl focus:outline-none focus:border-sage-500 text-sm text-ink-primary shadow-sm"
+            className="flex-1 px-4 py-3 bg-slate-900/80 border border-white/20 rounded-xl focus:outline-none focus:border-orange-400 text-sm text-white shadow-sm"
           />
           <button
             type="submit"
-            className="px-4 py-3 bg-sage-500 hover:bg-sage-600 text-white rounded-xl text-sm font-medium flex items-center gap-1 shadow-sm transition-colors"
+            className="px-4 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-xl text-sm font-medium flex items-center gap-1 shadow-sm transition-colors"
           >
             <Plus className="w-4 h-4 stroke-[2.5]" />
             <span>Add</span>
@@ -187,8 +187,8 @@ export const ListEditorView: React.FC<ListEditorViewProps> = ({ list, onBack }) 
       </div>
 
       {/* Tags Input */}
-      <div className="flex flex-col gap-2 pt-4 border-t border-ink-border">
-        <label className="text-xs uppercase tracking-wider font-semibold text-ink-muted">
+      <div className="flex flex-col gap-2 pt-4 border-t border-white/10">
+        <label className="text-xs uppercase tracking-wider font-semibold text-slate-400">
           Tags (Optional)
         </label>
         <input
@@ -196,7 +196,7 @@ export const ListEditorView: React.FC<ListEditorViewProps> = ({ list, onBack }) 
           value={tagsInput}
           onChange={(e) => setTagsInput(e.target.value)}
           placeholder="books, reading, goals"
-          className="w-full px-4 py-2.5 bg-white border border-ink-border rounded-xl focus:outline-none focus:border-sage-500 text-ink-primary text-sm shadow-sm"
+          className="w-full px-4 py-2.5 bg-slate-900/80 border border-white/20 rounded-xl focus:outline-none focus:border-orange-400 text-white text-sm shadow-sm"
         />
       </div>
     </div>

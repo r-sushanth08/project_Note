@@ -8,9 +8,9 @@ export default {
     extend: {
       colors: {
         bg: {
-          DEFAULT: '#FBF9F5',
-          card: '#FFFFFF',
-          secondary: '#F5F2EC',
+          DEFAULT: '#0B131D',
+          card: 'rgba(15, 23, 42, 0.75)',
+          glass: 'rgba(255, 255, 255, 0.08)',
         },
         sage: {
           50: '#F4F6F4',
@@ -20,11 +20,8 @@ export default {
           600: '#687B6E',
           700: '#55655A',
         },
-        ink: {
-          primary: '#2B2927',
-          secondary: '#7A7672',
-          muted: '#A5A09A',
-          border: '#EDE9E2',
+        accent: {
+          orange: '#F97316', // Orange underline accent
         }
       },
       fontFamily: {
@@ -32,8 +29,8 @@ export default {
         sans: ['Plus Jakarta Sans', 'system-ui', '-apple-system', 'sans-serif'],
       },
       boxShadow: {
-        card: '0 2px 12px -2px rgba(43, 41, 39, 0.04), 0 1px 3px 0 rgba(43, 41, 39, 0.02)',
-        float: '0 10px 30px -5px rgba(43, 41, 39, 0.08), 0 4px 12px -2px rgba(43, 41, 39, 0.04)',
+        card: '0 4px 20px -2px rgba(0, 0, 0, 0.3), 0 2px 6px -1px rgba(0, 0, 0, 0.2)',
+        float: '0 12px 35px -5px rgba(0, 0, 0, 0.5), 0 4px 12px -2px rgba(0, 0, 0, 0.3)',
       }
     },
   },

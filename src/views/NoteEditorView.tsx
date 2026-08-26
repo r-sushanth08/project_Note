@@ -15,7 +15,6 @@ export const NoteEditorView: React.FC<NoteEditorViewProps> = ({ note, onBack }) 
   const [content, setContent] = useState(note.content || '');
   const [tagsInput, setTagsInput] = useState((note.tags || []).join(', '));
 
-  // Formatted creation timestamp per REQUIREMENTS.md
   const formattedTimestamp = new Date(note.createdAt).toLocaleString(undefined, {
     weekday: 'short',
     month: 'short',
@@ -47,17 +46,17 @@ export const NoteEditorView: React.FC<NoteEditorViewProps> = ({ note, onBack }) 
       <div className="flex items-center justify-between">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 text-sm text-ink-secondary hover:text-ink-primary transition-colors"
+          className="flex items-center gap-2 text-sm text-slate-300 hover:text-white transition-colors"
         >
           <span className="text-base font-semibold">‹</span>
           <span className="font-medium">All Notes</span>
         </button>
 
         <div className="flex items-center gap-4">
-          <span className="text-xs text-ink-muted">Auto-saved note</span>
+          <span className="text-xs text-slate-400">Auto-saved note</span>
           <button
             onClick={handleDelete}
-            className="text-red-500 hover:text-red-700 transition-colors p-1"
+            className="text-red-400 hover:text-red-300 transition-colors p-1"
             title="Delete Note Permanently"
           >
             <Trash2 className="w-4 h-4" />
@@ -66,7 +65,7 @@ export const NoteEditorView: React.FC<NoteEditorViewProps> = ({ note, onBack }) 
       </div>
 
       {/* Timestamp Above Note per REQUIREMENTS.md */}
-      <div className="text-xs uppercase tracking-wider font-semibold text-sage-700 bg-sage-50 px-3 py-1.5 rounded-lg w-fit border border-sage-200">
+      <div className="text-xs uppercase tracking-wider font-semibold text-orange-400 bg-orange-500/10 border border-orange-500/20 px-3 py-1.5 rounded-lg w-fit">
         Created: {formattedTimestamp}
       </div>
 
@@ -78,7 +77,7 @@ export const NoteEditorView: React.FC<NoteEditorViewProps> = ({ note, onBack }) 
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Note Title"
-          className="w-full text-3xl font-serif font-medium bg-transparent border-b border-ink-border focus:border-sage-500 focus:outline-none pb-2 text-ink-primary placeholder:text-ink-muted"
+          className="w-full text-3xl font-serif font-medium bg-transparent border-b border-white/20 focus:border-orange-400 focus:outline-none pb-2 text-white placeholder:text-slate-500"
         />
 
         {/* Content Textarea */}
@@ -87,12 +86,12 @@ export const NoteEditorView: React.FC<NoteEditorViewProps> = ({ note, onBack }) 
           onChange={(e) => setContent(e.target.value)}
           rows={14}
           placeholder="Write your thoughts freely... (Supports # Headings and - Bullet lists)"
-          className="w-full p-4 bg-white border border-ink-border rounded-2xl focus:outline-none focus:border-sage-500 text-ink-primary text-base leading-relaxed shadow-sm resize-y font-sans"
+          className="w-full p-4 bg-slate-900/80 border border-white/20 rounded-2xl focus:outline-none focus:border-orange-400 text-white text-base leading-relaxed shadow-sm resize-y font-sans"
         />
 
         {/* Tags */}
-        <div className="flex flex-col gap-2 pt-2 border-t border-ink-border">
-          <label className="text-xs uppercase tracking-wider font-semibold text-ink-muted">
+        <div className="flex flex-col gap-2 pt-2 border-t border-white/10">
+          <label className="text-xs uppercase tracking-wider font-semibold text-slate-400">
             Tags (Optional)
           </label>
           <input
@@ -100,7 +99,7 @@ export const NoteEditorView: React.FC<NoteEditorViewProps> = ({ note, onBack }) 
             value={tagsInput}
             onChange={(e) => setTagsInput(e.target.value)}
             placeholder="journal, reflection, ideas"
-            className="w-full px-4 py-2.5 bg-white border border-ink-border rounded-xl focus:outline-none focus:border-sage-500 text-ink-primary text-sm shadow-sm"
+            className="w-full px-4 py-2.5 bg-slate-900/80 border border-white/20 rounded-xl focus:outline-none focus:border-orange-400 text-white text-sm shadow-sm"
           />
         </div>
       </div>

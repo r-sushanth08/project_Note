@@ -4,12 +4,31 @@
 
 @layer base {
   body {
-    background-color: #FBF9F5;
-    color: #2B2927;
+    background-color: #0B131D;
+    color: #F8FAFC;
     font-family: 'Plus Jakarta Sans', sans-serif;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
   }
   
   h1, h2, h3, h4, .font-serif {
     font-family: 'Newsreader', Georgia, serif;
   }
+}
+
+/* Custom scrollbars for dark theme */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.5);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
 }

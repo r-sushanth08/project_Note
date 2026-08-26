@@ -11,11 +11,9 @@ export const SearchView: React.FC = () => {
   const filteredEntries = entries.filter((entry) => {
     if (!query) return true;
 
-    // Title & Tags match
     if (entry.title.toLowerCase().includes(query)) return true;
     if (entry.tags.some((t) => t.toLowerCase().includes(query))) return true;
 
-    // Type specific matching
     if (entry.type === 'note') {
       const note = entry as NoteEntry;
       return note.content.toLowerCase().includes(query);
@@ -43,37 +41,37 @@ export const SearchView: React.FC = () => {
   return (
     <div className="w-full max-w-4xl mx-auto px-6 pt-2 pb-24 flex flex-col gap-8">
       {/* Subheader */}
-      <div className="flex items-center gap-3 border-b border-ink-border pb-4">
+      <div className="flex items-center gap-3 border-b border-white/10 pb-4">
         <button
           onClick={() => setCurrentView('home')}
-          className="w-8 h-8 rounded-full flex items-center justify-center bg-white border border-ink-border text-ink-secondary hover:text-ink-primary hover:border-sage-500 transition-all shadow-sm"
+          className="w-8 h-8 rounded-full flex items-center justify-center bg-slate-900/80 border border-white/20 text-slate-300 hover:text-white hover:border-orange-400 transition-all shadow-sm"
         >
           ‹
         </button>
-        <h1 className="text-3xl font-serif font-medium text-ink-primary">Reflect & Search</h1>
+        <h1 className="text-3xl font-serif font-medium text-white">Reflect & Search</h1>
       </div>
 
       {/* Search Bar Input */}
       <div className="relative w-full">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-ink-muted" />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search notes, lists, vocabulary, or tags..."
-          className="w-full pl-12 pr-4 py-4 bg-white border border-ink-border rounded-2xl focus:outline-none focus:border-sage-500 text-ink-primary text-base shadow-card"
+          className="w-full pl-12 pr-4 py-4 bg-slate-900/80 border border-white/20 rounded-2xl focus:outline-none focus:border-orange-400 text-white text-base shadow-card placeholder:text-slate-500"
           autoFocus
         />
       </div>
 
       {/* Results List */}
       <div className="flex flex-col gap-4">
-        <div className="text-xs uppercase tracking-wider font-semibold text-ink-muted px-1">
+        <div className="text-xs uppercase tracking-wider font-semibold text-slate-400 px-1">
           {filteredEntries.length} {filteredEntries.length === 1 ? 'result' : 'results'} found
         </div>
 
         {filteredEntries.length === 0 ? (
-          <div className="text-center py-16 text-ink-muted italic bg-white rounded-2xl border border-ink-border">
+          <div className="text-center py-16 text-slate-400 italic bg-slate-900/60 rounded-2xl border border-white/15 backdrop-blur-md">
             No entries found matching "{searchQuery}".
           </div>
         ) : (
@@ -87,50 +85,50 @@ export const SearchView: React.FC = () => {
                   else if (entry.type === 'list') setCurrentView('lists');
                   else if (entry.type === 'vocab') setCurrentView('vocab');
                 }}
-                className="bg-white rounded-2xl p-6 border border-ink-border shadow-card hover:shadow-float transition-all cursor-pointer group flex flex-col gap-2"
+                className="bg-slate-900/80 backdrop-blur-md rounded-2xl p-6 border border-white/15 shadow-card hover:border-orange-400/60 hover:bg-slate-900/90 transition-all cursor-pointer group flex flex-col gap-2"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     {entry.type === 'note' && (
-                      <span className="p-1.5 rounded-lg bg-sage-50 text-sage-700">
+                      <span className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                         <FileText className="w-4 h-4" />
                       </span>
                     )}
                     {entry.type === 'list' && (
-                      <span className="p-1.5 rounded-lg bg-amber-50 text-amber-700">
+                      <span className="p-1.5 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">
                         <ListIcon className="w-4 h-4" />
                       </span>
                     )}
                     {entry.type === 'vocab' && (
-                      <span className="p-1.5 rounded-lg bg-indigo-50 text-indigo-700">
+                      <span className="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
                         <BookOpen className="w-4 h-4" />
                       </span>
                     )}
 
-                    <h3 className="text-lg font-serif font-medium text-ink-primary group-hover:text-sage-700 transition-colors">
+                    <h3 className="text-lg font-serif font-medium text-white group-hover:text-orange-300 transition-colors">
                       {entry.title || (entry.type === 'vocab' ? (entry as VocabEntry).word : 'Untitled')}
                     </h3>
                   </div>
 
-                  <span className="text-xs text-ink-muted capitalize">
+                  <span className="text-xs text-slate-400 capitalize">
                     {entry.type} · {new Date(entry.createdAt).toLocaleDateString()}
                   </span>
                 </div>
 
                 {entry.type === 'note' && (
-                  <p className="text-sm text-ink-secondary leading-relaxed line-clamp-2 pl-8">
+                  <p className="text-sm text-slate-300 leading-relaxed line-clamp-2 pl-8">
                     {(entry as NoteEntry).content}
                   </p>
                 )}
 
                 {entry.type === 'vocab' && (
-                  <p className="text-sm text-ink-secondary leading-relaxed line-clamp-2 pl-8">
+                  <p className="text-sm text-slate-300 leading-relaxed line-clamp-2 pl-8">
                     {(entry as VocabEntry).meaning}
                   </p>
                 )}
 
                 {entry.type === 'list' && (
-                  <div className="text-sm text-ink-secondary line-clamp-2 pl-8">
+                  <div className="text-sm text-slate-300 line-clamp-2 pl-8">
                     {(entry as ListEntry).items.map((i) => i.text).join(' · ')}
                   </div>
                 )}
@@ -140,7 +138,7 @@ export const SearchView: React.FC = () => {
                     {entry.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="text-[10px] uppercase tracking-wider font-semibold text-sage-700 bg-sage-50 px-2 py-0.5 rounded-full"
+                        className="text-[10px] uppercase tracking-wider font-semibold text-orange-300 bg-orange-500/10 border border-orange-500/20 px-2 py-0.5 rounded-full"
                       >
                         #{tag}
                       </span>

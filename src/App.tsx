@@ -63,11 +63,21 @@ const MainContent: React.FC = () => {
 export const App: React.FC = () => {
   return (
     <EntryProvider>
-      <div className="min-h-screen bg-bg text-ink-primary font-sans flex flex-col antialiased">
-        <Header />
-        <main className="flex-1 w-full">
-          <MainContent />
-        </main>
+      <div className="relative min-h-[100dvh] h-[100dvh] text-slate-100 font-sans flex flex-col antialiased overflow-hidden">
+        {/* Full-screen Background Image with Subtle Dark Overlay */}
+        <div
+          className="fixed inset-0 bg-cover bg-center bg-no-repeat z-0 transition-opacity duration-500"
+          style={{ backgroundImage: "url('/bg.jpg')" }}
+        />
+        <div className="fixed inset-0 bg-slate-950/45 backdrop-blur-[0.5px] z-0 pointer-events-none" />
+
+        {/* Content Container */}
+        <div className="relative z-10 flex flex-col h-full overflow-y-auto">
+          <Header />
+          <main className="flex-1 w-full flex flex-col">
+            <MainContent />
+          </main>
+        </div>
       </div>
     </EntryProvider>
   );

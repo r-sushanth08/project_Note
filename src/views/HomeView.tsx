@@ -7,75 +7,61 @@ export const HomeView: React.FC = () => {
   const vocabCount = getVocabCount();
 
   return (
-    <div className="w-full max-w-5xl mx-auto px-6 pt-4 pb-16 flex flex-col gap-12">
-      {/* Top Hero Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Card 1: Saved Lexicon */}
-        <div
-          onClick={() => setCurrentView('vocab')}
-          className="bg-white rounded-2xl p-8 border border-ink-border shadow-card hover:shadow-float transition-all cursor-pointer flex flex-col justify-between group"
-        >
-          <div>
-            <span className="text-xs uppercase tracking-wider font-semibold text-ink-muted">
-              Saved Lexicon
-            </span>
-
-            <div className="mt-6 flex items-baseline gap-3">
-              <span className="text-5xl font-serif text-ink-primary font-normal group-hover:text-sage-700 transition-colors">
-                {vocabCount}
-              </span>
-              <span className="text-sm font-medium text-ink-secondary">words logged</span>
-            </div>
-          </div>
-
-          <p className="mt-8 text-sm text-ink-secondary leading-relaxed">
-            Your mindful vocabulary is growing steadily. Revisit your saved words often.
-          </p>
-        </div>
-
-        {/* Card 2: Lexicon of the Day */}
-        <div
-          onClick={() => {
-            if (vocabOfTheDay) {
-              setSelectedEntry(vocabOfTheDay);
-              setCurrentView('vocab');
-            }
-          }}
-          className="bg-white rounded-2xl p-8 border border-ink-border shadow-card hover:shadow-float transition-all cursor-pointer relative flex flex-col justify-between group"
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-xs uppercase tracking-wider font-semibold text-ink-muted">
-              Lexicon of the Day
-            </span>
-            <span className="text-[10px] uppercase tracking-wider font-bold text-sage-700 bg-sage-50 px-2.5 py-1 rounded-full border border-sage-200">
-              Daily Reflection
-            </span>
-          </div>
-
-          {vocabOfTheDay ? (
-            <div className="mt-6">
-              <h3 className="text-2xl font-serif font-medium text-ink-primary group-hover:text-sage-700 transition-colors">
-                {vocabOfTheDay.word}
-              </h3>
-              {(vocabOfTheDay.phonetic || vocabOfTheDay.partOfSpeech) && (
-                <p className="text-xs italic font-serif text-ink-muted mt-1">
-                  {vocabOfTheDay.phonetic} {vocabOfTheDay.partOfSpeech ? `· ${vocabOfTheDay.partOfSpeech}` : ''}
-                </p>
-              )}
-              <p className="mt-4 text-sm text-ink-secondary leading-relaxed line-clamp-3">
-                {vocabOfTheDay.meaning}
-              </p>
-            </div>
-          ) : (
-            <div className="mt-6 text-sm text-ink-muted italic">
-              No words in your lexicon yet. Use the radial control below to add your first word!
-            </div>
-          )}
-        </div>
+    <div className="w-full max-w-4xl mx-auto px-6 h-full flex flex-col justify-between items-center pt-2 pb-6 select-none overflow-hidden">
+      {/* Top Element: Lexicon Count Box */}
+      <div
+        onClick={() => setCurrentView('vocab')}
+        className="bg-slate-900/60 backdrop-blur-md border border-white/20 rounded-2xl px-6 py-3 shadow-card hover:border-orange-400/60 hover:bg-slate-900/80 transition-all cursor-pointer flex items-center gap-3 group"
+        title="View All Vocabulary"
+      >
+        <span className="text-3xl font-serif text-white font-normal group-hover:text-orange-400 transition-colors">
+          {vocabCount}
+        </span>
+        <span className="text-xs uppercase tracking-wider font-semibold text-slate-300">
+          words logged
+        </span>
       </div>
 
-      {/* Central Radial Quick-Capture Control */}
-      <div className="mt-8 flex flex-col items-center justify-center">
+      {/* Middle Section: Lexicon of the Day (Underlined in Orange + White Text) */}
+      <div className="flex flex-col items-center text-center max-w-xl px-4 py-2 my-auto">
+        {/* Orange Underlined Subheading */}
+        <div className="border-b-2 border-orange-500 pb-1 mb-3 inline-block">
+          <span className="text-xs font-semibold uppercase tracking-widest text-orange-400">
+            Lexicon of the Day
+          </span>
+        </div>
+
+        {vocabOfTheDay ? (
+          <div
+            onClick={() => {
+              setSelectedEntry(vocabOfTheDay);
+              setCurrentView('vocab');
+            }}
+            className="cursor-pointer group flex flex-col items-center"
+          >
+            <h2 className="text-4xl sm:text-5xl font-serif font-medium text-white tracking-wide group-hover:text-orange-300 transition-colors">
+              {vocabOfTheDay.word}
+            </h2>
+
+            {(vocabOfTheDay.phonetic || vocabOfTheDay.partOfSpeech) && (
+              <p className="text-xs italic font-serif text-slate-300 mt-1">
+                {vocabOfTheDay.phonetic} {vocabOfTheDay.partOfSpeech ? `· ${vocabOfTheDay.partOfSpeech}` : ''}
+              </p>
+            )}
+
+            <p className="mt-4 text-sm sm:text-base text-slate-200 font-sans leading-relaxed max-w-md line-clamp-3">
+              {vocabOfTheDay.meaning}
+            </p>
+          </div>
+        ) : (
+          <p className="text-sm text-slate-400 italic mt-2">
+            No words in your lexicon yet. Drag the dot below to add one!
+          </p>
+        )}
+      </div>
+
+      {/* Lower Section: Radial Quick-Capture Control Positioned Higher Up */}
+      <div className="w-full flex flex-col items-center justify-center -mt-4 pb-2">
         <RadialControl isHomeCentered={true} />
       </div>
     </div>

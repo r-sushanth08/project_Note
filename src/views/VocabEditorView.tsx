@@ -19,7 +19,6 @@ export const VocabEditorView: React.FC<VocabEditorViewProps> = ({ vocab, onBack 
   const [examples, setExamples] = useState((vocab.examples || []).join('\n'));
   const [tagsInput, setTagsInput] = useState((vocab.tags || []).join(', '));
 
-  // Auto-save on form state change
   useEffect(() => {
     const updated: VocabEntry = {
       ...vocab,
@@ -38,7 +37,6 @@ export const VocabEditorView: React.FC<VocabEditorViewProps> = ({ vocab, onBack 
   }, [word, partOfSpeech, meaning, synonyms, antonyms, examples, tagsInput]);
 
   const handleDelete = () => {
-    // Permanent deletion per DECISIONS.md #5
     deleteEntry(vocab.id);
     onBack();
   };
@@ -49,17 +47,17 @@ export const VocabEditorView: React.FC<VocabEditorViewProps> = ({ vocab, onBack 
       <div className="flex items-center justify-between">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 text-sm text-ink-secondary hover:text-ink-primary transition-colors"
+          className="flex items-center gap-2 text-sm text-slate-300 hover:text-white transition-colors"
         >
           <span className="text-base font-semibold">‹</span>
           <span className="font-medium">All Vocabulary</span>
         </button>
 
         <div className="flex items-center gap-4">
-          <span className="text-xs text-ink-muted">Auto-saved lexicon card</span>
+          <span className="text-xs text-slate-400">Auto-saved lexicon card</span>
           <button
             onClick={handleDelete}
-            className="text-red-500 hover:text-red-700 transition-colors p-1"
+            className="text-red-400 hover:text-red-300 transition-colors p-1"
             title="Delete Word Permanently"
           >
             <Trash2 className="w-4 h-4" />
@@ -68,7 +66,7 @@ export const VocabEditorView: React.FC<VocabEditorViewProps> = ({ vocab, onBack 
       </div>
 
       {/* Form Title */}
-      <h1 className="text-3xl font-serif font-medium text-ink-primary">
+      <h1 className="text-3xl font-serif font-medium text-white">
         {word ? `Edit Word` : `Add Word to Lexicon`}
       </h1>
 
@@ -77,7 +75,7 @@ export const VocabEditorView: React.FC<VocabEditorViewProps> = ({ vocab, onBack 
         {/* Word & Part of Speech */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="md:col-span-2 flex flex-col gap-2">
-            <label className="text-xs uppercase tracking-wider font-semibold text-ink-primary">
+            <label className="text-xs uppercase tracking-wider font-semibold text-slate-300">
               Word
             </label>
             <input
@@ -85,12 +83,12 @@ export const VocabEditorView: React.FC<VocabEditorViewProps> = ({ vocab, onBack 
               value={word}
               onChange={(e) => setWord(e.target.value)}
               placeholder="e.g. Eunoia"
-              className="w-full px-4 py-3 bg-white border border-ink-border rounded-xl focus:outline-none focus:border-sage-500 text-ink-primary font-serif text-lg shadow-sm"
+              className="w-full px-4 py-3 bg-slate-900/80 border border-white/20 rounded-xl focus:outline-none focus:border-orange-400 text-white font-serif text-lg shadow-sm"
             />
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-xs uppercase tracking-wider font-semibold text-ink-primary">
+            <label className="text-xs uppercase tracking-wider font-semibold text-slate-300">
               Part of Speech
             </label>
             <input
@@ -98,14 +96,14 @@ export const VocabEditorView: React.FC<VocabEditorViewProps> = ({ vocab, onBack 
               value={partOfSpeech}
               onChange={(e) => setPartOfSpeech(e.target.value)}
               placeholder="e.g. noun, adjective"
-              className="w-full px-4 py-3 bg-white border border-ink-border rounded-xl focus:outline-none focus:border-sage-500 text-ink-primary text-sm shadow-sm"
+              className="w-full px-4 py-3 bg-slate-900/80 border border-white/20 rounded-xl focus:outline-none focus:border-orange-400 text-white text-sm shadow-sm"
             />
           </div>
         </div>
 
         {/* Meaning */}
         <div className="flex flex-col gap-2">
-          <label className="text-xs uppercase tracking-wider font-semibold text-ink-primary">
+          <label className="text-xs uppercase tracking-wider font-semibold text-slate-300">
             Meaning
           </label>
           <textarea
@@ -113,13 +111,13 @@ export const VocabEditorView: React.FC<VocabEditorViewProps> = ({ vocab, onBack 
             onChange={(e) => setMeaning(e.target.value)}
             rows={3}
             placeholder="A pure and well-balanced mind; a good spirit."
-            className="w-full px-4 py-3 bg-white border border-ink-border rounded-xl focus:outline-none focus:border-sage-500 text-ink-primary text-sm leading-relaxed shadow-sm resize-y"
+            className="w-full px-4 py-3 bg-slate-900/80 border border-white/20 rounded-xl focus:outline-none focus:border-orange-400 text-white text-sm leading-relaxed shadow-sm resize-y"
           />
         </div>
 
         {/* Synonyms */}
         <div className="flex flex-col gap-2">
-          <label className="text-xs uppercase tracking-wider font-semibold text-ink-primary">
+          <label className="text-xs uppercase tracking-wider font-semibold text-slate-300">
             Synonyms
           </label>
           <input
@@ -127,13 +125,13 @@ export const VocabEditorView: React.FC<VocabEditorViewProps> = ({ vocab, onBack 
             value={synonyms}
             onChange={(e) => setSynonyms(e.target.value)}
             placeholder="Goodwill, benevolence, kindness"
-            className="w-full px-4 py-3 bg-white border border-ink-border rounded-xl focus:outline-none focus:border-sage-500 text-ink-primary text-sm shadow-sm"
+            className="w-full px-4 py-3 bg-slate-900/80 border border-white/20 rounded-xl focus:outline-none focus:border-orange-400 text-white text-sm shadow-sm"
           />
         </div>
 
         {/* Antonyms */}
         <div className="flex flex-col gap-2">
-          <label className="text-xs uppercase tracking-wider font-semibold text-ink-primary">
+          <label className="text-xs uppercase tracking-wider font-semibold text-slate-300">
             Antonyms
           </label>
           <input
@@ -141,13 +139,13 @@ export const VocabEditorView: React.FC<VocabEditorViewProps> = ({ vocab, onBack 
             value={antonyms}
             onChange={(e) => setAntonyms(e.target.value)}
             placeholder="Malice, ill-will, kakoneia"
-            className="w-full px-4 py-3 bg-white border border-ink-border rounded-xl focus:outline-none focus:border-sage-500 text-ink-primary text-sm shadow-sm"
+            className="w-full px-4 py-3 bg-slate-900/80 border border-white/20 rounded-xl focus:outline-none focus:border-orange-400 text-white text-sm shadow-sm"
           />
         </div>
 
         {/* Example Sentence(s) */}
         <div className="flex flex-col gap-2">
-          <label className="text-xs uppercase tracking-wider font-semibold text-ink-primary">
+          <label className="text-xs uppercase tracking-wider font-semibold text-slate-300">
             Example sentence(s)
           </label>
           <textarea
@@ -155,13 +153,13 @@ export const VocabEditorView: React.FC<VocabEditorViewProps> = ({ vocab, onBack 
             onChange={(e) => setExamples(e.target.value)}
             rows={3}
             placeholder='"The speaker’s eunoia put the troubled audience at complete ease."'
-            className="w-full px-4 py-3 bg-white border border-ink-border rounded-xl focus:outline-none focus:border-sage-500 text-ink-primary text-sm leading-relaxed shadow-sm resize-y"
+            className="w-full px-4 py-3 bg-slate-900/80 border border-white/20 rounded-xl focus:outline-none focus:border-orange-400 text-white text-sm leading-relaxed shadow-sm resize-y"
           />
         </div>
 
         {/* Tags */}
-        <div className="flex flex-col gap-2 pt-2 border-t border-ink-border">
-          <label className="text-xs uppercase tracking-wider font-semibold text-ink-muted">
+        <div className="flex flex-col gap-2 pt-2 border-t border-white/10">
+          <label className="text-xs uppercase tracking-wider font-semibold text-slate-400">
             Tags (Optional)
           </label>
           <input
@@ -169,7 +167,7 @@ export const VocabEditorView: React.FC<VocabEditorViewProps> = ({ vocab, onBack 
             value={tagsInput}
             onChange={(e) => setTagsInput(e.target.value)}
             placeholder="philosophy, reflection"
-            className="w-full px-4 py-2.5 bg-white border border-ink-border rounded-xl focus:outline-none focus:border-sage-500 text-ink-primary text-sm shadow-sm"
+            className="w-full px-4 py-2.5 bg-slate-900/80 border border-white/20 rounded-xl focus:outline-none focus:border-orange-400 text-white text-sm shadow-sm"
           />
         </div>
       </div>
