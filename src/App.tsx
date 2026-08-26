@@ -68,19 +68,13 @@ const AppContainer: React.FC = () => {
 
   return (
     <div className="relative min-h-[100dvh] h-[100dvh] text-slate-100 font-sans flex flex-col antialiased overflow-hidden select-none">
-      {/* Mobile Background Image (9:16 Portrait < 768px) */}
+      {/* Unified Widescreen Background Image for ALL Screens (Mobile & Desktop) */}
       <div
-        className="fixed inset-0 bg-no-repeat bg-cover bg-center md:hidden z-0"
-        style={{ backgroundImage: "url('/bg.jpg')" }}
-      />
-
-      {/* Desktop Widescreen Background Image (16:9 Landscape >= 768px) */}
-      <div
-        className="fixed inset-0 bg-no-repeat bg-cover hidden md:block bg-[position:right_10%_center] z-0 transition-all duration-500"
+        className="fixed inset-0 bg-no-repeat bg-cover bg-[position:right_28%_center] sm:bg-[position:right_20%_center] md:bg-[position:right_15%_center] z-0 pointer-events-none"
         style={{ backgroundImage: "url('/bg-desktop.jpg'), url('/bg-desktop.png'), url('/bg.jpg')" }}
       />
 
-      {/* Dark Translucent Vignette Overlay */}
+      {/* Dark Translucent Overlay */}
       <div className="fixed inset-0 bg-slate-950/40 md:bg-gradient-to-r md:from-slate-950/80 md:via-slate-950/40 md:to-transparent backdrop-blur-[0.5px] z-0 pointer-events-none" />
 
       {/* Main Full-Width Content Container */}
