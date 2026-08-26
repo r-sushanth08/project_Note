@@ -74,14 +74,14 @@ const AppContainer: React.FC = () => {
         style={{ backgroundImage: "url('/bg.jpg')" }}
       />
 
-      {/* Desktop Background Image (16:9 Landscape >= 768px, fallback to bg.jpg) */}
+      {/* Desktop Widescreen Background Image (16:9 Landscape >= 768px) */}
       <div
-        className="fixed inset-0 bg-no-repeat bg-cover hidden md:block bg-[position:right_15%_center] z-0 transition-all duration-500"
-        style={{ backgroundImage: "url('/bg-desktop.jpg'), url('/bg.jpg')" }}
+        className="fixed inset-0 bg-no-repeat bg-cover hidden md:block bg-[position:right_10%_center] z-0 transition-all duration-500"
+        style={{ backgroundImage: "url('/bg-desktop.jpg'), url('/bg-desktop.png'), url('/bg.jpg')" }}
       />
 
-      {/* Dark Translucent Overlay */}
-      <div className="fixed inset-0 bg-slate-950/40 md:bg-gradient-to-r md:from-slate-950/85 md:via-slate-950/50 md:to-slate-950/20 backdrop-blur-[0.5px] z-0 pointer-events-none" />
+      {/* Dark Translucent Vignette Overlay */}
+      <div className="fixed inset-0 bg-slate-950/40 md:bg-gradient-to-r md:from-slate-950/80 md:via-slate-950/40 md:to-transparent backdrop-blur-[0.5px] z-0 pointer-events-none" />
 
       {/* Main Full-Width Content Container */}
       <div className="relative z-10 flex flex-col h-full overflow-hidden">
