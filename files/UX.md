@@ -4,11 +4,22 @@ Agreed user experience and interaction behavior.
 
 ## Overall Feel & Visual Theme
 
-Calm, minimal, reflective, and distraction-free. The app is set against a **Dark Rainy Lantern background scene** (`public/bg.jpg`), creating a quiet, atmospheric, late-night place to think and record thoughts.
+Calm, minimal, reflective, and distraction-free. The app is set against a **Dark Rainy Lantern background scene** (`public/bg-desktop.jpg`), creating a quiet, atmospheric, late-night place to think and record thoughts.
 
 - **Theme**: Dark aesthetic with crisp white typography (`text-white`, `text-slate-200`) over the lantern background scene with soft dark overlay.
 - **Home Screen Aesthetic**: Text-only, minimalist layout — no heavy white cards on Home.
 - **Lexicon Count**: Displayed inside a sleek, semi-transparent boxed badge (`words logged`).
+
+## Home-Exclusive Atmospheric Effects (Rain & Lantern Glow)
+
+- **Synchronized Lantern Warm Glow Pulse**:
+  - Soft amber/orange radial glow (`animate-lantern-pulse`) centered directly over the lantern flame.
+  - Positioned dynamically in CSS (`right-[22%]` on mobile, `right-[16%]` on tablet, `right-[12%]` on desktop) so the glow shifts in **100% perfect sync** with the lantern as screen width changes!
+- **Ambient Falling Rain Streaks**:
+  - Lightweight vertical rain streak animations (`animate-rain-1`, `animate-rain-2`, `animate-rain-3`) drifting down the background.
+- **Home-Exclusive Activation**:
+  - Active **ONLY on the Home screen** (`currentView === 'home' && !selectedEntry`).
+  - Smoothly fades out (`opacity-0 duration-700`) when navigating to `Notes`, `Lists`, `Vocab`, `Calendar`, `Search`, or Editors, ensuring zero distraction while reading or writing.
 
 ## 3 Lexicons of the Day Swipe Carousel (Home Screen)
 

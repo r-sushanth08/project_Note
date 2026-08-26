@@ -61,6 +61,9 @@ const MainContent: React.FC = () => {
 const AppContainer: React.FC = () => {
   const { currentView, selectedEntry } = useEntries();
 
+  // Active home effect status: active ONLY on Home screen with no editor open
+  const isHomeActive = currentView === 'home' && !selectedEntry;
+
   // Unique transition key per screen or editor view
   const transitionKey = selectedEntry
     ? `${selectedEntry.type}-editor-${selectedEntry.id}`
@@ -68,11 +71,36 @@ const AppContainer: React.FC = () => {
 
   return (
     <div className="relative min-h-[100dvh] h-[100dvh] text-slate-100 font-sans flex flex-col antialiased overflow-hidden select-none">
-      {/* Unified Widescreen Background Image for ALL Screens (Mobile & Desktop) */}
+      {/* Widescreen Background Image for ALL Screens */}
       <div
         className="fixed inset-0 bg-no-repeat bg-cover bg-[position:right_28%_center] sm:bg-[position:right_20%_center] md:bg-[position:right_15%_center] z-0 pointer-events-none"
         style={{ backgroundImage: "url('/bg-desktop.jpg'), url('/bg-desktop.png'), url('/bg.jpg')" }}
       />
+
+      {/* Synchronized Lantern Warm Glow Pulse (Active ONLY on Home screen) */}
+      <div
+        className={`fixed inset-0 z-0 pointer-events-none transition-opacity duration-700 ${
+          isHomeActive ? 'opacity-100' : 'opacity-0'
+        }`}
+      >
+        {/* Glow Sphere centered directly over the lantern at every screen width */}
+        <div className="absolute right-[22%] sm:right-[16%] md:right-[12%] top-[34%] sm:top-[32%] md:top-[30%] w-36 h-36 sm:w-48 sm:h-48 md:w-60 md:h-60 rounded-full bg-amber-500/35 blur-3xl animate-lantern-pulse" />
+        <div className="absolute right-[24%] sm:right-[18%] md:right-[13%] top-[36%] sm:top-[34%] md:top-[32%] w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-full bg-orange-400/40 blur-2xl animate-lantern-pulse" />
+      </div>
+
+      {/* Ambient Falling Rain Streaks Overlay (Active ONLY on Home screen) */}
+      <div
+        className={`fixed inset-0 z-0 pointer-events-none transition-opacity duration-700 overflow-hidden ${
+          isHomeActive ? 'opacity-40' : 'opacity-0'
+        }`}
+      >
+        {/* Rain Layer 1 */}
+        <div className="absolute inset-0 animate-rain-1 bg-[linear-gradient(to_bottom,transparent_0%,rgba(255,255,255,0.15)_50%,transparent_100%)] bg-[length:2px_80px] bg-[repeat:repeat]" />
+        {/* Rain Layer 2 */}
+        <div className="absolute inset-0 animate-rain-2 bg-[linear-gradient(to_bottom,transparent_0%,rgba(255,255,255,0.12)_50%,transparent_100%)] bg-[length:1.5px_60px] bg-[repeat:repeat] [background-position:20px_0]" />
+        {/* Rain Layer 3 */}
+        <div className="absolute inset-0 animate-rain-3 bg-[linear-gradient(to_bottom,transparent_0%,rgba(255,255,255,0.08)_50%,transparent_100%)] bg-[length:1px_40px] bg-[repeat:repeat] [background-position:40px_0]" />
+      </div>
 
       {/* Dark Translucent Overlay */}
       <div className="fixed inset-0 bg-slate-950/40 md:bg-gradient-to-r md:from-slate-950/80 md:via-slate-950/40 md:to-transparent backdrop-blur-[0.5px] z-0 pointer-events-none" />
