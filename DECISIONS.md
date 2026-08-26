@@ -45,5 +45,8 @@ Replaced text input tags with tappable pill buttons (`Work`, `Personal`, `Idea`,
 Vocab cards stack over each other as the user scrolls up (`sticky top-[...]`), creating an authentic physical folder index card stack effect with hidden/locked scrollbars (`no-scrollbar`), capped at 2 visible cards max.
 
 ## 15. Hardware-Accelerated Screen Slide Transitions
-**Decision:** All screen and editor routing features smooth Slide In Right / Slide In Left CSS animations (`PageTransition.tsx`).
-**Why:** User requested fluid screen navigation transitions across all screens with 60 FPS mobile performance.
+All screen and editor routing features smooth Slide In Right / Slide In Left CSS animations (`PageTransition.tsx`).
+
+## 16. 3 Lexicons of the Day Carousel on Home Screen
+**Decision:** Home screen displays 3 Lexicons of the Day with horizontal touch swiping, 3 glowing white pagination indicator dots, slide-in CSS transitions, and a fixed static `LEXICON OF THE DAY` orange subheading.
+**Why:** User requested increasing daily vocabulary count to 3 words with a smooth swipe carousel and glowing pagination dots without altering the top layout hierarchy.

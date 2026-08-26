@@ -1,23 +1,28 @@
 import { VocabEntry } from '../types/entry';
 
 /**
- * Returns the Vocab of the Day prioritizing words least-recently shown.
- * If no words have been shown yet, it prioritizes by oldest creation date.
- * Automatically updates the entry's lastShownAt when selected.
+ * Returns a list of up to `count` (default 3) least-recently shown vocab entries.
+ * Entries without `lastShownAt` are prioritized first.
  */
-export function getVocabOfTheDay(vocabList: VocabEntry[]): VocabEntry | null {
-  if (vocabList.length === 0) return null;
+export function getVocabOfTheDayList(entries: VocabEntry[], count = 3): VocabEntry[] {
+  if (!entries || entries.length === 0) {
+    return [];
+  }
 
-  // Sort by lastShownAt (ascending: never shown or oldest shown first),
-  // tie-breaker: createdAt (ascending: oldest word first)
-  const sorted = [...vocabList].sort((a, b) => {
-    if (!a.lastShownAt && !b.lastShownAt) {
-      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-    }
+  const sorted = [...entries].sort((a, b) => {
+    if (!a.lastShownAt && !b.lastShownAt) return 0;
     if (!a.lastShownAt) return -1;
     if (!b.lastShownAt) return 1;
     return new Date(a.lastShownAt).getTime() - new Date(b.lastShownAt).getTime();
   });
 
-  return sorted[0];
+  return sorted.slice(0, count);
+}
+
+/**
+ * Legacy single-word helper
+ */
+export function getVocabOfTheDay(entries: VocabEntry[]): VocabEntry | null {
+  const list = getVocabOfTheDayList(entries, 1);
+  return list.length > 0 ? list[0] : null;
 }

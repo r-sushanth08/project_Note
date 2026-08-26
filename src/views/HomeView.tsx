@@ -1,14 +1,63 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { useEntries } from '../context/EntryContext';
 import { RadialControl } from '../components/RadialControl';
 
 export const HomeView: React.FC = () => {
-  const { getVocabCount, vocabOfTheDay, setCurrentView, setSelectedEntry } = useEntries();
+  const { getVocabCount, vocabOfTheDayList, setCurrentView, setSelectedEntry } = useEntries();
   const vocabCount = getVocabCount();
+
+  const [activeWordIndex, setActiveWordIndex] = useState<number>(0);
+  const [slideDirection, setSlideDirection] = useState<'right' | 'left'>('right');
+
+  // Touch Swipe tracking refs
+  const touchStartXRef = useRef<number | null>(null);
+
+  const totalDailyWords = vocabOfTheDayList.length;
+  const currentVocab = totalDailyWords > 0 ? vocabOfTheDayList[Math.min(activeWordIndex, totalDailyWords - 1)] : null;
+
+  const handleNextWord = () => {
+    if (totalDailyWords <= 1) return;
+    setSlideDirection('right');
+    setActiveWordIndex((prev) => (prev + 1) % totalDailyWords);
+  };
+
+  const handlePrevWord = () => {
+    if (totalDailyWords <= 1) return;
+    setSlideDirection('left');
+    setActiveWordIndex((prev) => (prev - 1 + totalDailyWords) % totalDailyWords);
+  };
+
+  // Touch handlers for mobile swiping
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length > 0) {
+      touchStartXRef.current = e.touches[0].clientX;
+    }
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartXRef.current === null || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const deltaX = touchEndX - touchStartXRef.current;
+
+    // Minimum swipe threshold (40px)
+    if (deltaX < -40) {
+      handleNextWord(); // Swipe Left -> Next word
+    } else if (deltaX > 40) {
+      handlePrevWord(); // Swipe Right -> Previous word
+    }
+
+    touchStartXRef.current = null;
+  };
+
+  const handleDotClick = (index: number) => {
+    if (index > activeWordIndex) setSlideDirection('right');
+    else if (index < activeWordIndex) setSlideDirection('left');
+    setActiveWordIndex(index);
+  };
 
   return (
     <div className="w-full max-w-4xl mx-auto px-6 flex flex-col justify-between items-center h-[calc(100dvh-70px)] select-none overflow-hidden overscroll-none touch-none pb-8 pt-1">
-      {/* Zone 1: Lexicon Count Box (Top) */}
+      {/* 1. Top Element: Lexicon Count Box */}
       <div className="flex-shrink-0">
         <div
           onClick={() => setCurrentView('vocab')}
@@ -24,45 +73,79 @@ export const HomeView: React.FC = () => {
         </div>
       </div>
 
-      {/* Zone 2: Lexicon of the Day (Middle Text Section, Flex-1 with Line-Clamp) */}
-      <div className="flex-1 min-h-0 flex flex-col items-center justify-center text-center max-w-xl px-4 my-auto">
-        {/* Orange Underlined Subheading */}
-        <div className="border-b-2 border-orange-500 pb-1 mb-2 inline-block flex-shrink-0">
+      {/* 2. Middle Section: Lexicon of the Day (3 Words Carousel with Fixed Orange Subheading) */}
+      <div className="flex-1 min-h-0 flex flex-col items-center justify-center text-center max-w-xl px-4 my-auto w-full">
+        {/* FIXED SUBHEADING: Never moves or changes during swiping */}
+        <div className="border-b-2 border-orange-500 pb-1 mb-3 inline-block flex-shrink-0">
           <span className="text-xs font-semibold uppercase tracking-widest text-orange-400">
             Lexicon of the Day
           </span>
         </div>
 
-        {vocabOfTheDay ? (
+        {/* SWIPEABLE WORD & MEANING BLOCK */}
+        {currentVocab ? (
           <div
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
             onClick={() => {
-              setSelectedEntry(vocabOfTheDay);
+              setSelectedEntry(currentVocab);
               setCurrentView('vocab');
             }}
-            className="cursor-pointer group flex flex-col items-center max-h-full overflow-hidden"
+            className="cursor-pointer group flex flex-col items-center max-h-full overflow-hidden w-full"
           >
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-medium text-white tracking-wide group-hover:text-orange-300 transition-colors line-clamp-1">
-              {vocabOfTheDay.word}
-            </h2>
+            <div
+              key={currentVocab.id}
+              className={`flex flex-col items-center w-full ${
+                slideDirection === 'right' ? 'animate-slide-in-right' : 'animate-slide-in-left'
+              }`}
+            >
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-medium text-white tracking-wide group-hover:text-orange-300 transition-colors line-clamp-1">
+                {currentVocab.word}
+              </h2>
 
-            {(vocabOfTheDay.phonetic || vocabOfTheDay.partOfSpeech) && (
-              <p className="text-xs italic font-serif text-slate-300 mt-1">
-                {vocabOfTheDay.phonetic} {vocabOfTheDay.partOfSpeech ? `· ${vocabOfTheDay.partOfSpeech}` : ''}
+              {(currentVocab.phonetic || currentVocab.partOfSpeech) && (
+                <p className="text-xs italic font-serif text-slate-300 mt-1">
+                  {currentVocab.phonetic} {currentVocab.partOfSpeech ? `· ${currentVocab.partOfSpeech}` : ''}
+                </p>
+              )}
+
+              <p className="mt-2.5 text-sm sm:text-base text-slate-200 font-sans leading-relaxed max-w-md line-clamp-2">
+                {currentVocab.meaning}
               </p>
-            )}
-
-            <p className="mt-2 text-sm sm:text-base text-slate-200 font-sans leading-relaxed max-w-md line-clamp-2">
-              {vocabOfTheDay.meaning}
-            </p>
+            </div>
           </div>
         ) : (
           <p className="text-sm text-slate-400 italic mt-2">
             No words in your lexicon yet. Drag the dot below to add one!
           </p>
         )}
+
+        {/* 3 PAGINATION INDICATOR DOTS BELOW LEXICON */}
+        {totalDailyWords > 1 && (
+          <div className="flex items-center justify-center gap-2.5 mt-4 flex-shrink-0">
+            {vocabOfTheDayList.map((wordItem, idx) => {
+              const isActive = idx === activeWordIndex;
+              return (
+                <button
+                  key={wordItem.id || idx}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDotClick(idx);
+                  }}
+                  className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                    isActive
+                      ? 'bg-white scale-125 shadow-[0_0_10px_rgba(255,255,255,0.9)] opacity-100'
+                      : 'bg-white/30 hover:bg-white/60 opacity-60'
+                  }`}
+                  title={`Word ${idx + 1}: ${wordItem.word}`}
+                />
+              );
+            })}
+          </div>
+        )}
       </div>
 
-      {/* Zone 3: Radial Quick-Capture Control (Prominent Sizing with Clearance Zone) */}
+      {/* 3. Radial Quick-Capture Control Positioned Below Carousel */}
       <div className="flex-shrink-0 h-[210px] min-h-[210px] w-full flex items-center justify-center pb-8">
         <RadialControl isHomeCentered={true} />
       </div>

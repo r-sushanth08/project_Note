@@ -9,7 +9,16 @@ Calm, minimal, reflective, and distraction-free. The app is set against a **Dark
 - **Theme**: Dark aesthetic with crisp white typography (`text-white`, `text-slate-200`) over the lantern background scene with soft dark overlay.
 - **Home Screen Aesthetic**: Text-only, minimalist layout — no heavy white cards on Home.
 - **Lexicon Count**: Displayed inside a sleek, semi-transparent boxed badge (`words logged`).
-- **Lexicon of the Day**: Displayed below the Lexicon count with a **vibrant orange underline** (`border-b-2 border-orange-500`) under the subheading, followed by the serif word title and white text meaning.
+
+## 3 Lexicons of the Day Swipe Carousel (Home Screen)
+
+- **Static Orange Subheading**: The `LEXICON OF THE DAY` subheading with **vibrant orange underline** (`border-b-2 border-orange-500`) stays fixed at top and never shifts during swiping.
+- **3 Daily Words Carousel**: Displays 3 least-recently shown words per day.
+- **Slide In / Slide Out Transitions**: Swiping left/right or tapping pagination dots triggers smooth slide-in CSS transitions on the word title, phonetic, and meaning block.
+- **3 Glowing Pagination Dots**: 3 white indicator dots below the definition text:
+  - **Active Word Dot**: Glowing white (`bg-white shadow-[0_0_10px_rgba(255,255,255,0.9)] scale-125`).
+  - **Inactive Word Dots**: Faded glass white (`bg-white/30`).
+- **Touch Swiping**: Swipe left for next word, swipe right for previous word (`onTouchStart`, `onTouchEnd`).
 
 ## Screen Navigation Slide Transitions
 

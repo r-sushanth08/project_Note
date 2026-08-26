@@ -12,15 +12,18 @@ Implementation roadmap.
   - [x] White serif word title & text definition
   - [x] Position radial capture dot higher up
   - [x] Fits completely inside `100dvh` mobile viewport without scrolling
+- [x] **3 Lexicons of the Day Carousel on Home Screen**:
+  - [x] Selection of 3 least-recently shown words per day (`getVocabOfTheDayList`)
+  - [x] Horizontal touch swiping (`onTouchStart`, `onTouchEnd`)
+  - [x] 3 glowing white pagination indicator dots
+  - [x] Slide-in CSS transitions on word title & definition block
+  - [x] Static fixed `LEXICON OF THE DAY` orange subheading
 - [x] Fix mobile touchscreen drag & drop gesture (`onTouchStart`, `onTouchMove`, `onTouchEnd`, `touch-action: none`)
 - [x] Radial Control Dual Interaction Modes (Direct click = browse section, Drag & drop = create new entry)
 - [x] Note Sub-types (Diary, Brain Dump, Collections)
 - [x] Interactive Tappable Tag Pill System with custom tag creation
 - [x] Vocab Folder Deck Stacking Cards Effect (2-card max stack, hidden scrollbar)
-- [x] **Hardware-Accelerated Screen Navigation Slide Transitions**:
-  - [x] Keyframe slide-in-right and slide-in-left CSS animations
-  - [x] Dynamic PageTransition wrapper component
-  - [x] Smooth 60 FPS transitions across all screens (Home, Notes, Lists, Vocab, Calendar, Search) and Editors
+- [x] Hardware-Accelerated Screen Navigation Slide Transitions (`PageTransition.tsx`)
 - [x] Build List editor with checkable items, reordering, and endless appending (no done state)
 - [x] Build Calendar grid with per-day passive activity indicators and expanded day view
 - [x] Build unified full-text search across Notes, Lists, Vocab, and tags

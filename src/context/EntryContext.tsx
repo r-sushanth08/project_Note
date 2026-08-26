@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useMemo } from 'react';
 import { Entry, EntryType, NoteEntry, ListEntry, VocabEntry, ViewMode, DEFAULT_BUILTIN_TAGS, NoteSubtype } from '../types/entry';
 import { INITIAL_MOCK_ENTRIES } from '../data/initialMockData';
-import { getVocabOfTheDay } from '../utils/vocabOfTheDay';
+import { getVocabOfTheDay, getVocabOfTheDayList } from '../utils/vocabOfTheDay';
 
 interface EntryContextType {
   entries: Entry[];
@@ -25,6 +25,7 @@ interface EntryContextType {
   openNewEntry: (type: EntryType, subtype?: NoteSubtype) => void;
   getVocabCount: () => number;
   vocabOfTheDay: VocabEntry | null;
+  vocabOfTheDayList: VocabEntry[];
 }
 
 const EntryContext = createContext<EntryContextType | undefined>(undefined);
@@ -47,7 +48,6 @@ export const EntryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const addCustomTag = (tag: string) => {
     const trimmed = tag.trim();
     if (!trimmed) return;
-    // Format nicely capitalized
     const formatted = trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
     if (!allTags.includes(formatted)) {
       setCustomTags((prev) => [...prev, formatted]);
@@ -57,6 +57,10 @@ export const EntryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const vocabEntries = useMemo(() => {
     return entries.filter((e): e is VocabEntry => e.type === 'vocab');
   }, [entries]);
+
+  const vocabOfTheDayList = useMemo(() => {
+    return getVocabOfTheDayList(vocabEntries, 3);
+  }, [vocabEntries]);
 
   const vocabOfTheDay = useMemo(() => {
     return getVocabOfTheDay(vocabEntries);
@@ -159,6 +163,7 @@ export const EntryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         openNewEntry,
         getVocabCount,
         vocabOfTheDay,
+        vocabOfTheDayList,
       }}
     >
       {children}
