@@ -30,9 +30,15 @@ Phased architecture: Phase 1 & 2 operate strictly on-device; Phase 3 handles bac
 The app opens to Home every time on every launch.
 
 ## 10. Dark Rainy Lantern Background & Text-Only Home Design
-**Decision:** Integrated full-screen rainy lantern background (`public/bg.jpg`) with crisp white text, boxed Lexicon count, and an orange-underlined `LEXICON OF THE DAY` subheading.
-**Why:** User requested dark atmospheric backdrop to reinforce reflective journal aesthetic. Text-only cards keep the UI minimal and unobtrusive over the background image.
+Integrated full-screen rainy lantern background (`public/bg.jpg`) with crisp white text, boxed Lexicon count, and an orange-underlined `LEXICON OF THE DAY` subheading.
 
 ## 11. Touchscreen Mobile Touch Gestures & 100dvh Single Viewport
-**Decision:** Implemented native touch handlers (`onTouchStart`, `onTouchMove`, `onTouchEnd`) with `touch-action: none` and dynamic `100dvh` viewport layout.
-**Why:** Prevents touchscreen drag-and-drop scrolling conflicts and ensures the entire Home view (Count box, Lexicon of the Day, and Radial Dot) fits comfortably on mobile screens without scrolling.
+Implemented native touch handlers (`onTouchStart`, `onTouchMove`, `onTouchEnd`) with `touch-action: none` and dynamic `100dvh` viewport layout.
+
+## 12. Note Sub-types (Diary, Brain Dump, Collections)
+**Decision:** Notes support 3 sub-types: **Diary** (chronological journal with prominent timestamp), **Brain Dump** (distraction-free fast capture), and **Collections** (structured lists of artists, books, movies, places, etc.).
+**Why:** User requested explicit workflow separation between reflective daily journaling, fast mind dumping, and structured collections.
+
+## 13. Interactive Tappable Tag Pill Buttons & Custom Tag Creation
+**Decision:** Replaced text input tags with tappable pill buttons (`Work`, `Personal`, `Idea`, `Learning`, `Important`, `Reminder`, `People`, `Travel`, `Experience`, `Question`, `Favorite`, `Explore`) plus custom tag creation.
+**Why:** Tappable tag pills eliminate typing friction, provide visual clarity with orange highlights, and allow custom reusable tags.

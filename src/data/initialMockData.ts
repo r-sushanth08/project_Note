@@ -1,7 +1,59 @@
 import { Entry } from '../types/entry';
 
 export const INITIAL_MOCK_ENTRIES: Entry[] = [
-  // Vocab entries matching user design mockup
+  // Diary Note
+  {
+    id: 'note-diary-1',
+    ownerId: 'user-1',
+    type: 'note',
+    noteSubtype: 'diary',
+    title: 'Quiet Reflections on Simplicity',
+    content: `The best ideas arrive when the mind isn't forced to categorize them immediately.
+
+- Writing without friction is essential.
+- Let ideas sit untagged until they naturally belong somewhere.
+- Time gives perspective to daily observations.`,
+    createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
+    updatedAt: new Date(Date.now() - 86400000 * 2).toISOString(),
+    tags: ['Personal', 'Experience', 'Favorite'],
+  },
+
+  // Brain Dump Note
+  {
+    id: 'note-braindump-1',
+    ownerId: 'user-1',
+    type: 'note',
+    noteSubtype: 'brain_dump',
+    title: 'Late Night Midnight Ideas & Reminders',
+    content: `* Explore PWA offline syncing architecture for Phase 3
+* Check out modern serif font pairings for dark mode
+* Remind sushanth to review list drag-and-drop mobile touch performance
+* What makes a journal feel reflective rather than transactional?`,
+    createdAt: new Date(Date.now() - 86400000 * 1).toISOString(),
+    updatedAt: new Date(Date.now() - 86400000 * 1).toISOString(),
+    tags: ['Idea', 'Work', 'Reminder'],
+  },
+
+  // Collections Note
+  {
+    id: 'note-collection-1',
+    ownerId: 'user-1',
+    type: 'note',
+    noteSubtype: 'collections',
+    title: 'Favorite Visual Artists & Illustrators',
+    category: 'Artists',
+    content: 'A curated log of inspiring visual artists, digital painters, and traditional illustrators.',
+    collectionItems: [
+      { id: 'item-1', name: 'Claude Monet', notes: 'Impressionist master of light and water lilies' },
+      { id: 'item-2', name: 'Moebius (Jean Giraud)', notes: 'Sci-fi comic illustrator with surreal world building' },
+      { id: 'item-3', name: 'Shinichiro Watanabe', notes: 'Director known for atmospheric musical compositions' },
+    ],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    tags: ['Explore', 'Favorite'],
+  },
+
+  // Vocab entries
   {
     id: 'vocab-1',
     ownerId: 'user-1',
@@ -18,7 +70,7 @@ export const INITIAL_MOCK_ENTRIES: Entry[] = [
     ],
     createdAt: new Date(Date.now() - 86400000 * 5).toISOString(),
     updatedAt: new Date(Date.now() - 86400000 * 5).toISOString(),
-    tags: ['philosophy', 'reflection'],
+    tags: ['Personal', 'Learning'],
     lastShownAt: new Date(Date.now() - 86400000 * 2).toISOString(),
   },
   {
@@ -35,7 +87,7 @@ export const INITIAL_MOCK_ENTRIES: Entry[] = [
     examples: ['"The morning sun provided an auspicious start to our journey."'],
     createdAt: new Date(Date.now() - 86400000 * 4).toISOString(),
     updatedAt: new Date(Date.now() - 86400000 * 4).toISOString(),
-    tags: ['vocabulary'],
+    tags: ['Learning'],
   },
   {
     id: 'vocab-3',
@@ -51,7 +103,7 @@ export const INITIAL_MOCK_ENTRIES: Entry[] = [
     examples: ['"His laconic reply said more than a long speech ever could."'],
     createdAt: new Date(Date.now() - 86400000 * 3).toISOString(),
     updatedAt: new Date(Date.now() - 86400000 * 3).toISOString(),
-    tags: ['writing'],
+    tags: ['Work'],
   },
   {
     id: 'vocab-4',
@@ -67,7 +119,7 @@ export const INITIAL_MOCK_ENTRIES: Entry[] = [
     examples: ['"She enjoyed the quiet solitude of early morning walks."'],
     createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
     updatedAt: new Date(Date.now() - 86400000 * 2).toISOString(),
-    tags: ['reflection'],
+    tags: ['Personal', 'Experience'],
   },
   {
     id: 'vocab-5',
@@ -83,41 +135,7 @@ export const INITIAL_MOCK_ENTRIES: Entry[] = [
     examples: ['"An autumn rain always brings a subtle sense of melancholia."'],
     createdAt: new Date(Date.now() - 86400000 * 1).toISOString(),
     updatedAt: new Date(Date.now() - 86400000 * 1).toISOString(),
-    tags: ['emotions'],
-  },
-  {
-    id: 'vocab-6',
-    ownerId: 'user-1',
-    type: 'vocab',
-    title: 'Ineffable',
-    word: 'Ineffable',
-    phonetic: '/ in-ef-uh-buhl /',
-    partOfSpeech: 'adjective',
-    meaning: 'Too great or extreme to be expressed or described in words.',
-    synonyms: ['Indescribable', 'inexpressible', 'transcendent'],
-    antonyms: ['Definable', 'expressible'],
-    examples: ['"The beauty of the mountain sunset was simply ineffable."'],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    tags: ['wonder'],
-  },
-
-  // Sample Notes
-  {
-    id: 'note-1',
-    ownerId: 'user-1',
-    type: 'note',
-    title: 'Quiet Reflections on Simplicity',
-    content: `# Morning Thoughts
-
-The best ideas arrive when the mind isn't forced to categorize them immediately.
-
-- Writing without friction is essential.
-- Let ideas sit untagged until they naturally belong somewhere.
-- Time gives perspective to daily observations.`,
-    createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
-    updatedAt: new Date(Date.now() - 86400000 * 2).toISOString(),
-    tags: ['journal', 'simplicity'],
+    tags: ['Experience'],
   },
 
   // Sample List
@@ -134,6 +152,6 @@ The best ideas arrive when the mind isn't forced to categorize them immediately.
     ],
     createdAt: new Date(Date.now() - 86400000 * 3).toISOString(),
     updatedAt: new Date(Date.now() - 86400000 * 3).toISOString(),
-    tags: ['reading', 'books'],
+    tags: ['Personal', 'Learning'],
   },
 ];

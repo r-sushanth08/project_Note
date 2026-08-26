@@ -1,10 +1,12 @@
 import React, { createContext, useContext, useState, useMemo } from 'react';
-import { Entry, EntryType, NoteEntry, ListEntry, VocabEntry, ViewMode } from '../types/entry';
+import { Entry, EntryType, NoteEntry, ListEntry, VocabEntry, ViewMode, DEFAULT_BUILTIN_TAGS, NoteSubtype } from '../types/entry';
 import { INITIAL_MOCK_ENTRIES } from '../data/initialMockData';
 import { getVocabOfTheDay } from '../utils/vocabOfTheDay';
 
 interface EntryContextType {
   entries: Entry[];
+  customTags: string[];
+  allTags: string[];
   currentView: ViewMode;
   selectedEntry: Entry | null;
   selectedDate: string | null;
@@ -18,8 +20,9 @@ interface EntryContextType {
   addEntry: (entry: Entry) => void;
   updateEntry: (entry: Entry) => void;
   deleteEntry: (id: string) => void;
-  createBlankEntry: (type: EntryType) => Entry;
-  openNewEntry: (type: EntryType) => void;
+  addCustomTag: (tag: string) => void;
+  createBlankEntry: (type: EntryType, subtype?: NoteSubtype) => Entry;
+  openNewEntry: (type: EntryType, subtype?: NoteSubtype) => void;
   getVocabCount: () => number;
   vocabOfTheDay: VocabEntry | null;
 }
@@ -28,11 +31,28 @@ const EntryContext = createContext<EntryContextType | undefined>(undefined);
 
 export const EntryProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [entries, setEntries] = useState<Entry[]>(INITIAL_MOCK_ENTRIES);
+  const [customTags, setCustomTags] = useState<string[]>([]);
   const [currentView, setCurrentView] = useState<ViewMode>('home');
   const [selectedEntry, setSelectedEntry] = useState<Entry | null>(null);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isRadialOpen, setIsRadialOpen] = useState<boolean>(false);
+
+  // Combine default built-in tags with user created custom tags
+  const allTags = useMemo(() => {
+    const combined = [...DEFAULT_BUILTIN_TAGS, ...customTags];
+    return Array.from(new Set(combined));
+  }, [customTags]);
+
+  const addCustomTag = (tag: string) => {
+    const trimmed = tag.trim();
+    if (!trimmed) return;
+    // Format nicely capitalized
+    const formatted = trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+    if (!allTags.includes(formatted)) {
+      setCustomTags((prev) => [...prev, formatted]);
+    }
+  };
 
   const vocabEntries = useMemo(() => {
     return entries.filter((e): e is VocabEntry => e.type === 'vocab');
@@ -62,7 +82,7 @@ export const EntryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
-  const createBlankEntry = (type: EntryType): Entry => {
+  const createBlankEntry = (type: EntryType, subtype: NoteSubtype = 'diary'): Entry => {
     const now = new Date().toISOString();
     const base = {
       id: `${type}-${Date.now()}`,
@@ -76,8 +96,11 @@ export const EntryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const note: NoteEntry = {
         ...base,
         type: 'note',
-        title: 'Untitled Note',
+        noteSubtype: subtype,
+        title: subtype === 'diary' ? 'Journal Entry' : subtype === 'brain_dump' ? 'Brain Dump' : 'New Collection',
         content: '',
+        category: subtype === 'collections' ? 'General' : undefined,
+        collectionItems: subtype === 'collections' ? [] : undefined,
       };
       return note;
     } else if (type === 'list') {
@@ -103,8 +126,8 @@ export const EntryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
-  const openNewEntry = (type: EntryType) => {
-    const newEntry = createBlankEntry(type);
+  const openNewEntry = (type: EntryType, subtype: NoteSubtype = 'diary') => {
+    const newEntry = createBlankEntry(type, subtype);
     addEntry(newEntry);
     setSelectedEntry(newEntry);
     if (type === 'note') setCurrentView('notes');
@@ -116,6 +139,8 @@ export const EntryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     <EntryContext.Provider
       value={{
         entries,
+        customTags,
+        allTags,
         currentView,
         selectedEntry,
         selectedDate,
@@ -129,6 +154,7 @@ export const EntryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         addEntry,
         updateEntry,
         deleteEntry,
+        addCustomTag,
         createBlankEntry,
         openNewEntry,
         getVocabCount,

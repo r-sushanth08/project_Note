@@ -1,8 +1,17 @@
 export type EntryType = 'note' | 'list' | 'vocab';
 
+export type NoteSubtype = 'diary' | 'brain_dump' | 'collections';
+
+export interface CollectionItem {
+  id: string;
+  name: string;
+  notes?: string;
+  linkOrMetadata?: string;
+}
+
 export interface BaseEntry {
   id: string;
-  ownerId: string; // Placeholder for future multi-user compatibility per ARCHITECTURE.md
+  ownerId: string;
   type: EntryType;
   title: string;
   createdAt: string; // ISO String
@@ -12,7 +21,10 @@ export interface BaseEntry {
 
 export interface NoteEntry extends BaseEntry {
   type: 'note';
-  content: string;
+  noteSubtype: NoteSubtype;
+  content: string; // Freeform prose for Diary & Brain Dump
+  category?: string; // e.g. "Books", "Movies", "Artists", "Places", "Brands", "Topics" for Collections
+  collectionItems?: CollectionItem[]; // Items for Collections sub-type
 }
 
 export interface ListItem {
@@ -31,14 +43,29 @@ export interface VocabEntry extends BaseEntry {
   type: 'vocab';
   word: string;
   phonetic?: string;
-  partOfSpeech?: string; // e.g. "noun", "adjective"
+  partOfSpeech?: string;
   meaning: string;
   synonyms: string[];
   antonyms: string[];
   examples: string[];
-  lastShownAt?: string; // Timestamp for Vocab of the Day least-recently-shown tracking
+  lastShownAt?: string;
 }
 
 export type Entry = NoteEntry | ListEntry | VocabEntry;
 
 export type ViewMode = 'home' | 'notes' | 'lists' | 'vocab' | 'calendar' | 'search';
+
+export const DEFAULT_BUILTIN_TAGS = [
+  'Work',
+  'Personal',
+  'Idea',
+  'Learning',
+  'Important',
+  'Reminder',
+  'People',
+  'Travel',
+  'Experience',
+  'Question',
+  'Favorite',
+  'Explore',
+];

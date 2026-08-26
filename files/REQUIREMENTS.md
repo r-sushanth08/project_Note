@@ -4,11 +4,27 @@ Functionality agreed during discovery and iteration.
 
 ## Entry Types
 
-### Note
-- Freeform text content with light structure support (headings, bullets)
-- Required title
-- Exact timestamp shown above the note (set at creation)
-- Editable at any time; edits overwrite in place (no version history)
+### Note Sub-types
+Notes support 3 specialized sub-types:
+
+1. **Diary (Chronological Journal)**:
+   - Chronological journal for recording experiences, events, and reflections
+   - Prominent **Date, Day, and Timestamp** header (e.g. `CREATED: MON, 24 AUG 2026, 14:19`)
+   - Title field + spacious freeform prose area
+
+2. **Brain Dump (Fast Distraction-Free Capture)**:
+   - Ultra-minimalist writing space for quickly capturing raw thoughts, ideas, reminders, and questions
+   - Zero header friction, instant auto-save
+
+3. **Collections (Structured Lists & Interests)**:
+   - Structured way to collect and organize brands, artists, books, movies, people, places, topics, or personal interests
+   - Title, Category selector (`Books`, `Movies`, `Artists`, `Places`, `Brands`, `Topics`, `Custom`), and structured Collection Items (each item has a name and optional notes/metadata)
+
+### Interactive Tag Pill System
+- Replaces plain CSV text tag input with **Tappable Tag Pill Buttons**
+- Built-in default tags: `Work`, `Personal`, `Idea`, `Learning`, `Important`, `Reminder`, `People`, `Travel`, `Experience`, `Question`, `Favorite`, `Explore`
+- Highlighted in vibrant orange when selected (`bg-orange-500 text-white`)
+- Inline `+ Custom Tag` creator allows users to add custom tags that become reusable tag buttons for future notes
 
 ### List
 - Title, plus an ordered set of checkable items
@@ -31,7 +47,8 @@ Functionality agreed during discovery and iteration.
 
 - Floating radial control ("the dot") present on every screen
 - 4 directions: Notes, Lists, Vocab, Calendar
-- Single-stage gesture: quick drag and release immediately creates new entry of that type or opens Calendar
+- **Direct Click**: Opens section browsing view (`Notes`, `Lists`, `Vocab`, `Calendar`)
+- **Drag & Drop**: Triggers fast entry creation immediately
 - Mobile touch gesture support (`onTouchStart`, `onTouchMove`, `onTouchEnd`) with `touch-action: none`
 
 ## Calendar
