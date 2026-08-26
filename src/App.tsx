@@ -76,9 +76,9 @@ const AppContainer: React.FC = () => {
       <div className="fixed inset-0 bg-slate-950/40 md:bg-gradient-to-r md:from-slate-950/85 md:via-slate-950/50 md:to-slate-950/20 backdrop-blur-[0.5px] z-0 pointer-events-none" />
 
       {/* Content Container */}
-      <div className="relative z-10 flex flex-col h-full overflow-y-auto">
+      <div className="relative z-10 flex flex-col h-full overflow-hidden">
         <Header />
-        <main className="flex-1 w-full flex flex-col overflow-hidden">
+        <main className="flex-1 w-full flex flex-col min-h-0 overflow-hidden">
           <PageTransition transitionKey={transitionKey}>
             <MainContent />
           </PageTransition>

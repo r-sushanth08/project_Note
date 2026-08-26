@@ -13,9 +13,9 @@ export const VocabView: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-6 pt-2 pb-44 flex flex-col gap-6">
+    <div className="w-full max-w-4xl mx-auto px-6 pt-2 pb-44 flex flex-col gap-6 h-full overflow-y-auto no-scrollbar">
       {/* Subheader Title */}
-      <div className="flex items-center justify-between border-b border-white/10 pb-4">
+      <div className="flex items-center justify-between border-b border-white/10 pb-4 flex-shrink-0">
         <div className="flex items-center gap-3">
           <button
             onClick={() => setCurrentView('home')}
@@ -31,16 +31,16 @@ export const VocabView: React.FC = () => {
         </span>
       </div>
 
-      {/* Cards Deck Stack Container (Locked/Hidden Scrollbar & Clean 2-Card Max Stack) */}
+      {/* Cards Deck Stack Container (Explicit Sticky Scroll Container) */}
       {vocabList.length === 0 ? (
         <div className="text-center py-16 text-slate-400 italic bg-slate-900/60 rounded-2xl border border-white/15 backdrop-blur-md">
           No vocabulary cards in your folder yet. Drag the pencil dot to add one!
         </div>
       ) : (
-        <div className="relative flex flex-col gap-6 no-scrollbar pb-36">
+        <div className="relative flex flex-col gap-6 pb-48">
           {vocabList.map((item, index) => {
-            // Strictly cap top sticky offset at max 2 cards (80px base + max 10px peek)
-            const stickyTopPx = 80 + Math.min(index, 1) * 10;
+            // Capped sticky top offset for 2-card max stack (0px top offset for card 0, 12px for card 1+)
+            const stickyTopPx = Math.min(index, 1) * 12;
 
             return (
               <div
@@ -48,6 +48,7 @@ export const VocabView: React.FC = () => {
                 onClick={() => handleSelect(item)}
                 style={{
                   top: `${stickyTopPx}px`,
+                  zIndex: index + 10,
                   transform: 'translateZ(0)',
                   willChange: 'transform',
                 }}
