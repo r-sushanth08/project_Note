@@ -64,12 +64,12 @@ export const App: React.FC = () => {
   return (
     <EntryProvider>
       <div className="relative min-h-[100dvh] h-[100dvh] text-slate-100 font-sans flex flex-col antialiased overflow-hidden">
-        {/* Full-screen Background Image with Subtle Dark Overlay */}
+        {/* Full-screen Background Image with Responsive Positioning & Gradient Overlay */}
         <div
-          className="fixed inset-0 bg-cover bg-center bg-no-repeat z-0 transition-opacity duration-500"
+          className="fixed inset-0 bg-no-repeat bg-cover bg-center md:bg-[position:right_15%_center] z-0 transition-all duration-500"
           style={{ backgroundImage: "url('/bg.jpg')" }}
         />
-        <div className="fixed inset-0 bg-slate-950/45 backdrop-blur-[0.5px] z-0 pointer-events-none" />
+        <div className="fixed inset-0 bg-slate-950/40 md:bg-gradient-to-r md:from-slate-950/85 md:via-slate-950/50 md:to-slate-950/20 backdrop-blur-[0.5px] z-0 pointer-events-none" />
 
         {/* Content Container */}
         <div className="relative z-10 flex flex-col h-full overflow-y-auto">
