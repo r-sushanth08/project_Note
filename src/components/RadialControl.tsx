@@ -25,8 +25,8 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
     const deltaY = clientY - centerY;
     const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
-    // Dead zone check (< 35px)
-    if (distance < 35) {
+    // Dead zone check (< 30px)
+    if (distance < 30) {
       return null;
     }
 
@@ -117,7 +117,7 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
         ref={containerRef}
         className={`z-50 select-none touch-none ${
           isHomeCentered
-            ? 'relative my-4 flex justify-center items-center'
+            ? 'relative flex justify-center items-center'
             : 'fixed bottom-6 left-1/2 -translate-x-1/2 flex justify-center items-center'
         }`}
       >
@@ -130,21 +130,21 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
           {/* TOP: Notes */}
           <button
             onClick={() => executeDirectionAction('notes')}
-            className={`pointer-events-auto absolute -top-20 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 group transition-transform duration-150 ${
+            className={`pointer-events-auto absolute -top-16 left-1/2 -translate-x-1/2 flex flex-col items-center gap-0.5 group transition-transform duration-150 ${
               activeDirection === 'notes' ? 'scale-110' : ''
             }`}
           >
             <div
-              className={`w-11 h-11 rounded-full flex items-center justify-center border transition-all ${
+              className={`w-10 h-10 rounded-full flex items-center justify-center border transition-all ${
                 activeDirection === 'notes'
                   ? 'bg-orange-500 text-white border-orange-400 shadow-lg'
                   : 'bg-slate-900/90 text-white border-white/20 shadow-card backdrop-blur-md group-hover:border-orange-400'
               }`}
             >
-              <FileText className="w-5 h-5 stroke-[1.75]" />
+              <FileText className="w-4 h-4 stroke-[1.75]" />
             </div>
             <span
-              className={`text-[11px] font-medium tracking-wide transition-colors ${
+              className={`text-[10px] font-medium tracking-wide transition-colors ${
                 activeDirection === 'notes' ? 'text-orange-400 font-semibold' : 'text-slate-300'
               }`}
             >
@@ -155,21 +155,21 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
           {/* RIGHT: Lists */}
           <button
             onClick={() => executeDirectionAction('lists')}
-            className={`pointer-events-auto absolute top-1/2 -right-20 -translate-y-1/2 flex flex-col items-center gap-1 group transition-transform duration-150 ${
+            className={`pointer-events-auto absolute top-1/2 -right-16 -translate-y-1/2 flex flex-col items-center gap-0.5 group transition-transform duration-150 ${
               activeDirection === 'lists' ? 'scale-110' : ''
             }`}
           >
             <div
-              className={`w-11 h-11 rounded-full flex items-center justify-center border transition-all ${
+              className={`w-10 h-10 rounded-full flex items-center justify-center border transition-all ${
                 activeDirection === 'lists'
                   ? 'bg-orange-500 text-white border-orange-400 shadow-lg'
                   : 'bg-slate-900/90 text-white border-white/20 shadow-card backdrop-blur-md group-hover:border-orange-400'
               }`}
             >
-              <List className="w-5 h-5 stroke-[1.75]" />
+              <List className="w-4 h-4 stroke-[1.75]" />
             </div>
             <span
-              className={`text-[11px] font-medium tracking-wide transition-colors ${
+              className={`text-[10px] font-medium tracking-wide transition-colors ${
                 activeDirection === 'lists' ? 'text-orange-400 font-semibold' : 'text-slate-300'
               }`}
             >
@@ -180,21 +180,21 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
           {/* BOTTOM: Vocab */}
           <button
             onClick={() => executeDirectionAction('vocab')}
-            className={`pointer-events-auto absolute -bottom-20 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 group transition-transform duration-150 ${
+            className={`pointer-events-auto absolute -bottom-16 left-1/2 -translate-x-1/2 flex flex-col items-center gap-0.5 group transition-transform duration-150 ${
               activeDirection === 'vocab' ? 'scale-110' : ''
             }`}
           >
             <div
-              className={`w-11 h-11 rounded-full flex items-center justify-center border transition-all ${
+              className={`w-10 h-10 rounded-full flex items-center justify-center border transition-all ${
                 activeDirection === 'vocab'
                   ? 'bg-orange-500 text-white border-orange-400 shadow-lg'
                   : 'bg-slate-900/90 text-white border-white/20 shadow-card backdrop-blur-md group-hover:border-orange-400'
               }`}
             >
-              <BookOpen className="w-5 h-5 stroke-[1.75]" />
+              <BookOpen className="w-4 h-4 stroke-[1.75]" />
             </div>
             <span
-              className={`text-[11px] font-medium tracking-wide transition-colors ${
+              className={`text-[10px] font-medium tracking-wide transition-colors ${
                 activeDirection === 'vocab' ? 'text-orange-400 font-semibold' : 'text-slate-300'
               }`}
             >
@@ -205,21 +205,21 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
           {/* LEFT: Calendar */}
           <button
             onClick={() => executeDirectionAction('calendar')}
-            className={`pointer-events-auto absolute top-1/2 -left-20 -translate-y-1/2 flex flex-col items-center gap-1 group transition-transform duration-150 ${
+            className={`pointer-events-auto absolute top-1/2 -left-16 -translate-y-1/2 flex flex-col items-center gap-0.5 group transition-transform duration-150 ${
               activeDirection === 'calendar' ? 'scale-110' : ''
             }`}
           >
             <div
-              className={`w-11 h-11 rounded-full flex items-center justify-center border transition-all ${
+              className={`w-10 h-10 rounded-full flex items-center justify-center border transition-all ${
                 activeDirection === 'calendar'
                   ? 'bg-orange-500 text-white border-orange-400 shadow-lg'
                   : 'bg-slate-900/90 text-white border-white/20 shadow-card backdrop-blur-md group-hover:border-orange-400'
               }`}
             >
-              <Calendar className="w-5 h-5 stroke-[1.75]" />
+              <Calendar className="w-4 h-4 stroke-[1.75]" />
             </div>
             <span
-              className={`text-[11px] font-medium tracking-wide transition-colors ${
+              className={`text-[10px] font-medium tracking-wide transition-colors ${
                 activeDirection === 'calendar' ? 'text-orange-400 font-semibold' : 'text-slate-300'
               }`}
             >
@@ -239,7 +239,7 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
           onTouchStart={() => setIsOpen(true)}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleDragRelease}
-          className={`relative w-14 h-14 rounded-full bg-sage-500 text-white flex items-center justify-center shadow-float hover:bg-sage-600 active:scale-95 transition-all duration-200 group touch-none ${
+          className={`relative w-13 h-13 rounded-full bg-sage-500 text-white flex items-center justify-center shadow-float hover:bg-sage-600 active:scale-95 transition-all duration-200 group touch-none ${
             isOpen ? 'ring-4 ring-orange-400/40 scale-105 bg-orange-500' : ''
           }`}
           title="Quick Capture (Drag to Notes, Lists, Vocab, or Calendar)"
