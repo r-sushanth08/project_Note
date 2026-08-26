@@ -127,7 +127,7 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
         className={`z-50 select-none touch-none ${
           isHomeCentered
             ? 'relative flex justify-center items-center'
-            : 'fixed bottom-24 left-1/2 -translate-x-1/2 flex justify-center items-center'
+            : 'fixed bottom-28 left-1/2 -translate-x-1/2 flex justify-center items-center'
         }`}
       >
         {/* Radial Directions Options */}

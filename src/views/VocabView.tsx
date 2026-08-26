@@ -1,10 +1,10 @@
 import React from 'react';
 import { useEntries } from '../context/EntryContext';
 import { VocabEntry } from '../types/entry';
-import { Plus, ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 
 export const VocabView: React.FC = () => {
-  const { entries, setCurrentView, setSelectedEntry, openNewEntry } = useEntries();
+  const { entries, setCurrentView, setSelectedEntry } = useEntries();
 
   const vocabList = entries.filter((e): e is VocabEntry => e.type === 'vocab');
 
@@ -13,7 +13,7 @@ export const VocabView: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-6 pt-2 pb-32 flex flex-col gap-6">
+    <div className="w-full max-w-4xl mx-auto px-6 pt-2 pb-44 flex flex-col gap-6">
       {/* Subheader Title */}
       <div className="flex items-center justify-between border-b border-white/10 pb-4">
         <div className="flex items-center gap-3">
@@ -34,7 +34,7 @@ export const VocabView: React.FC = () => {
       {/* Cards Deck Stack Container (Locked/Hidden Scrollbar & Clean 2-Card Max Stack) */}
       {vocabList.length === 0 ? (
         <div className="text-center py-16 text-slate-400 italic bg-slate-900/60 rounded-2xl border border-white/15 backdrop-blur-md">
-          No vocabulary cards in your folder yet. Click the + button below to add one!
+          No vocabulary cards in your folder yet. Drag the pencil dot to add one!
         </div>
       ) : (
         <div className="relative flex flex-col gap-6 no-scrollbar pb-36">
@@ -125,17 +125,6 @@ export const VocabView: React.FC = () => {
           })}
         </div>
       )}
-
-      {/* Floating Add Button */}
-      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-30">
-        <button
-          onClick={() => openNewEntry('vocab')}
-          className="w-14 h-14 rounded-full bg-orange-500 text-white flex items-center justify-center shadow-float hover:bg-orange-600 active:scale-95 transition-all"
-          title="Add New Word"
-        >
-          <Plus className="w-6 h-6 stroke-[2.5]" />
-        </button>
-      </div>
     </div>
   );
 };
