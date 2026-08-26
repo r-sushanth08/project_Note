@@ -31,7 +31,7 @@ export const VocabView: React.FC = () => {
         </span>
       </div>
 
-      {/* Cards Deck Stack Container (Locked/Hidden Scrollbar) */}
+      {/* Cards Deck Stack Container (Locked/Hidden Scrollbar & 2-Card Max Stack) */}
       {vocabList.length === 0 ? (
         <div className="text-center py-16 text-slate-400 italic bg-slate-900/60 rounded-2xl border border-white/15 backdrop-blur-md">
           No vocabulary cards in your folder yet. Click the + button below to add one!
@@ -39,8 +39,9 @@ export const VocabView: React.FC = () => {
       ) : (
         <div className="relative flex flex-col gap-6 no-scrollbar pb-32">
           {vocabList.map((item, index) => {
-            // Staggered top sticky offset for physical folder stack effect
-            const stickyTopPx = Math.min(80 + index * 12, 160);
+            // Strictly cap top sticky offset at max 2 cards (80px base + max 10px peek)
+            // Ensures Card N-2 and older are 100% hidden underneath
+            const stickyTopPx = 80 + Math.min(index, 1) * 10;
 
             return (
               <div
