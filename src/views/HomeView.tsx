@@ -7,9 +7,9 @@ export const HomeView: React.FC = () => {
   const vocabCount = getVocabCount();
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-6 flex flex-col justify-between items-center h-full select-none overflow-hidden pb-4">
-      {/* Zone 1: Lexicon Count Box (Top, flex-shrink-0) */}
-      <div className="flex-shrink-0 pt-1">
+    <div className="w-full max-w-4xl mx-auto px-6 flex flex-col justify-between items-center h-[calc(100dvh-70px)] select-none overflow-hidden overscroll-none touch-none pb-8 pt-1">
+      {/* Zone 1: Lexicon Count Box (Top) */}
+      <div className="flex-shrink-0">
         <div
           onClick={() => setCurrentView('vocab')}
           className="bg-slate-900/60 backdrop-blur-md border border-white/20 rounded-2xl px-6 py-2.5 shadow-card hover:border-orange-400/60 hover:bg-slate-900/80 transition-all cursor-pointer flex items-center gap-3 group"
@@ -24,7 +24,7 @@ export const HomeView: React.FC = () => {
         </div>
       </div>
 
-      {/* Zone 2: Lexicon of the Day (Middle Text Section, Flex-1 with Controlled Height) */}
+      {/* Zone 2: Lexicon of the Day (Middle Text Section, Flex-1 with Line-Clamp) */}
       <div className="flex-1 min-h-0 flex flex-col items-center justify-center text-center max-w-xl px-4 my-auto">
         {/* Orange Underlined Subheading */}
         <div className="border-b-2 border-orange-500 pb-1 mb-2 inline-block flex-shrink-0">
@@ -41,7 +41,7 @@ export const HomeView: React.FC = () => {
             }}
             className="cursor-pointer group flex flex-col items-center max-h-full overflow-hidden"
           >
-            <h2 className="text-3xl sm:text-4xl font-serif font-medium text-white tracking-wide group-hover:text-orange-300 transition-colors line-clamp-1">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-medium text-white tracking-wide group-hover:text-orange-300 transition-colors line-clamp-1">
               {vocabOfTheDay.word}
             </h2>
 
@@ -62,8 +62,8 @@ export const HomeView: React.FC = () => {
         )}
       </div>
 
-      {/* Zone 3: Radial Quick-Capture Control (Dedicated Clearance Zone, flex-shrink-0) */}
-      <div className="flex-shrink-0 h-[160px] min-h-[160px] w-full flex items-center justify-center">
+      {/* Zone 3: Radial Quick-Capture Control (Prominent Sizing with Clearance Zone) */}
+      <div className="flex-shrink-0 h-[210px] min-h-[210px] w-full flex items-center justify-center pb-8">
         <RadialControl isHomeCentered={true} />
       </div>
     </div>
