@@ -67,26 +67,36 @@ const AppContainer: React.FC = () => {
     : currentView;
 
   return (
-    <div className="relative min-h-[100dvh] h-[100dvh] text-slate-100 font-sans flex flex-col antialiased overflow-hidden">
-      {/* Full-screen Background Image with Responsive Positioning & Gradient Overlay */}
+    <div className="relative min-h-[100dvh] h-[100dvh] bg-slate-950 text-slate-100 font-sans flex items-center justify-center antialiased overflow-hidden select-none">
+      {/* Desktop Outer Ambient Blur Background Overlay */}
       <div
-        className="fixed inset-0 bg-no-repeat bg-cover bg-center md:bg-[position:right_15%_center] z-0 transition-all duration-500"
+        className="fixed inset-0 bg-no-repeat bg-cover bg-center blur-md opacity-30 pointer-events-none z-0"
         style={{ backgroundImage: "url('/bg.jpg')" }}
       />
-      <div className="fixed inset-0 bg-slate-950/40 md:bg-gradient-to-r md:from-slate-950/85 md:via-slate-950/50 md:to-slate-950/20 backdrop-blur-[0.5px] z-0 pointer-events-none" />
+      <div className="fixed inset-0 bg-slate-950/80 pointer-events-none z-0" />
 
-      {/* Content Container */}
-      <div className="relative z-10 flex flex-col h-full overflow-hidden">
-        <Header />
-        <main className="flex-1 w-full flex flex-col min-h-0 overflow-hidden">
-          <PageTransition transitionKey={transitionKey}>
-            <MainContent />
-          </PageTransition>
-        </main>
+      {/* Centered Mobile/Tablet App Canvas Frame (100% Identical Layout Across All Screens) */}
+      <div className="relative w-full max-w-[480px] sm:max-w-[520px] h-[100dvh] bg-slate-950 shadow-[0_0_90px_rgba(0,0,0,0.9)] border-x border-white/10 z-10 flex flex-col overflow-hidden">
+        {/* Full-screen Background Image inside App Canvas Frame */}
+        <div
+          className="absolute inset-0 bg-no-repeat bg-cover bg-center z-0"
+          style={{ backgroundImage: "url('/bg.jpg')" }}
+        />
+        <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-[0.5px] z-0 pointer-events-none" />
+
+        {/* Content Container inside Canvas Frame */}
+        <div className="relative z-10 flex flex-col h-full overflow-hidden">
+          <Header />
+          <main className="flex-1 w-full flex flex-col min-h-0 overflow-hidden">
+            <PageTransition transitionKey={transitionKey}>
+              <MainContent />
+            </PageTransition>
+          </main>
+        </div>
+
+        {/* Floating Radial Capture Control present on all non-home views per UX.md */}
+        {currentView !== 'home' && !selectedEntry && <RadialControl isHomeCentered={false} />}
       </div>
-
-      {/* Floating Radial Capture Control present on all non-home views per UX.md */}
-      {currentView !== 'home' && !selectedEntry && <RadialControl isHomeCentered={false} />}
     </div>
   );
 };
