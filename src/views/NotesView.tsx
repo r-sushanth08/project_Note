@@ -23,9 +23,9 @@ export const NotesView: React.FC = () => {
   });
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-6 pt-2 pb-44 flex flex-col gap-6">
+    <div className="w-full max-w-4xl mx-auto px-6 pt-2 pb-44 flex flex-col gap-6 h-full overflow-y-auto no-scrollbar">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-white/10 pb-4">
+      <div className="flex items-center justify-between border-b border-white/10 pb-4 flex-shrink-0">
         <div className="flex items-center gap-3">
           <button
             onClick={() => setCurrentView('home')}
@@ -86,7 +86,7 @@ export const NotesView: React.FC = () => {
       </div>
 
       {/* Sub-type Filter Tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar flex-shrink-0">
         <button
           onClick={() => setActiveSubtypeFilter('all')}
           className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
@@ -137,7 +137,7 @@ export const NotesView: React.FC = () => {
 
       {/* Tag Filter Pill Bar */}
       {allTags.length > 0 && (
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar flex-shrink-0">
           <span className="text-[11px] uppercase tracking-wider font-semibold text-slate-400 flex items-center gap-1">
             <TagIcon className="w-3 h-3 text-orange-400" />
           </span>
@@ -171,7 +171,7 @@ export const NotesView: React.FC = () => {
           No notes match your active filter. Drag the pencil dot below to create one!
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-24">
           {filteredNotes.map((note) => {
             const dateStr = new Date(note.createdAt).toLocaleDateString(undefined, {
               month: 'short',

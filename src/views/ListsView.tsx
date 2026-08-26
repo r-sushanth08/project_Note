@@ -9,9 +9,9 @@ export const ListsView: React.FC = () => {
   const listsArray = entries.filter((e): e is ListEntry => e.type === 'list');
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-6 pt-2 pb-44 flex flex-col gap-8">
+    <div className="w-full max-w-4xl mx-auto px-6 pt-2 pb-44 flex flex-col gap-8 h-full overflow-y-auto no-scrollbar">
       {/* Header */}
-      <div className="flex items-center gap-3 border-b border-white/10 pb-4">
+      <div className="flex items-center gap-3 border-b border-white/10 pb-4 flex-shrink-0">
         <button
           onClick={() => setCurrentView('home')}
           className="w-8 h-8 rounded-full flex items-center justify-center bg-slate-900/80 border border-white/20 text-slate-300 hover:text-white hover:border-orange-400 transition-all shadow-sm"
@@ -27,7 +27,7 @@ export const ListsView: React.FC = () => {
           No living lists created yet. Drag the pencil dot below to start a list!
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-24">
           {listsArray.map((list) => {
             const checkedCount = list.items.filter((i) => i.checked).length;
             const totalCount = list.items.length;

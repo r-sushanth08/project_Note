@@ -39,9 +39,9 @@ export const SearchView: React.FC = () => {
   });
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-6 pt-2 pb-24 flex flex-col gap-8">
+    <div className="w-full max-w-4xl mx-auto px-6 pt-2 pb-44 flex flex-col gap-8 h-full overflow-y-auto no-scrollbar">
       {/* Subheader */}
-      <div className="flex items-center gap-3 border-b border-white/10 pb-4">
+      <div className="flex items-center gap-3 border-b border-white/10 pb-4 flex-shrink-0">
         <button
           onClick={() => setCurrentView('home')}
           className="w-8 h-8 rounded-full flex items-center justify-center bg-slate-900/80 border border-white/20 text-slate-300 hover:text-white hover:border-orange-400 transition-all shadow-sm"
@@ -52,7 +52,7 @@ export const SearchView: React.FC = () => {
       </div>
 
       {/* Search Bar Input */}
-      <div className="relative w-full">
+      <div className="relative w-full flex-shrink-0">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
         <input
           type="text"
@@ -65,7 +65,7 @@ export const SearchView: React.FC = () => {
       </div>
 
       {/* Results List */}
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 pb-24">
         <div className="text-xs uppercase tracking-wider font-semibold text-slate-400 px-1">
           {filteredEntries.length} {filteredEntries.length === 1 ? 'result' : 'results'} found
         </div>

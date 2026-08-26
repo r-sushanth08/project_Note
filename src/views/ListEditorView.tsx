@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useEntries } from '../context/EntryContext';
 import { ListEntry, ListItem } from '../types/entry';
+import { TagPillSelector } from '../components/TagPillSelector';
 import { Trash2, Plus, ArrowUp, ArrowDown, GripVertical } from 'lucide-react';
 
 interface ListEditorViewProps {
@@ -14,18 +15,18 @@ export const ListEditorView: React.FC<ListEditorViewProps> = ({ list, onBack }) 
   const [title, setTitle] = useState(list.title || '');
   const [items, setItems] = useState<ListItem[]>(list.items || []);
   const [newItemText, setNewItemText] = useState('');
-  const [tagsInput, setTagsInput] = useState((list.tags || []).join(', '));
+  const [selectedTags, setSelectedTags] = useState<string[]>(list.tags || []);
 
   useEffect(() => {
     const updated: ListEntry = {
       ...list,
       title: title || 'Untitled List',
       items,
-      tags: tagsInput.split(',').map((t) => t.trim().toLowerCase()).filter(Boolean),
+      tags: selectedTags,
       updatedAt: new Date().toISOString(),
     };
     updateEntry(updated);
-  }, [title, items, tagsInput]);
+  }, [title, items, selectedTags]);
 
   const handleAddItem = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -69,9 +70,9 @@ export const ListEditorView: React.FC<ListEditorViewProps> = ({ list, onBack }) 
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto px-6 pt-2 pb-24 flex flex-col gap-6">
+    <div className="w-full max-w-3xl mx-auto px-6 pt-2 pb-44 flex flex-col gap-6 h-full overflow-y-auto no-scrollbar">
       {/* Navigation & Controls */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-shrink-0">
         <button
           onClick={onBack}
           className="flex items-center gap-2 text-sm text-slate-300 hover:text-white transition-colors"
@@ -98,7 +99,7 @@ export const ListEditorView: React.FC<ListEditorViewProps> = ({ list, onBack }) 
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         placeholder="List Title"
-        className="w-full text-3xl font-serif font-medium bg-transparent border-b border-white/20 focus:border-orange-400 focus:outline-none pb-2 text-white placeholder:text-slate-500"
+        className="w-full text-3xl font-serif font-medium bg-transparent border-b border-white/20 focus:border-orange-400 focus:outline-none pb-2 text-white placeholder:text-slate-500 flex-shrink-0"
       />
 
       {/* Items Section */}
@@ -186,19 +187,11 @@ export const ListEditorView: React.FC<ListEditorViewProps> = ({ list, onBack }) 
         </form>
       </div>
 
-      {/* Tags Input */}
-      <div className="flex flex-col gap-2 pt-4 border-t border-white/10">
-        <label className="text-xs uppercase tracking-wider font-semibold text-slate-400">
-          Tags (Optional)
-        </label>
-        <input
-          type="text"
-          value={tagsInput}
-          onChange={(e) => setTagsInput(e.target.value)}
-          placeholder="books, reading, goals"
-          className="w-full px-4 py-2.5 bg-slate-900/80 border border-white/20 rounded-xl focus:outline-none focus:border-orange-400 text-white text-sm shadow-sm"
-        />
-      </div>
+      {/* Interactive Tag Pill Selector */}
+      <TagPillSelector
+        selectedTags={selectedTags}
+        onTagsChange={(newTags) => setSelectedTags(newTags)}
+      />
     </div>
   );
 };

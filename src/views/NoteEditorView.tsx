@@ -84,9 +84,9 @@ export const NoteEditorView: React.FC<NoteEditorViewProps> = ({ note, onBack }) 
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto px-6 pt-2 pb-24 flex flex-col gap-6">
+    <div className="w-full max-w-3xl mx-auto px-6 pt-2 pb-44 flex flex-col gap-6 h-full overflow-y-auto no-scrollbar">
       {/* Top Controls Bar */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-shrink-0">
         <button
           onClick={onBack}
           className="flex items-center gap-2 text-sm text-slate-300 hover:text-white transition-colors"
@@ -108,7 +108,7 @@ export const NoteEditorView: React.FC<NoteEditorViewProps> = ({ note, onBack }) 
       </div>
 
       {/* Sub-type Switcher Tabs */}
-      <div className="grid grid-cols-3 gap-2 bg-slate-900/80 p-1.5 rounded-2xl border border-white/15 backdrop-blur-md">
+      <div className="grid grid-cols-3 gap-2 bg-slate-900/80 p-1.5 rounded-2xl border border-white/15 backdrop-blur-md flex-shrink-0">
         <button
           type="button"
           onClick={() => setNoteSubtype('diary')}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useEntries } from '../context/EntryContext';
 import { VocabEntry } from '../types/entry';
+import { TagPillSelector } from '../components/TagPillSelector';
 import { Trash2 } from 'lucide-react';
 
 interface VocabEditorViewProps {
@@ -17,7 +18,7 @@ export const VocabEditorView: React.FC<VocabEditorViewProps> = ({ vocab, onBack 
   const [synonyms, setSynonyms] = useState((vocab.synonyms || []).join(', '));
   const [antonyms, setAntonyms] = useState((vocab.antonyms || []).join(', '));
   const [examples, setExamples] = useState((vocab.examples || []).join('\n'));
-  const [tagsInput, setTagsInput] = useState((vocab.tags || []).join(', '));
+  const [selectedTags, setSelectedTags] = useState<string[]>(vocab.tags || []);
 
   useEffect(() => {
     const updated: VocabEntry = {
@@ -29,12 +30,12 @@ export const VocabEditorView: React.FC<VocabEditorViewProps> = ({ vocab, onBack 
       synonyms: synonyms.split(',').map((s) => s.trim()).filter(Boolean),
       antonyms: antonyms.split(',').map((a) => a.trim()).filter(Boolean),
       examples: examples.split('\n').map((e) => e.trim()).filter(Boolean),
-      tags: tagsInput.split(',').map((t) => t.trim().toLowerCase()).filter(Boolean),
+      tags: selectedTags,
       updatedAt: new Date().toISOString(),
     };
 
     updateEntry(updated);
-  }, [word, partOfSpeech, meaning, synonyms, antonyms, examples, tagsInput]);
+  }, [word, partOfSpeech, meaning, synonyms, antonyms, examples, selectedTags]);
 
   const handleDelete = () => {
     deleteEntry(vocab.id);
@@ -42,9 +43,9 @@ export const VocabEditorView: React.FC<VocabEditorViewProps> = ({ vocab, onBack 
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto px-6 pt-2 pb-24 flex flex-col gap-8">
+    <div className="w-full max-w-3xl mx-auto px-6 pt-2 pb-44 flex flex-col gap-8 h-full overflow-y-auto no-scrollbar">
       {/* Top Controls Bar */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-shrink-0">
         <button
           onClick={onBack}
           className="flex items-center gap-2 text-sm text-slate-300 hover:text-white transition-colors"
@@ -66,7 +67,7 @@ export const VocabEditorView: React.FC<VocabEditorViewProps> = ({ vocab, onBack 
       </div>
 
       {/* Form Title */}
-      <h1 className="text-3xl font-serif font-medium text-white">
+      <h1 className="text-3xl font-serif font-medium text-white flex-shrink-0">
         {word ? `Edit Word` : `Add Word to Lexicon`}
       </h1>
 
@@ -157,19 +158,11 @@ export const VocabEditorView: React.FC<VocabEditorViewProps> = ({ vocab, onBack 
           />
         </div>
 
-        {/* Tags */}
-        <div className="flex flex-col gap-2 pt-2 border-t border-white/10">
-          <label className="text-xs uppercase tracking-wider font-semibold text-slate-400">
-            Tags (Optional)
-          </label>
-          <input
-            type="text"
-            value={tagsInput}
-            onChange={(e) => setTagsInput(e.target.value)}
-            placeholder="philosophy, reflection"
-            className="w-full px-4 py-2.5 bg-slate-900/80 border border-white/20 rounded-xl focus:outline-none focus:border-orange-400 text-white text-sm shadow-sm"
-          />
-        </div>
+        {/* Interactive Tag Pill Selector */}
+        <TagPillSelector
+          selectedTags={selectedTags}
+          onTagsChange={(newTags) => setSelectedTags(newTags)}
+        />
       </div>
     </div>
   );

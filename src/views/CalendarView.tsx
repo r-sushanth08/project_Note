@@ -39,7 +39,7 @@ export const CalendarView: React.FC = () => {
   const selectedDayEntries = selectedDayISO ? entriesByDate[selectedDayISO] || [] : [];
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-6 pt-2 pb-24 flex flex-col gap-8">
+    <div className="w-full max-w-4xl mx-auto px-6 pt-2 pb-44 flex flex-col gap-8 h-full overflow-y-auto no-scrollbar">
       {/* Subheader */}
       <div className="flex items-center gap-3 border-b border-white/10 pb-4">
         <button
