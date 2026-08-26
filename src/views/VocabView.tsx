@@ -13,7 +13,7 @@ export const VocabView: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-6 pt-2 pb-24 flex flex-col gap-6">
+    <div className="w-full max-w-4xl mx-auto px-6 pt-2 pb-32 flex flex-col gap-6">
       {/* Subheader Title */}
       <div className="flex items-center justify-between border-b border-white/10 pb-4">
         <div className="flex items-center gap-3">
@@ -31,16 +31,15 @@ export const VocabView: React.FC = () => {
         </span>
       </div>
 
-      {/* Cards Deck Stack Container (Locked/Hidden Scrollbar & 2-Card Max Stack) */}
+      {/* Cards Deck Stack Container (Locked/Hidden Scrollbar & Clean 2-Card Max Stack) */}
       {vocabList.length === 0 ? (
         <div className="text-center py-16 text-slate-400 italic bg-slate-900/60 rounded-2xl border border-white/15 backdrop-blur-md">
           No vocabulary cards in your folder yet. Click the + button below to add one!
         </div>
       ) : (
-        <div className="relative flex flex-col gap-6 no-scrollbar pb-32">
+        <div className="relative flex flex-col gap-6 no-scrollbar pb-36">
           {vocabList.map((item, index) => {
             // Strictly cap top sticky offset at max 2 cards (80px base + max 10px peek)
-            // Ensures Card N-2 and older are 100% hidden underneath
             const stickyTopPx = 80 + Math.min(index, 1) * 10;
 
             return (
@@ -52,7 +51,7 @@ export const VocabView: React.FC = () => {
                   transform: 'translateZ(0)',
                   willChange: 'transform',
                 }}
-                className="sticky bg-slate-900/95 backdrop-blur-2xl rounded-3xl p-6 border border-white/20 border-t-white/30 shadow-[0_-12px_35px_rgba(0,0,0,0.7)] hover:border-orange-400/60 hover:bg-slate-900 transition-all cursor-pointer group flex flex-col justify-between gap-4 min-h-[210px]"
+                className="sticky bg-slate-900/95 backdrop-blur-2xl rounded-3xl p-6 border border-white/20 border-t-white/35 shadow-card hover:border-orange-400/60 hover:bg-slate-900 transition-all cursor-pointer group flex flex-col justify-between gap-4 min-h-[210px]"
               >
                 {/* Card Top Row: Word & Part of Speech */}
                 <div className="flex items-baseline justify-between border-b border-white/10 pb-3">
