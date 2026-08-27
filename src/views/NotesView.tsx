@@ -1,26 +1,54 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useEntries } from '../context/EntryContext';
 import { NoteEntry, NoteSubtype } from '../types/entry';
-import { Plus, BookOpen, Lightbulb, FolderKanban, Tag as TagIcon } from 'lucide-react';
+import { Plus, BookOpen, Lightbulb, FolderKanban, Calendar as CalendarIcon, ArrowUpRight } from 'lucide-react';
 
 export const NotesView: React.FC = () => {
-  const { entries, allTags, setCurrentView, setSelectedEntry, openNewEntry } = useEntries();
+  const { entries, setCurrentView, setSelectedEntry, openNewEntry } = useEntries();
   const [activeSubtypeFilter, setActiveSubtypeFilter] = useState<'all' | NoteSubtype>('all');
-  const [activeTagFilter, setActiveTagFilter] = useState<string | null>(null);
+  const [selectedDateISO, setSelectedDateISO] = useState<string | null>(null);
   const [isAddMenuOpen, setIsAddMenuOpen] = useState(false);
 
-  const notesList = entries.filter((e): e is NoteEntry => e.type === 'note');
+  const notesList = useMemo(() => {
+    return entries.filter((e): e is NoteEntry => e.type === 'note');
+  }, [entries]);
 
-  // Filter notes by subtype & active tag
-  const filteredNotes = notesList.filter((note) => {
-    if (activeSubtypeFilter !== 'all' && (note.noteSubtype || 'diary') !== activeSubtypeFilter) {
-      return false;
+  // Generate a rolling 14-day date strip centered around today
+  const dateStripItems = useMemo(() => {
+    const dates: { iso: string; dayLetter: string; dayNum: number; isToday: boolean }[] = [];
+    const todayObj = new Date();
+    todayObj.setHours(0, 0, 0, 0);
+
+    const dayLetters = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+
+    // 7 days in past + today + 6 days in future
+    for (let i = -7; i <= 6; i++) {
+      const d = new Date(todayObj);
+      d.setDate(d.getDate() + i);
+      const iso = d.toISOString().split('T')[0];
+      const dayLetter = dayLetters[d.getDay()];
+      const dayNum = d.getDate();
+      const isToday = i === 0;
+
+      dates.push({ iso, dayLetter, dayNum, isToday });
     }
-    if (activeTagFilter && !note.tags.includes(activeTagFilter)) {
-      return false;
-    }
-    return true;
-  });
+
+    return dates;
+  }, []);
+
+  // Filter notes by subtype & active date
+  const filteredNotes = useMemo(() => {
+    return notesList.filter((note) => {
+      if (activeSubtypeFilter !== 'all' && (note.noteSubtype || 'diary') !== activeSubtypeFilter) {
+        return false;
+      }
+      if (selectedDateISO) {
+        const noteDateISO = new Date(note.createdAt).toISOString().split('T')[0];
+        if (noteDateISO !== selectedDateISO) return false;
+      }
+      return true;
+    });
+  }, [notesList, activeSubtypeFilter, selectedDateISO]);
 
   return (
     <div className="w-full max-w-4xl mx-auto px-6 flex flex-col h-full overflow-hidden">
@@ -136,46 +164,58 @@ export const NotesView: React.FC = () => {
           </button>
         </div>
 
-        {/* Tag Filter Pill Bar */}
-        {allTags.length > 0 && (
-          <div className="flex items-center gap-2 overflow-x-auto pb-0.5 no-scrollbar">
-            <span className="text-[11px] uppercase tracking-wider font-semibold text-slate-400 flex items-center gap-1">
-              <TagIcon className="w-3 h-3 text-orange-400" />
-            </span>
-            {activeTagFilter && (
+        {/* HORIZONTAL CALENDAR DATE STRIP BAR (Replaces tag bar) */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-1 no-scrollbar border-t border-white/10">
+          {/* Left Calendar Icon & All Dates Toggle */}
+          <button
+            onClick={() => setSelectedDateISO(null)}
+            className={`p-2 rounded-2xl flex items-center gap-1.5 text-xs font-semibold transition-all flex-shrink-0 ${
+              selectedDateISO === null
+                ? 'bg-orange-500/20 text-orange-300 border border-orange-400 shadow-[0_0_12px_rgba(249,115,22,0.4)]'
+                : 'bg-slate-900/80 text-slate-400 border border-white/15 hover:text-white hover:border-white/30'
+            }`}
+            title="Show All Dates"
+          >
+            <CalendarIcon className="w-4 h-4 text-orange-400" />
+            <span>All</span>
+          </button>
+
+          {/* Date Pills List (Day letter above day number) */}
+          {dateStripItems.map((item) => {
+            const isSelected = selectedDateISO === item.iso;
+            return (
               <button
-                onClick={() => setActiveTagFilter(null)}
-                className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-orange-500/20 text-orange-400 border border-orange-500/30"
-              >
-                Clear Tag Filter ✕
-              </button>
-            )}
-            {allTags.map((tag) => (
-              <button
-                key={tag}
-                onClick={() => setActiveTagFilter(activeTagFilter === tag ? null : tag)}
-                className={`px-2.5 py-0.5 rounded-full text-[11px] font-medium transition-all ${
-                  activeTagFilter === tag
-                    ? 'bg-orange-500 text-white font-semibold border border-orange-400'
-                    : 'bg-slate-900/40 text-slate-300 border border-white/10 hover:border-white/20'
+                key={item.iso}
+                onClick={() => setSelectedDateISO(isSelected ? null : item.iso)}
+                className={`flex flex-col items-center justify-center min-w-[38px] px-2.5 py-1.5 rounded-2xl transition-all duration-300 flex-shrink-0 border ${
+                  isSelected
+                    ? 'bg-orange-500/25 border-orange-400 text-orange-300 shadow-[0_0_16px_rgba(249,115,22,0.5)] font-bold scale-105'
+                    : item.isToday
+                    ? 'bg-slate-900/90 border-orange-500/50 text-white font-semibold'
+                    : 'bg-slate-900/60 border-white/10 text-slate-300 hover:border-white/25 hover:text-white'
                 }`}
               >
-                #{tag}
+                <span className="text-[10px] font-semibold tracking-wider uppercase opacity-75">
+                  {item.dayLetter}
+                </span>
+                <span className="text-sm font-serif font-bold leading-none mt-0.5">
+                  {item.dayNum}
+                </span>
               </button>
-            ))}
-          </div>
-        )}
+            );
+          })}
+        </div>
       </div>
 
-      {/* Notes List Container — Scrolls strictly below the title header */}
-      <div className="flex-1 overflow-y-auto no-scrollbar pt-3 pb-44">
+      {/* Notes Folder Deck Container — Note cards stack over each other as user scrolls up */}
+      <div className="flex-1 overflow-y-auto no-scrollbar pt-3 pb-48">
         {filteredNotes.length === 0 ? (
           <div className="text-center py-16 text-slate-400 italic bg-slate-900/60 rounded-2xl border border-white/15 backdrop-blur-md my-auto">
-            No notes match your active filter. Drag the pencil dot below to create one!
+            No notes recorded for this selection. Drag the pencil dot below to create one!
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {filteredNotes.map((note) => {
+          <div className="relative flex flex-col gap-6">
+            {filteredNotes.map((note, index) => {
               const dateStr = new Date(note.createdAt).toLocaleDateString(undefined, {
                 month: 'short',
                 day: 'numeric',
@@ -187,11 +227,20 @@ export const NotesView: React.FC = () => {
               });
               const subtype = note.noteSubtype || 'diary';
 
+              // Capped sticky top offset for 2-card max folder deck stack (0px for note 0, 12px for note 1+)
+              const stickyTopPx = Math.min(index, 1) * 12;
+
               return (
                 <div
                   key={note.id}
                   onClick={() => setSelectedEntry(note)}
-                  className="bg-slate-900/80 backdrop-blur-md rounded-2xl p-6 border border-white/15 shadow-card hover:border-orange-400/60 hover:bg-slate-900/90 transition-all cursor-pointer group flex flex-col justify-between gap-4"
+                  style={{
+                    top: `${stickyTopPx}px`,
+                    zIndex: index + 10,
+                    transform: 'translateZ(0)',
+                    willChange: 'transform',
+                  }}
+                  className="sticky bg-slate-900/95 backdrop-blur-2xl rounded-3xl p-6 border border-white/20 border-t-white/35 shadow-card hover:border-orange-400/60 hover:bg-slate-900 transition-all cursor-pointer group flex flex-col justify-between gap-4 min-h-[210px]"
                 >
                   <div>
                     <div className="flex items-center justify-between mb-2">
@@ -217,7 +266,7 @@ export const NotesView: React.FC = () => {
                       )}
                     </div>
 
-                    <h3 className="text-xl font-serif font-medium text-white group-hover:text-orange-300 transition-colors line-clamp-1">
+                    <h3 className="text-2xl font-serif font-semibold text-white group-hover:text-orange-300 transition-colors tracking-wide line-clamp-1">
                       {note.title || 'Untitled Note'}
                     </h3>
 
@@ -231,24 +280,36 @@ export const NotesView: React.FC = () => {
                         </p>
                       </div>
                     ) : (
-                      <p className="mt-2 text-sm text-slate-300 leading-relaxed line-clamp-3 whitespace-pre-line">
+                      <p className="mt-2 text-sm text-slate-200 leading-relaxed line-clamp-3 whitespace-pre-line">
                         {note.content || 'Empty note...'}
                       </p>
                     )}
                   </div>
 
-                  {note.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 pt-2 border-t border-white/10">
-                      {note.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="text-[10px] uppercase tracking-wider font-semibold text-orange-300 bg-orange-500/10 border border-orange-500/20 px-2 py-0.5 rounded-full"
-                        >
-                          #{tag}
+                  {/* Card Bottom Row: Tags & View Details Indicator */}
+                  <div className="flex items-center justify-between pt-2 border-t border-white/10 mt-1">
+                    <div className="flex flex-wrap gap-1.5">
+                      {note.tags.length > 0 ? (
+                        note.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="text-[10px] uppercase tracking-wider font-semibold text-orange-300 bg-orange-500/10 border border-orange-500/20 px-2 py-0.5 rounded-full"
+                          >
+                            #{tag}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-[10px] uppercase tracking-wider text-slate-500 italic">
+                          Untagged
                         </span>
-                      ))}
+                      )}
                     </div>
-                  )}
+
+                    <span className="text-xs font-semibold text-orange-400 group-hover:text-white flex items-center gap-1 transition-colors">
+                      <span>Open Note</span>
+                      <ArrowUpRight className="w-3.5 h-3.5" />
+                    </span>
+                  </div>
                 </div>
               );
             })}
