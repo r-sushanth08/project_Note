@@ -30,7 +30,7 @@ Phased architecture: Phase 1 & 2 operate strictly on-device; Phase 3 handles bac
 The app opens to Home every time on every launch.
 
 ## 10. Dark Rainy Lantern Background & Text-Only Home Design
-Integrated full-screen rainy lantern background (`public/bg.jpg`) with crisp white text, boxed Lexicon count, and an orange-underlined `LEXICON OF THE DAY` subheading.
+Integrated full-screen rainy lantern background (`public/bg-desktop.jpg`) with crisp white text, boxed Lexicon count, and an orange-underlined `LEXICON OF THE DAY` subheading.
 
 ## 11. Touchscreen Mobile Touch Gestures & 100dvh Single Viewport
 Implemented native touch handlers (`onTouchStart`, `onTouchMove`, `onTouchEnd`) with `touch-action: none` and dynamic `100dvh` viewport layout.
@@ -47,6 +47,11 @@ Vocab cards stack over each other as the user scrolls up (`sticky top-[...]`), c
 ## 15. Hardware-Accelerated Screen Slide Transitions
 All screen and editor routing features smooth Slide In Right / Slide In Left CSS animations (`PageTransition.tsx`).
 
-## 16. 3 Lexicons of the Day Carousel on Home Screen
-**Decision:** Home screen displays 3 Lexicons of the Day with horizontal touch swiping, 3 glowing white pagination indicator dots, slide-in CSS transitions, and a fixed static `LEXICON OF THE DAY` orange subheading.
-**Why:** User requested increasing daily vocabulary count to 3 words with a smooth swipe carousel and glowing pagination dots without altering the top layout hierarchy.
+## 16. Fixed Pinned Section Subheaders
+Section titles (`Notes`, `Lists`, `Vocab`, `Calendar`, `Search`) stay pinned to the top of the screen (`sticky top-0 z-30 bg-slate-950/85 backdrop-blur-xl border-b border-white/10`) so they never scroll offscreen.
+
+## 17. Auto-Rotating Lexicon Carousel
+Lexicon of the Day automatically cycles through the 3 daily words every 6 seconds on the Home screen.
+
+## 18. Orange Glowing Vocab Badge & Calendar Dropdown Filter
+Vocab count badge in Vocabulary Deck glows in vibrant orange (`shadow-[0_0_18px_rgba(249,115,22,0.5)]`), and Calendar includes a dropdown filter (`All Entries`, `Notes`, `Lists`, `Vocab`).

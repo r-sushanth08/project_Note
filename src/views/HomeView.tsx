@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useEntries } from '../context/EntryContext';
 import { RadialControl } from '../components/RadialControl';
 
@@ -26,6 +26,18 @@ export const HomeView: React.FC = () => {
     setSlideDirection('left');
     setActiveWordIndex((prev) => (prev - 1 + totalDailyWords) % totalDailyWords);
   };
+
+  // Auto Rotation Timer (cycles every 6 seconds)
+  useEffect(() => {
+    if (totalDailyWords <= 1) return;
+
+    const interval = setInterval(() => {
+      setSlideDirection('right');
+      setActiveWordIndex((prev) => (prev + 1) % totalDailyWords);
+    }, 6000);
+
+    return () => clearInterval(interval);
+  }, [totalDailyWords, activeWordIndex]);
 
   // Touch handlers for mobile swiping
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -73,7 +85,7 @@ export const HomeView: React.FC = () => {
         </div>
       </div>
 
-      {/* 2. Middle Section: Lexicon of the Day (3 Words Carousel with Fixed Orange Subheading) */}
+      {/* 2. Middle Section: Lexicon of the Day (3 Words Auto-Rotating Carousel) */}
       <div className="flex-1 min-h-0 flex flex-col items-center justify-center text-center max-w-xl px-4 my-auto w-full">
         {/* FIXED SUBHEADING: Never moves or changes during swiping */}
         <div className="border-b-2 border-orange-500 pb-1 mb-3 inline-block flex-shrink-0">
@@ -82,7 +94,7 @@ export const HomeView: React.FC = () => {
           </span>
         </div>
 
-        {/* SWIPEABLE WORD & MEANING BLOCK */}
+        {/* SWIPEABLE & AUTO-ROTATING WORD CONTENT BLOCK */}
         {currentVocab ? (
           <div
             onTouchStart={handleTouchStart}

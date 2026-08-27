@@ -9,9 +9,9 @@ export const ListsView: React.FC = () => {
   const listsArray = entries.filter((e): e is ListEntry => e.type === 'list');
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-6 pt-2 pb-44 flex flex-col gap-8 h-full overflow-y-auto no-scrollbar">
-      {/* Header */}
-      <div className="flex items-center gap-3 border-b border-white/10 pb-4 flex-shrink-0">
+    <div className="w-full max-w-4xl mx-auto px-6 flex flex-col h-full overflow-y-auto no-scrollbar">
+      {/* Fixed Sticky Header (Pinned at top, doesn't scroll offscreen) */}
+      <div className="sticky top-0 z-30 bg-slate-950/85 backdrop-blur-xl border-b border-white/10 -mx-6 px-6 pt-3 pb-4 mb-4 flex items-center gap-3 flex-shrink-0">
         <button
           onClick={() => setCurrentView('home')}
           className="w-8 h-8 rounded-full flex items-center justify-center bg-slate-900/80 border border-white/20 text-slate-300 hover:text-white hover:border-orange-400 transition-all shadow-sm"
@@ -23,11 +23,11 @@ export const ListsView: React.FC = () => {
 
       {/* Lists Grid */}
       {listsArray.length === 0 ? (
-        <div className="text-center py-16 text-slate-400 italic bg-slate-900/60 rounded-2xl border border-white/15 backdrop-blur-md">
+        <div className="text-center py-16 text-slate-400 italic bg-slate-900/60 rounded-2xl border border-white/15 backdrop-blur-md my-auto">
           No living lists created yet. Drag the pencil dot below to start a list!
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-24">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-44 pt-2">
           {listsArray.map((list) => {
             const checkedCount = list.items.filter((i) => i.checked).length;
             const totalCount = list.items.length;

@@ -10,41 +10,35 @@ Calm, minimal, reflective, and distraction-free. The app is set against a **Dark
 - **Home Screen Aesthetic**: Text-only, minimalist layout — no heavy white cards on Home.
 - **Lexicon Count**: Displayed inside a sleek, semi-transparent boxed badge (`words logged`).
 
-## Home-Exclusive Atmospheric Effects (Rain & Lantern Glow)
+## Fixed Pinned Section Subheaders
 
-- **Synchronized Lantern Warm Glow Pulse**:
-  - Soft amber/orange radial glow (`animate-lantern-pulse`) centered directly over the lantern flame.
-  - Positioned dynamically in CSS (`right-[22%]` on mobile, `right-[16%]` on tablet, `right-[12%]` on desktop) so the glow shifts in **100% perfect sync** with the lantern as screen width changes!
-- **Ambient Falling Rain Streaks**:
-  - Lightweight vertical rain streak animations (`animate-rain-1`, `animate-rain-2`, `animate-rain-3`) drifting down the background.
-- **Home-Exclusive Activation**:
-  - Active **ONLY on the Home screen** (`currentView === 'home' && !selectedEntry`).
-  - Smoothly fades out (`opacity-0 duration-700`) when navigating to `Notes`, `Lists`, `Vocab`, `Calendar`, `Search`, or Editors, ensuring zero distraction while reading or writing.
+- **Pinned Headers**: In `Notes`, `Lists`, `Vocab`, `Calendar`, and `Search`, the section subheader title bar (back button `‹`, section title, and top action buttons/filters) is pinned to the top of the viewport (`sticky top-0 z-30 bg-slate-950/85 backdrop-blur-xl border-b border-white/10`).
+- **Scroll Behavior**: When scrolling down through long lists of notes, living list items, stacking vocab cards, or calendar grids, the section title stays fixed at top without moving offscreen.
 
-## 3 Lexicons of the Day Swipe Carousel (Home Screen)
+## Auto-Rotating Lexicon of the Day (Home Screen)
 
 - **Static Orange Subheading**: The `LEXICON OF THE DAY` subheading with **vibrant orange underline** (`border-b-2 border-orange-500`) stays fixed at top and never shifts during swiping.
-- **3 Daily Words Carousel**: Displays 3 least-recently shown words per day.
-- **Slide In / Slide Out Transitions**: Swiping left/right or tapping pagination dots triggers smooth slide-in CSS transitions on the word title, phonetic, and meaning block.
+- **Auto-Rotation**: Automatically rotates through the 3 daily Lexicon words every 6 seconds with smooth slide-in CSS transitions.
+- **Manual Override**: Touch swiping or clicking pagination dots pauses/resets the auto-rotation loop.
 - **3 Glowing Pagination Dots**: 3 white indicator dots below the definition text:
   - **Active Word Dot**: Glowing white (`bg-white shadow-[0_0_10px_rgba(255,255,255,0.9)] scale-125`).
   - **Inactive Word Dots**: Faded glass white (`bg-white/30`).
-- **Touch Swiping**: Swipe left for next word, swipe right for previous word (`onTouchStart`, `onTouchEnd`).
 
-## Screen Navigation Slide Transitions
+## Vocabulary Deck (Folder Stacking Cards Effect & Orange Glow Badge)
 
-- **Smooth Slide In / Slide Out**: All screen transitions (`Home`, `Notes`, `Lists`, `Vocab`, `Calendar`, `Search`, and Editors) feature 60 FPS hardware-accelerated slide-in animations.
-- **Navigation Direction**:
-  - Navigating forward to a section or opening an editor triggers **Slide In Right**.
-  - Returning to Home or closing an editor triggers **Slide In Left**.
-- **Static Background**: The dark rainy lantern background image remains fixed and static while screens glide smoothly above it.
-
-## Vocabulary Deck (Folder Stacking Cards Effect)
-
+- **Orange Glowing Count Badge**: The top count pill badge (`{vocabList.length} cards in folder`) features a vibrant orange ambient glow (`shadow-[0_0_18px_rgba(249,115,22,0.5)]`).
 - **Folder Deck Physics**: Vocab cards stack over each other as the user scrolls up (`sticky top-[...]`), creating an authentic physical folder/deck effect.
 - **2-Card Max Stack**: Capped at 2 visible card layers max (Current Card + Previous Card), completely hiding older cards underneath for infinite performance.
 - **Locked / Hidden Scrollbar**: Browser scrollbars are completely hidden (`no-scrollbar`) so no raw scrollbar disrupts the folder deck aesthetic.
-- **Structured Fields**: Cards display `Meaning:`, `Synonyms:`, `Antonyms:`, and orange tag pill buttons (`#PERSONAL`, `#LEARNING`).
+
+## Calendar Entry Type Dropdown Filter
+
+- **Filter Dropdown**: Styled `<select>` dropdown in the Calendar subheader:
+  - `All Entries`
+  - `Notes`
+  - `Lists`
+  - `Vocab`
+- **Filtered View**: Filters both the passive day indicators in the month calendar grid and the expanded day details section below.
 
 ## App Structure
 
@@ -53,7 +47,7 @@ Four sections, plus Home:
 - **Notes** — browse/view/edit existing notes (Diary, Brain Dump, Collections sub-types).
 - **Lists** — browse/view/edit existing living lists.
 - **Vocab** — browse/view/edit existing vocab entries via the **Folder Stacking Cards Deck**.
-- **Calendar** — month/year view with per-day activity indicators.
+- **Calendar** — month/year view with per-day activity indicators and dropdown type filter.
 
 ## Radial Quick-Capture Control ("the dot") Interaction Modes
 
