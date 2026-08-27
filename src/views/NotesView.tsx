@@ -23,9 +23,9 @@ export const NotesView: React.FC = () => {
   });
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-6 flex flex-col h-full overflow-y-auto no-scrollbar">
-      {/* Fixed Sticky Header & Filters Container (Pinned at top, doesn't scroll offscreen) */}
-      <div className="sticky top-0 z-30 bg-slate-950/85 backdrop-blur-xl border-b border-white/10 -mx-6 px-6 pt-3 pb-3 mb-4 flex flex-col gap-3 flex-shrink-0">
+    <div className="w-full max-w-4xl mx-auto px-6 flex flex-col h-full overflow-hidden">
+      {/* Static Subheader Title & Filter Bars (Notes scroll below this, never behind or under the title) */}
+      <div className="flex flex-col gap-3 pt-3 pb-4 border-b border-white/10 flex-shrink-0 z-10 bg-transparent">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
@@ -167,92 +167,94 @@ export const NotesView: React.FC = () => {
         )}
       </div>
 
-      {/* Notes List */}
-      {filteredNotes.length === 0 ? (
-        <div className="text-center py-16 text-slate-400 italic bg-slate-900/60 rounded-2xl border border-white/15 backdrop-blur-md my-auto">
-          No notes match your active filter. Drag the pencil dot below to create one!
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-44 pt-2">
-          {filteredNotes.map((note) => {
-            const dateStr = new Date(note.createdAt).toLocaleDateString(undefined, {
-              month: 'short',
-              day: 'numeric',
-              year: 'numeric',
-            });
-            const timeStr = new Date(note.createdAt).toLocaleTimeString([], {
-              hour: '2-digit',
-              minute: '2-digit',
-            });
-            const subtype = note.noteSubtype || 'diary';
+      {/* Notes List Container — Scrolls strictly below the title header */}
+      <div className="flex-1 overflow-y-auto no-scrollbar pt-3 pb-44">
+        {filteredNotes.length === 0 ? (
+          <div className="text-center py-16 text-slate-400 italic bg-slate-900/60 rounded-2xl border border-white/15 backdrop-blur-md my-auto">
+            No notes match your active filter. Drag the pencil dot below to create one!
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {filteredNotes.map((note) => {
+              const dateStr = new Date(note.createdAt).toLocaleDateString(undefined, {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+              });
+              const timeStr = new Date(note.createdAt).toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit',
+              });
+              const subtype = note.noteSubtype || 'diary';
 
-            return (
-              <div
-                key={note.id}
-                onClick={() => setSelectedEntry(note)}
-                className="bg-slate-900/80 backdrop-blur-md rounded-2xl p-6 border border-white/15 shadow-card hover:border-orange-400/60 hover:bg-slate-900/90 transition-all cursor-pointer group flex flex-col justify-between gap-4"
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wider">
-                      {dateStr} · {timeStr}
-                    </span>
+              return (
+                <div
+                  key={note.id}
+                  onClick={() => setSelectedEntry(note)}
+                  className="bg-slate-900/80 backdrop-blur-md rounded-2xl p-6 border border-white/15 shadow-card hover:border-orange-400/60 hover:bg-slate-900/90 transition-all cursor-pointer group flex flex-col justify-between gap-4"
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wider">
+                        {dateStr} · {timeStr}
+                      </span>
 
-                    {/* Subtype Badge */}
-                    {subtype === 'diary' && (
-                      <span className="text-[10px] uppercase font-bold tracking-wider text-orange-400 bg-orange-500/10 border border-orange-500/20 px-2 py-0.5 rounded-full flex items-center gap-1">
-                        <BookOpen className="w-2.5 h-2.5" /> Diary
-                      </span>
-                    )}
-                    {subtype === 'brain_dump' && (
-                      <span className="text-[10px] uppercase font-bold tracking-wider text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full flex items-center gap-1">
-                        <Lightbulb className="w-2.5 h-2.5" /> Brain Dump
-                      </span>
-                    )}
-                    {subtype === 'collections' && (
-                      <span className="text-[10px] uppercase font-bold tracking-wider text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded-full flex items-center gap-1">
-                        <FolderKanban className="w-2.5 h-2.5" /> Collection
-                      </span>
+                      {/* Subtype Badge */}
+                      {subtype === 'diary' && (
+                        <span className="text-[10px] uppercase font-bold tracking-wider text-orange-400 bg-orange-500/10 border border-orange-500/20 px-2 py-0.5 rounded-full flex items-center gap-1">
+                          <BookOpen className="w-2.5 h-2.5" /> Diary
+                        </span>
+                      )}
+                      {subtype === 'brain_dump' && (
+                        <span className="text-[10px] uppercase font-bold tracking-wider text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full flex items-center gap-1">
+                          <Lightbulb className="w-2.5 h-2.5" /> Brain Dump
+                        </span>
+                      )}
+                      {subtype === 'collections' && (
+                        <span className="text-[10px] uppercase font-bold tracking-wider text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded-full flex items-center gap-1">
+                          <FolderKanban className="w-2.5 h-2.5" /> Collection
+                        </span>
+                      )}
+                    </div>
+
+                    <h3 className="text-xl font-serif font-medium text-white group-hover:text-orange-300 transition-colors line-clamp-1">
+                      {note.title || 'Untitled Note'}
+                    </h3>
+
+                    {subtype === 'collections' ? (
+                      <div className="mt-2 text-sm text-slate-300 leading-relaxed">
+                        <span className="text-xs text-orange-400 font-semibold uppercase tracking-wider block mb-1">
+                          Category: {note.category || 'General'} ({note.collectionItems?.length || 0} items)
+                        </span>
+                        <p className="line-clamp-2 italic text-slate-400">
+                          {note.content || note.collectionItems?.map((i) => i.name).join(' · ')}
+                        </p>
+                      </div>
+                    ) : (
+                      <p className="mt-2 text-sm text-slate-300 leading-relaxed line-clamp-3 whitespace-pre-line">
+                        {note.content || 'Empty note...'}
+                      </p>
                     )}
                   </div>
 
-                  <h3 className="text-xl font-serif font-medium text-white group-hover:text-orange-300 transition-colors line-clamp-1">
-                    {note.title || 'Untitled Note'}
-                  </h3>
-
-                  {subtype === 'collections' ? (
-                    <div className="mt-2 text-sm text-slate-300 leading-relaxed">
-                      <span className="text-xs text-orange-400 font-semibold uppercase tracking-wider block mb-1">
-                        Category: {note.category || 'General'} ({note.collectionItems?.length || 0} items)
-                      </span>
-                      <p className="line-clamp-2 italic text-slate-400">
-                        {note.content || note.collectionItems?.map((i) => i.name).join(' · ')}
-                      </p>
+                  {note.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 pt-2 border-t border-white/10">
+                      {note.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="text-[10px] uppercase tracking-wider font-semibold text-orange-300 bg-orange-500/10 border border-orange-500/20 px-2 py-0.5 rounded-full"
+                        >
+                          #{tag}
+                        </span>
+                      ))}
                     </div>
-                  ) : (
-                    <p className="mt-2 text-sm text-slate-300 leading-relaxed line-clamp-3 whitespace-pre-line">
-                      {note.content || 'Empty note...'}
-                    </p>
                   )}
                 </div>
-
-                {note.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 pt-2 border-t border-white/10">
-                    {note.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="text-[10px] uppercase tracking-wider font-semibold text-orange-300 bg-orange-500/10 border border-orange-500/20 px-2 py-0.5 rounded-full"
-                      >
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      )}
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
