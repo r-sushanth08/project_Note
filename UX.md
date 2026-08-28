@@ -20,22 +20,24 @@ The floating radial control ("the dot") supports 3 distinct interaction modes:
 - **Click Node Icon**: Tapping any node icon directly navigates to that section screen (`Notes`, `Lists`, `Vocab`, `Calendar`).
 - **Drag & Drop Gesture**: Dragging from the central pencil dot toward any direction and releasing immediately opens new entry creation (`New Note`, `New List`, `New Vocab`, `Calendar`).
 
-### 2. ⚡ Mode A: Quick Tap Entry Creation Mode (Non-Home Screens, `isHomeCentered = false`)
+### 2. ⚡ Plus State: Entry Creation Mode (Non-Home Screens, `isHomeCentered = false`)
 - **Trigger**: Quick tap (< 250ms, < 12px movement) on the central pencil dot on any non-home screen.
 - **Visual Transformations**:
   - The center pencil icon morphs smoothly into an orange **`+` Plus Icon**.
-  - Expands **3 Creation Nodes** with generous spacing (`-top-24`, `-right-24`, `-left-24`):
+  - Expands **3 Larger Creation Nodes** (`w-14 h-14` / 56px) with generous spacing (`-top-24`, `-right-24`, `-left-24`):
     - **Top (`^`)**: `+ Note` (Emerald Green)
     - **Right (`>`)**: `+ List` (Amber Yellow)
     - **Left (`<`)**: `+ Vocab` (Purple / Indigo)
     - *(Calendar excluded from creation mode)*.
-- **Rewind Toggle**: Tapping the central `+` button again rewinds back to the pencil icon.
-- **Actions**: Tapping any creation node opens fast entry creation (`openNewEntry`) and closes the menu cleanly.
+- **Dual Choice Creation**:
+  - **Choice A (Direct Tap)**: Tapping any creation node opens fast entry creation (`openNewEntry`) and closes the menu cleanly.
+  - **Choice B (Drag & Drop in Plus State)**: Pressing and dragging from the `+` dot button tracks aiming direction with animated chevron arrow indicators (`^` top, `>` right, `<` left). Releasing instantly opens entry creation!
+- **Rewind Toggle**: Tapping the central `+` button directly rewinds back to the pencil icon.
 
-### 3. 🎯 Mode B: Hold & Aim Navigation Mode (Non-Home Screens, `isHomeCentered = false`)
+### 3. 🎯 Pencil State: Hold & Aim Navigation Mode (Non-Home Screens, `isHomeCentered = false`)
 - **Trigger**: Pressing down and holding on the central pencil dot.
 - **Visual Transformations**:
-  - Instantly pops **4 Vibrant Colored Navigation Nodes** into view:
+  - Instantly pops **4 Larger Vibrant Colored Navigation Nodes** (`w-14 h-14` / 56px) into view:
     - **Top (`^`)**: Notes — Emerald Green (`bg-emerald-500 shadow-[0_0_18px_rgba(16,185,129,0.6)]`)
     - **Right (`>`)**: Lists — Amber Yellow (`bg-amber-500 shadow-[0_0_18px_rgba(245,158,11,0.6)]`)
     - **Bottom (`v`)**: Vocab — Purple / Indigo (`bg-indigo-500 shadow-[0_0_18px_rgba(99,102,241,0.6)]`)
