@@ -177,8 +177,8 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
       }
     } else {
       // --- PLUS STATE RELEASE ---
-      if (!hasDraggedRef.current) {
-        // Quick Click on + Center Dot -> REWIND BACK TO PENCIL STATE!
+      if (!hasDraggedRef.current || !activeCreateDirection) {
+        // Click or release on + Center Dot without direction -> REWIND BACK TO PENCIL STATE!
         setIsQuickCreateOpen(false);
         setActiveCreateDirection(null);
       } else if (hasDraggedRef.current && activeCreateDirection) {
@@ -188,6 +188,7 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
         setActiveCreateDirection(null);
         openNewEntry(typeToCreate);
       } else {
+        setIsQuickCreateOpen(false);
         setActiveCreateDirection(null);
       }
     }
@@ -247,32 +248,32 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
             : 'fixed bottom-28 left-1/2 -translate-x-1/2 flex justify-center items-center'
         }`}
       >
-        {/* --- 1. QUICK CREATE NODES (Plus State: Popped Icons with Drag Chevron Indicators) --- */}
+        {/* --- 1. QUICK CREATE NODES (Plus State: w-12 h-12 / 48px Popped Icons with Drag Chevron Indicators) --- */}
         {isCreateVisible && (
           <div className="absolute inset-0 z-50 pointer-events-auto">
             {/* TOP: + Note (Emerald Green) */}
             <button
               onClick={(e) => handleQuickCreateNodeClick(e, 'note')}
               className={`absolute -top-24 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 group cursor-pointer transition-all duration-150 ${
-                activeCreateDirection === 'note' ? 'scale-115 z-10' : 'opacity-90'
+                activeCreateDirection === 'note' ? 'scale-110 z-10' : 'opacity-90'
               }`}
               title="Create New Note"
             >
               {/* Chevron Arrow Indicator when dragging + dot top */}
               {activeCreateDirection === 'note' && (
                 <div className="absolute -top-6 text-emerald-400 font-bold animate-bounce drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]">
-                  <ChevronUp className="w-6 h-6 stroke-[3]" />
+                  <ChevronUp className="w-5 h-5 stroke-[3]" />
                 </div>
               )}
 
               <div
-                className={`w-14 h-14 rounded-full flex items-center justify-center border transition-all ${
+                className={`w-12 h-12 rounded-full flex items-center justify-center border transition-all ${
                   activeCreateDirection === 'note'
-                    ? 'bg-emerald-500 text-white border-emerald-300 shadow-[0_0_22px_rgba(16,185,129,0.8)] ring-2 ring-emerald-400'
-                    : 'bg-emerald-500 text-white border-emerald-400/80 shadow-[0_0_18px_rgba(16,185,129,0.6)] group-hover:scale-110'
+                    ? 'bg-emerald-500 text-white border-emerald-300 shadow-[0_0_20px_rgba(16,185,129,0.8)] ring-2 ring-emerald-400'
+                    : 'bg-emerald-500 text-white border-emerald-400/80 shadow-[0_0_16px_rgba(16,185,129,0.6)] group-hover:scale-105'
                 }`}
               >
-                <FileText className="w-6 h-6 stroke-[2]" />
+                <FileText className="w-5 h-5 stroke-[2]" />
               </div>
               <span
                 className={`text-xs font-semibold tracking-wide bg-slate-900/95 px-2.5 py-0.5 rounded-full border shadow-sm transition-colors ${
@@ -289,25 +290,25 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
             <button
               onClick={(e) => handleQuickCreateNodeClick(e, 'list')}
               className={`absolute top-1/2 -right-24 -translate-y-1/2 flex flex-col items-center gap-1.5 group cursor-pointer transition-all duration-150 ${
-                activeCreateDirection === 'list' ? 'scale-115 z-10' : 'opacity-90'
+                activeCreateDirection === 'list' ? 'scale-110 z-10' : 'opacity-90'
               }`}
               title="Create New List"
             >
               {/* Chevron Arrow Indicator when dragging + dot right */}
               {activeCreateDirection === 'list' && (
-                <div className="absolute -right-6 top-3 text-amber-400 font-bold animate-bounce drop-shadow-[0_0_8px_rgba(245,158,11,0.8)]">
-                  <ChevronRight className="w-6 h-6 stroke-[3]" />
+                <div className="absolute -right-6 top-2.5 text-amber-400 font-bold animate-bounce drop-shadow-[0_0_8px_rgba(245,158,11,0.8)]">
+                  <ChevronRight className="w-5 h-5 stroke-[3]" />
                 </div>
               )}
 
               <div
-                className={`w-14 h-14 rounded-full flex items-center justify-center border transition-all ${
+                className={`w-12 h-12 rounded-full flex items-center justify-center border transition-all ${
                   activeCreateDirection === 'list'
-                    ? 'bg-amber-500 text-white border-amber-300 shadow-[0_0_22px_rgba(245,158,11,0.8)] ring-2 ring-amber-400'
-                    : 'bg-amber-500 text-white border-amber-400/80 shadow-[0_0_18px_rgba(245,158,11,0.6)] group-hover:scale-110'
+                    ? 'bg-amber-500 text-white border-amber-300 shadow-[0_0_20px_rgba(245,158,11,0.8)] ring-2 ring-amber-400'
+                    : 'bg-amber-500 text-white border-amber-400/80 shadow-[0_0_16px_rgba(245,158,11,0.6)] group-hover:scale-105'
                 }`}
               >
-                <List className="w-6 h-6 stroke-[2]" />
+                <List className="w-5 h-5 stroke-[2]" />
               </div>
               <span
                 className={`text-xs font-semibold tracking-wide bg-slate-900/95 px-2.5 py-0.5 rounded-full border shadow-sm transition-colors ${
@@ -324,25 +325,25 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
             <button
               onClick={(e) => handleQuickCreateNodeClick(e, 'vocab')}
               className={`absolute top-1/2 -left-24 -translate-y-1/2 flex flex-col items-center gap-1.5 group cursor-pointer transition-all duration-150 ${
-                activeCreateDirection === 'vocab' ? 'scale-115 z-10' : 'opacity-90'
+                activeCreateDirection === 'vocab' ? 'scale-110 z-10' : 'opacity-90'
               }`}
               title="Add Vocabulary Card"
             >
               {/* Chevron Arrow Indicator when dragging + dot left */}
               {activeCreateDirection === 'vocab' && (
-                <div className="absolute -left-6 top-3 text-indigo-400 font-bold animate-bounce drop-shadow-[0_0_8px_rgba(99,102,241,0.8)]">
-                  <ChevronLeft className="w-6 h-6 stroke-[3]" />
+                <div className="absolute -left-6 top-2.5 text-indigo-400 font-bold animate-bounce drop-shadow-[0_0_8px_rgba(99,102,241,0.8)]">
+                  <ChevronLeft className="w-5 h-5 stroke-[3]" />
                 </div>
               )}
 
               <div
-                className={`w-14 h-14 rounded-full flex items-center justify-center border transition-all ${
+                className={`w-12 h-12 rounded-full flex items-center justify-center border transition-all ${
                   activeCreateDirection === 'vocab'
-                    ? 'bg-indigo-500 text-white border-indigo-300 shadow-[0_0_22px_rgba(99,102,241,0.8)] ring-2 ring-indigo-400'
-                    : 'bg-indigo-500 text-white border-indigo-400/80 shadow-[0_0_18px_rgba(99,102,241,0.6)] group-hover:scale-110'
+                    ? 'bg-indigo-500 text-white border-indigo-300 shadow-[0_0_20px_rgba(99,102,241,0.8)] ring-2 ring-indigo-400'
+                    : 'bg-indigo-500 text-white border-indigo-400/80 shadow-[0_0_16px_rgba(99,102,241,0.6)] group-hover:scale-105'
                 }`}
               >
-                <BookOpen className="w-6 h-6 stroke-[2]" />
+                <BookOpen className="w-5 h-5 stroke-[2]" />
               </div>
               <span
                 className={`text-xs font-semibold tracking-wide bg-slate-900/95 px-2.5 py-0.5 rounded-full border shadow-sm transition-colors ${
@@ -357,7 +358,7 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
           </div>
         )}
 
-        {/* --- 2. VIBRANT COLORED NAVIGATION NODES (Pencil State: Expanded on Hold) --- */}
+        {/* --- 2. VIBRANT COLORED NAVIGATION NODES (Pencil State: w-12 h-12 / 48px Icons, Smaller than Central 64px Dot) --- */}
         <div
           className={`absolute inset-0 transition-all duration-250 ${
             isNavVisible || isHomeCentered
@@ -370,25 +371,25 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
             onClick={(e) => isHomeCentered && handleHomeNodeClick(e, 'notes')}
             disabled={!isNavVisible && !isHomeCentered}
             className={`pointer-events-auto absolute -top-24 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 transition-all duration-150 group cursor-pointer ${
-              activeNavDirection === 'notes' ? 'scale-115 z-10' : 'opacity-85'
+              activeNavDirection === 'notes' ? 'scale-110 z-10' : 'opacity-85'
             }`}
             title="Notes"
           >
             {/* Red Chevron Arrow Pointer (^ Up on Non-Home) */}
             {!isHomeCentered && activeNavDirection === 'notes' && (
               <div className="absolute -top-6 text-red-500 font-bold animate-bounce drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]">
-                <ChevronUp className="w-6 h-6 stroke-[3]" />
+                <ChevronUp className="w-5 h-5 stroke-[3]" />
               </div>
             )}
 
             <div
-              className={`w-14 h-14 rounded-full flex items-center justify-center border transition-all ${
+              className={`w-12 h-12 rounded-full flex items-center justify-center border transition-all ${
                 activeNavDirection === 'notes'
-                  ? 'bg-emerald-500 text-white border-emerald-300 shadow-[0_0_22px_rgba(16,185,129,0.8)] ring-2 ring-emerald-400'
-                  : 'bg-emerald-500/85 text-white border-emerald-400/60 shadow-[0_0_14px_rgba(16,185,129,0.4)] backdrop-blur-md group-hover:scale-105'
+                  ? 'bg-emerald-500 text-white border-emerald-300 shadow-[0_0_20px_rgba(16,185,129,0.8)] ring-2 ring-emerald-400'
+                  : 'bg-emerald-500/85 text-white border-emerald-400/60 shadow-[0_0_12px_rgba(16,185,129,0.4)] backdrop-blur-md group-hover:scale-105'
               }`}
             >
-              <FileText className="w-6 h-6 stroke-[2]" />
+              <FileText className="w-5 h-5 stroke-[2]" />
             </div>
             <span
               className={`text-xs font-semibold tracking-wide transition-colors ${
@@ -404,25 +405,25 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
             onClick={(e) => isHomeCentered && handleHomeNodeClick(e, 'lists')}
             disabled={!isNavVisible && !isHomeCentered}
             className={`pointer-events-auto absolute top-1/2 -right-24 -translate-y-1/2 flex flex-col items-center gap-1 transition-all duration-150 group cursor-pointer ${
-              activeNavDirection === 'lists' ? 'scale-115 z-10' : 'opacity-85'
+              activeNavDirection === 'lists' ? 'scale-110 z-10' : 'opacity-85'
             }`}
             title="Lists"
           >
             {/* Red Chevron Arrow Pointer (> Right on Non-Home) */}
             {!isHomeCentered && activeNavDirection === 'lists' && (
-              <div className="absolute -right-6 top-3 text-red-500 font-bold animate-bounce drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]">
-                <ChevronRight className="w-6 h-6 stroke-[3]" />
+              <div className="absolute -right-6 top-2.5 text-red-500 font-bold animate-bounce drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]">
+                <ChevronRight className="w-5 h-5 stroke-[3]" />
               </div>
             )}
 
             <div
-              className={`w-14 h-14 rounded-full flex items-center justify-center border transition-all ${
+              className={`w-12 h-12 rounded-full flex items-center justify-center border transition-all ${
                 activeNavDirection === 'lists'
-                  ? 'bg-amber-500 text-white border-amber-300 shadow-[0_0_22px_rgba(245,158,11,0.8)] ring-2 ring-amber-400'
-                  : 'bg-amber-500/85 text-white border-amber-400/60 shadow-[0_0_14px_rgba(245,158,11,0.4)] backdrop-blur-md group-hover:scale-105'
+                  ? 'bg-amber-500 text-white border-amber-300 shadow-[0_0_20px_rgba(245,158,11,0.8)] ring-2 ring-amber-400'
+                  : 'bg-amber-500/85 text-white border-amber-400/60 shadow-[0_0_12px_rgba(245,158,11,0.4)] backdrop-blur-md group-hover:scale-105'
               }`}
             >
-              <List className="w-6 h-6 stroke-[2]" />
+              <List className="w-5 h-5 stroke-[2]" />
             </div>
             <span
               className={`text-xs font-semibold tracking-wide transition-colors ${
@@ -438,18 +439,18 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
             onClick={(e) => isHomeCentered && handleHomeNodeClick(e, 'vocab')}
             disabled={!isNavVisible && !isHomeCentered}
             className={`pointer-events-auto absolute -bottom-24 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 transition-all duration-150 group cursor-pointer ${
-              activeNavDirection === 'vocab' ? 'scale-115 z-10' : 'opacity-85'
+              activeNavDirection === 'vocab' ? 'scale-110 z-10' : 'opacity-85'
             }`}
             title="Vocab"
           >
             <div
-              className={`w-14 h-14 rounded-full flex items-center justify-center border transition-all ${
+              className={`w-12 h-12 rounded-full flex items-center justify-center border transition-all ${
                 activeNavDirection === 'vocab'
-                  ? 'bg-indigo-500 text-white border-indigo-300 shadow-[0_0_22px_rgba(99,102,241,0.8)] ring-2 ring-indigo-400'
-                  : 'bg-indigo-500/85 text-white border-indigo-400/60 shadow-[0_0_14px_rgba(99,102,241,0.4)] backdrop-blur-md group-hover:scale-105'
+                  ? 'bg-indigo-500 text-white border-indigo-300 shadow-[0_0_20px_rgba(99,102,241,0.8)] ring-2 ring-indigo-400'
+                  : 'bg-indigo-500/85 text-white border-indigo-400/60 shadow-[0_0_12px_rgba(99,102,241,0.4)] backdrop-blur-md group-hover:scale-105'
               }`}
             >
-              <BookOpen className="w-6 h-6 stroke-[2]" />
+              <BookOpen className="w-5 h-5 stroke-[2]" />
             </div>
             <span
               className={`text-xs font-semibold tracking-wide transition-colors ${
@@ -462,7 +463,7 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
             {/* Red Chevron Arrow Pointer (v Down on Non-Home) */}
             {!isHomeCentered && activeNavDirection === 'vocab' && (
               <div className="absolute -bottom-6 text-red-500 font-bold animate-bounce drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]">
-                <ChevronDown className="w-6 h-6 stroke-[3]" />
+                <ChevronDown className="w-5 h-5 stroke-[3]" />
               </div>
             )}
           </button>
@@ -472,25 +473,25 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
             onClick={(e) => isHomeCentered && handleHomeNodeClick(e, 'calendar')}
             disabled={!isNavVisible && !isHomeCentered}
             className={`pointer-events-auto absolute top-1/2 -left-24 -translate-y-1/2 flex flex-col items-center gap-1 transition-all duration-150 group cursor-pointer ${
-              activeNavDirection === 'calendar' ? 'scale-115 z-10' : 'opacity-85'
+              activeNavDirection === 'calendar' ? 'scale-110 z-10' : 'opacity-85'
             }`}
             title="Calendar"
           >
             {/* Red Chevron Arrow Pointer (< Left on Non-Home) */}
             {!isHomeCentered && activeNavDirection === 'calendar' && (
-              <div className="absolute -left-6 top-3 text-red-500 font-bold animate-bounce drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]">
-                <ChevronLeft className="w-6 h-6 stroke-[3]" />
+              <div className="absolute -left-6 top-2.5 text-red-500 font-bold animate-bounce drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]">
+                <ChevronLeft className="w-5 h-5 stroke-[3]" />
               </div>
             )}
 
             <div
-              className={`w-14 h-14 rounded-full flex items-center justify-center border transition-all ${
+              className={`w-12 h-12 rounded-full flex items-center justify-center border transition-all ${
                 activeNavDirection === 'calendar'
-                  ? 'bg-orange-500 text-white border-orange-300 shadow-[0_0_22px_rgba(249,115,22,0.8)] ring-2 ring-orange-400'
-                  : 'bg-orange-500/85 text-white border-orange-400/60 shadow-[0_0_14px_rgba(249,115,22,0.4)] backdrop-blur-md group-hover:scale-105'
+                  ? 'bg-orange-500 text-white border-orange-300 shadow-[0_0_20px_rgba(249,115,22,0.8)] ring-2 ring-orange-400'
+                  : 'bg-orange-500/85 text-white border-orange-400/60 shadow-[0_0_12px_rgba(249,115,22,0.4)] backdrop-blur-md group-hover:scale-105'
               }`}
             >
-              <Calendar className="w-6 h-6 stroke-[2]" />
+              <Calendar className="w-5 h-5 stroke-[2]" />
             </div>
             <span
               className={`text-xs font-semibold tracking-wide transition-colors ${
@@ -502,7 +503,7 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
           </button>
         </div>
 
-        {/* --- CENTER BUTTON --- */}
+        {/* --- CENTER BUTTON (Prominent w-16 h-16 / 64px Radial Dot) --- */}
         {isHomeCentered ? (
           // Home Screen Center Control (Drag to create new entry)
           <div
