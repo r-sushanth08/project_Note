@@ -10,17 +10,17 @@ Calm, minimal, reflective, and distraction-free. The app is set against a **Dark
 - **Home Screen Aesthetic**: Text-only, minimalist layout — no heavy white cards on Home.
 - **Lexicon Count**: Displayed inside a sleek, semi-transparent boxed badge (`words logged`).
 
-## Hold & Aim Radial Navigation with Red Pointer (Non-Home Screens)
+## Real-Time Directional Movement Tracking Navigation (Non-Home Screens)
 
-- **Gesture**: Pressing and holding down on the central pencil dot on non-home screens (`isHomeCentered = false`) expands the 4 radial nodes (`Notes`, `Lists`, `Vocab`, `Calendar`).
-- **Initial Selection**: **Notes (`notes`) is selected by default first**, accompanied by a **vibrant red chevron arrow (`^`)** pointing to Notes.
-- **Dynamic Aiming**: Moving slightly in any direction updates the pointer indicator:
-  - **Up (`^`)**: Red chevron points to **Notes**
-  - **Left (`<`)**: Red chevron points to **Calendar**
-  - **Right (`>`)**: Red chevron points to **Lists**
-  - **Down (`v`)**: Red chevron points to **Vocab**
-- **Release Navigation**: Releasing the hold immediately navigates to the screen where the red arrow was pointing (`setCurrentView(activeDirection)`).
-- **Home Screen**: Unchanged.
+- **Hold Gesture**: Pressing and holding down on the central pencil dot on non-home screens (`isHomeCentered = false`) expands the 4 radial nodes (`Notes`, `Lists`, `Vocab`, `Calendar`).
+- **Zero Default Selection**: When pressing down, **no node is selected by default (`activeDirection = null`)**. No red arrow appears initially until movement occurs.
+- **Real-Time Directional Tracking**: Moving your finger/cursor slightly away from the center dot (> 15px) dynamically selects the targeted direction:
+  - **Move Left (`<`)**: Highlights **Calendar** (`<`) with red chevron arrow pointer
+  - **Move Right (`>`)**: Highlights **Lists** (`>`) with red chevron arrow pointer
+  - **Move Up (`^`)**: Highlights **Notes** (`^`) with red chevron arrow pointer
+  - **Move Down (`v`)**: Highlights **Vocab** (`v`) with red chevron arrow pointer
+- **Release Navigation**: Releasing the hold while pointing at a direction instantly navigates to that screen (`setCurrentView`). Releasing inside the center dead zone closes the menu cleanly without triggering navigation.
+- **Home Screen**: Retains full click navigation and drag-to-create actions.
 
 ## Larger Back Button Tap Target
 
@@ -39,12 +39,6 @@ Calm, minimal, reflective, and distraction-free. The app is set against a **Dark
 - **Folder Deck Physics**: Note cards and Vocab cards stack over each other as the user scrolls up (`sticky top-[...]`), creating an authentic physical folder/deck effect.
 - **2-Card Max Stack**: Capped at 2 visible card layers max (Current Card + Previous Card), completely hiding older cards underneath for infinite performance.
 - **Separate Title Header & Scroll Boundary**: The section title header sits in a static header container at top (`flex-shrink-0`), while cards scroll strictly within the content region below (`flex-1 overflow-y-auto`). Cards **NEVER pass underneath or behind the title header**.
-
-## Auto-Rotating Lexicon of the Day (Home Screen)
-
-- **Static Orange Subheading**: The `LEXICON OF THE DAY` subheading with **vibrant orange underline** (`border-b-2 border-orange-500`) stays fixed at top and never shifts during swiping.
-- **Auto-Rotation**: Automatically rotates through the 3 daily Lexicon words every 6 seconds with smooth slide-in CSS transitions.
-- **Manual Override**: Touch swiping or clicking pagination dots pauses/resets the auto-rotation loop.
 
 ## Mobile Responsiveness & Touch Gestures
 

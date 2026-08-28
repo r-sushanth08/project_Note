@@ -7,12 +7,12 @@ interface RadialControlProps {
   isHomeCentered?: boolean;
 }
 
-type Direction = 'notes' | 'lists' | 'vocab' | 'calendar';
+type Direction = 'notes' | 'lists' | 'vocab' | 'calendar' | null;
 
 export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = false }) => {
   const { openNewEntry, setCurrentView } = useEntries();
   const [isHolding, setIsHolding] = useState(false);
-  const [activeDirection, setActiveDirection] = useState<Direction>('notes');
+  const [activeDirection, setActiveDirection] = useState<Direction>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const touchStartPos = useRef<{ x: number; y: number } | null>(null);
@@ -21,13 +21,19 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
 
   // Calculate direction sector based on pointer coordinates relative to center of control
   const calculateDirectionFromCoords = (clientX: number, clientY: number): Direction => {
-    if (!containerRef.current) return 'notes';
+    if (!containerRef.current) return null;
     const rect = containerRef.current.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
 
     const deltaX = clientX - centerX;
     const deltaY = clientY - centerY;
+    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+    // Dead zone check (< 15px from center)
+    if (distance < 15) {
+      return null;
+    }
 
     const angleRad = Math.atan2(deltaY, deltaX);
     const angleDeg = (angleRad * 180) / Math.PI;
@@ -77,6 +83,7 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
 
     touchStartPos.current = null;
     isDraggingHomeRef.current = false;
+    setActiveDirection(null);
   };
 
   // Direct Node Click Handler for Home Screen Navigation
@@ -85,11 +92,12 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
     setCurrentView(view);
   };
 
-  // --- NON-HOME HOLD & AIM NAVIGATION LOGIC ---
+  // --- NON-HOME REAL-TIME MOVEMENT TRACKING LOGIC ---
   const handleNonHomeHoldStart = (pointerId?: number) => {
     isPointerDownRef.current = true;
     setIsHolding(true);
-    setActiveDirection('notes');
+    // No default auto-selection when hold starts!
+    setActiveDirection(null);
 
     if (containerRef.current && pointerId !== undefined && containerRef.current.setPointerCapture) {
       try {
@@ -111,11 +119,13 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
     isPointerDownRef.current = false;
     setIsHolding(false);
 
-    // Instantly navigate to active direction where red arrow was pointing
+    // Instantly navigate to active direction if set
     if (activeDirection === 'notes') setCurrentView('notes');
     else if (activeDirection === 'lists') setCurrentView('lists');
     else if (activeDirection === 'vocab') setCurrentView('vocab');
     else if (activeDirection === 'calendar') setCurrentView('calendar');
+
+    setActiveDirection(null);
   };
 
   // Close menu on Escape key
@@ -123,6 +133,7 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         if (!isHomeCentered) setIsHolding(false);
+        setActiveDirection(null);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -324,7 +335,7 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
             <Pencil className="w-6 h-6 stroke-[2] transition-transform group-hover:rotate-12" />
           </div>
         ) : (
-          // Non-Home Screen Center Control (Hold & Aim Navigation)
+          // Non-Home Screen Center Control (Real-Time Movement Tracking Navigation)
           <div
             onPointerDown={(e) => handleNonHomeHoldStart(e.pointerId)}
             onPointerMove={(e) => handleNonHomeHoldMove(e.clientX, e.clientY)}
@@ -341,7 +352,7 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
             className={`relative w-16 h-16 rounded-full bg-sage-500 text-white flex items-center justify-center shadow-float active:scale-95 transition-all duration-200 group touch-none cursor-pointer ${
               isHolding ? 'ring-4 ring-red-500/50 scale-105 bg-red-500' : ''
             }`}
-            title="Press & Hold to Aim Navigation"
+            title="Hold & Move to Aim Navigation"
           >
             <Pencil className="w-6 h-6 stroke-[2] transition-transform group-hover:rotate-12" />
           </div>
