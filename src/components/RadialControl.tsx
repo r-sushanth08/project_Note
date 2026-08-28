@@ -16,7 +16,7 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
 
   const containerRef = useRef<HTMLDivElement>(null);
   const touchStartPos = useRef<{ x: number; y: number } | null>(null);
-  const isDraggingRef = useRef<boolean>(false);
+  const wasDraggedRef = useRef<boolean>(false);
 
   // Calculate direction sector from coordinates relative to center of control
   const calculateDirectionFromCoords = (clientX: number, clientY: number) => {
@@ -29,19 +29,13 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
     const deltaY = clientY - centerY;
     const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
-    // Dead zone check (< 30px)
-    if (distance < 30) {
+    if (distance < 25) {
       return null;
     }
 
     const angleRad = Math.atan2(deltaY, deltaX);
     const angleDeg = (angleRad * 180) / Math.PI;
 
-    // 4 Direction sectors:
-    // Top: -135 to -45 deg -> Notes
-    // Right: -45 to 45 deg -> Lists
-    // Bottom: 45 to 135 deg -> Vocab
-    // Left: 135 to 180 or -180 to -135 deg -> Calendar
     if (angleDeg >= -135 && angleDeg < -45) {
       return 'notes';
     } else if (angleDeg >= -45 && angleDeg < 45) {
@@ -53,59 +47,57 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
     }
   };
 
-  const handlePointerDown = (clientX: number, clientY: number) => {
+  const handleStart = (clientX: number, clientY: number) => {
     touchStartPos.current = { x: clientX, y: clientY };
-    isDraggingRef.current = false;
+    wasDraggedRef.current = false;
   };
 
-  const handlePointerMove = (clientX: number, clientY: number) => {
+  const handleMove = (clientX: number, clientY: number) => {
     if (!touchStartPos.current) return;
     const deltaX = clientX - touchStartPos.current.x;
     const deltaY = clientY - touchStartPos.current.y;
     const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
     if (distance > 15) {
-      isDraggingRef.current = true;
+      wasDraggedRef.current = true;
       if (!isOpen) setIsOpen(true);
       const dir = calculateDirectionFromCoords(clientX, clientY);
       setActiveDirection(dir);
     }
   };
 
-  const handlePointerUp = () => {
-    if (isDraggingRef.current && activeDirection) {
-      // Drag & Drop Release -> Create New Entry
-      executeDragAction(activeDirection);
+  const handleEnd = () => {
+    if (wasDraggedRef.current && activeDirection) {
+      // Drag action -> Create New Entry
+      if (activeDirection === 'notes') openNewEntry('note');
+      else if (activeDirection === 'lists') openNewEntry('list');
+      else if (activeDirection === 'vocab') openNewEntry('vocab');
+      else if (activeDirection === 'calendar') setCurrentView('calendar');
+
       if (!isHomeCentered) setIsOpen(false);
-    } else if (!isDraggingRef.current) {
-      // Single Click / Tap -> Toggle Expansion Menu
-      if (!isHomeCentered) {
-        setIsOpen((prev) => !prev);
-      }
     }
 
-    touchStartPos.current = null;
-    isDraggingRef.current = false;
-    setActiveDirection(null);
+    // Reset drag tracking state after short delay to allow click handler check
+    setTimeout(() => {
+      touchStartPos.current = null;
+      wasDraggedRef.current = false;
+      setActiveDirection(null);
+    }, 50);
   };
 
-  const executeDragAction = (dir: Direction) => {
-    if (dir === 'notes') {
-      openNewEntry('note');
-    } else if (dir === 'lists') {
-      openNewEntry('list');
-    } else if (dir === 'vocab') {
-      openNewEntry('vocab');
-    } else if (dir === 'calendar') {
-      setCurrentView('calendar');
+  const handleCenterButtonClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    // Only toggle open/close if the user tapped/clicked without dragging
+    if (!wasDraggedRef.current && !isHomeCentered) {
+      setIsOpen((prev) => !prev);
     }
   };
 
-  // Direct Button Click Handler -> Navigates to Section Screen
-  const handleDirectClick = (dir: ViewMode) => {
+  const handleNodeClick = (e: React.MouseEvent, view: ViewMode) => {
+    e.stopPropagation();
     if (!isHomeCentered) setIsOpen(false);
     setActiveDirection(null);
-    setCurrentView(dir);
+    setCurrentView(view);
   };
 
   // Close menu on Escape key
@@ -147,11 +139,11 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
         >
           {/* TOP: Notes */}
           <button
-            onClick={() => handleDirectClick('notes')}
+            onClick={(e) => handleNodeClick(e, 'notes')}
             className={`pointer-events-auto absolute -top-20 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 group transition-transform duration-150 ${
               activeDirection === 'notes' ? 'scale-110' : ''
             }`}
-            title="Click to browse Notes / Drag to create new Note"
+            title="Click to browse Notes"
           >
             <div
               className={`w-12 h-12 rounded-full flex items-center justify-center border transition-all ${
@@ -173,11 +165,11 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
 
           {/* RIGHT: Lists */}
           <button
-            onClick={() => handleDirectClick('lists')}
+            onClick={(e) => handleNodeClick(e, 'lists')}
             className={`pointer-events-auto absolute top-1/2 -right-20 -translate-y-1/2 flex flex-col items-center gap-1 group transition-transform duration-150 ${
               activeDirection === 'lists' ? 'scale-110' : ''
             }`}
-            title="Click to browse Lists / Drag to create new List"
+            title="Click to browse Lists"
           >
             <div
               className={`w-12 h-12 rounded-full flex items-center justify-center border transition-all ${
@@ -199,11 +191,11 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
 
           {/* BOTTOM: Vocab */}
           <button
-            onClick={() => handleDirectClick('vocab')}
+            onClick={(e) => handleNodeClick(e, 'vocab')}
             className={`pointer-events-auto absolute -bottom-20 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 group transition-transform duration-150 ${
               activeDirection === 'vocab' ? 'scale-110' : ''
             }`}
-            title="Click to browse Vocab / Drag to add new Vocab"
+            title="Click to browse Vocab"
           >
             <div
               className={`w-12 h-12 rounded-full flex items-center justify-center border transition-all ${
@@ -225,11 +217,11 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
 
           {/* LEFT: Calendar */}
           <button
-            onClick={() => handleDirectClick('calendar')}
+            onClick={(e) => handleNodeClick(e, 'calendar')}
             className={`pointer-events-auto absolute top-1/2 -left-20 -translate-y-1/2 flex flex-col items-center gap-1 group transition-transform duration-150 ${
               activeDirection === 'calendar' ? 'scale-110' : ''
             }`}
-            title="Click or Drag to view Calendar"
+            title="Click to view Calendar"
           >
             <div
               className={`w-12 h-12 rounded-full flex items-center justify-center border transition-all ${
@@ -252,27 +244,25 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
 
         {/* Center Pencil Dot Button */}
         <button
-          onPointerDown={(e) => {
-            handlePointerDown(e.clientX, e.clientY);
-            (e.target as HTMLElement).setPointerCapture(e.pointerId);
-          }}
-          onPointerMove={(e) => handlePointerMove(e.clientX, e.clientY)}
-          onPointerUp={handlePointerUp}
+          onClick={handleCenterButtonClick}
+          onMouseDown={(e) => handleStart(e.clientX, e.clientY)}
+          onMouseMove={(e) => handleMove(e.clientX, e.clientY)}
+          onMouseUp={handleEnd}
           onTouchStart={(e) => {
             if (e.touches.length > 0) {
-              handlePointerDown(e.touches[0].clientX, e.touches[0].clientY);
+              handleStart(e.touches[0].clientX, e.touches[0].clientY);
             }
           }}
           onTouchMove={(e) => {
             if (e.touches.length > 0) {
-              handlePointerMove(e.touches[0].clientX, e.touches[0].clientY);
+              handleMove(e.touches[0].clientX, e.touches[0].clientY);
             }
           }}
-          onTouchEnd={handlePointerUp}
+          onTouchEnd={handleEnd}
           className={`relative w-16 h-16 rounded-full bg-sage-500 text-white flex items-center justify-center shadow-float hover:bg-sage-600 active:scale-95 transition-all duration-200 group touch-none ${
             isOpen ? 'ring-4 ring-orange-400/40 scale-105 bg-orange-500' : ''
           }`}
-          title="Tap to toggle menu / Drag to create new entry"
+          title="Click to toggle menu / Drag to create new entry"
         >
           <Pencil className="w-6 h-6 stroke-[2] transition-transform group-hover:rotate-12" />
         </button>
