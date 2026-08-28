@@ -10,21 +10,39 @@ Calm, minimal, reflective, and distraction-free. The app is set against a **Dark
 - **Home Screen Aesthetic**: Text-only, minimalist layout — no heavy white cards on Home.
 - **Lexicon Count**: Displayed inside a sleek, semi-transparent boxed badge (`words logged`).
 
-## Dual-Mode Radial Capture & Navigation (Non-Home Screens)
+## Comprehensive Summary of Radial Control Trigger Actions & Behaviors
 
-- **Mode A: Quick Tap (< 250ms, < 12px movement) — Entry Creation Mode**:
-  - Tapping the center pencil dot morphs the pencil icon smoothly into an orange **`+` Plus Icon**.
-  - Expands **3 Creation Nodes**:
-    - **Top (`^`)**: `+ Note` (FileText + Plus)
-    - **Right (`>`)**: `+ List` (List + Plus)
-    - **Left (`<`)**: `+ Vocab` (BookOpen + Plus)
+The floating radial control ("the dot") supports 3 distinct interaction modes:
+
+### 1. 🏡 Home Screen Mode (`isHomeCentered = true`)
+- **Location**: Positioned in the upper-center viewport.
+- **Static Nodes**: 4 radial node icons (`Notes`, `Lists`, `Vocab`, `Calendar`) are displayed around the central pencil dot.
+- **Click Node Icon**: Tapping any node icon directly navigates to that section screen (`Notes`, `Lists`, `Vocab`, `Calendar`).
+- **Drag & Drop Gesture**: Dragging from the central pencil dot toward any direction and releasing immediately opens new entry creation (`New Note`, `New List`, `New Vocab`, `Calendar`).
+
+### 2. ⚡ Mode A: Quick Tap Entry Creation Mode (Non-Home Screens, `isHomeCentered = false`)
+- **Trigger**: Quick tap (< 250ms, < 12px movement) on the central pencil dot on any non-home screen.
+- **Visual Transformations**:
+  - The center pencil icon morphs smoothly into an orange **`+` Plus Icon**.
+  - Expands **3 Creation Nodes** with generous spacing (`-top-24`, `-right-24`, `-left-24`):
+    - **Top (`^`)**: `+ Note` (Emerald Green)
+    - **Right (`>`)**: `+ List` (Amber Yellow)
+    - **Left (`<`)**: `+ Vocab` (Purple / Indigo)
     - *(Calendar excluded from creation mode)*.
-  - Tapping any creation node opens `openNewEntry` and closes menu.
+- **Rewind Toggle**: Tapping the central `+` button again rewinds back to the pencil icon.
+- **Actions**: Tapping any creation node opens fast entry creation (`openNewEntry`) and closes the menu cleanly.
 
-- **Mode B: Hold & Swipe Drag — Navigation Mode**:
-  - Pressing, holding & moving (> 12px distance) retains pencil icon.
-  - Expands **4 Navigation Nodes** (`Notes`, `Lists`, `Vocab`, `Calendar`) with **Red Chevron Pointer Indicator** (`^`, `>`, `v`, `<`).
-  - Releasing instantly navigates to `setCurrentView(activeDirection)`.
+### 3. 🎯 Mode B: Hold & Aim Navigation Mode (Non-Home Screens, `isHomeCentered = false`)
+- **Trigger**: Pressing down and holding on the central pencil dot.
+- **Visual Transformations**:
+  - Instantly pops **4 Vibrant Colored Navigation Nodes** into view:
+    - **Top (`^`)**: Notes — Emerald Green (`bg-emerald-500 shadow-[0_0_18px_rgba(16,185,129,0.6)]`)
+    - **Right (`>`)**: Lists — Amber Yellow (`bg-amber-500 shadow-[0_0_18px_rgba(245,158,11,0.6)]`)
+    - **Bottom (`v`)**: Vocab — Purple / Indigo (`bg-indigo-500 shadow-[0_0_18px_rgba(99,102,241,0.6)]`)
+    - **Left (`<`)**: Calendar — Orange Accent (`bg-orange-500 shadow-[0_0_18px_rgba(249,115,22,0.6)]`)
+  - **Red Chevron Pointer Indicator (`^`, `>`, `v`, `<`)**: Displays an animated red chevron arrow pointing to the targeted direction.
+- **Real-Time Aiming**: Aiming/moving toward any direction lights up that colored node icon.
+- **Release Navigation**: Releasing your hold immediately navigates to that screen (`setCurrentView(activeDirection)`). Releasing inside the center dead zone closes the menu cleanly without triggering navigation.
 
 ## Larger Back Button Tap Target
 

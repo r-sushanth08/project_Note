@@ -101,6 +101,12 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
     touchStartPos.current = { x: clientX, y: clientY };
     hasDraggedRef.current = false;
 
+    // Instant Navigation Pop on Hold Down!
+    if (!isQuickCreateOpen) {
+      setIsHoldingNav(true);
+      setActiveDirection(null);
+    }
+
     if (containerRef.current && pointerId !== undefined && containerRef.current.setPointerCapture) {
       try {
         containerRef.current.setPointerCapture(pointerId);
@@ -118,10 +124,9 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
 
     if (distance > 12) {
       hasDraggedRef.current = true;
-      // Close quick create mode if user starts swiping/holding for navigation
       if (isQuickCreateOpen) setIsQuickCreateOpen(false);
-
       setIsHoldingNav(true);
+
       const dir = calculateDirectionFromCoords(clientX, clientY);
       setActiveDirection(dir);
     }
@@ -133,7 +138,7 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
     const duration = Date.now() - pressStartTimeRef.current;
 
     if (!hasDraggedRef.current && duration < 250) {
-      // QUICK TAP -> Toggle Entry Creation Mode!
+      // QUICK TAP -> Toggle Entry Creation Mode (Rewinds back to pencil if already open!)
       setIsQuickCreateOpen((prev) => !prev);
       setIsHoldingNav(false);
       setActiveDirection(null);
@@ -201,19 +206,19 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
             : 'fixed bottom-28 left-1/2 -translate-x-1/2 flex justify-center items-center'
         }`}
       >
-        {/* --- 1. QUICK CREATE NODES (Expanded on Quick Tap) --- */}
+        {/* --- 1. QUICK CREATE NODES (Expanded on Quick Tap with Generous Spacing) --- */}
         {isCreateVisible && (
           <div className="absolute inset-0 z-50 pointer-events-auto">
             {/* TOP: + Note */}
             <button
               onClick={(e) => handleQuickCreateClick(e, 'note')}
-              className="absolute -top-20 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 group cursor-pointer animate-scale-in"
+              className="absolute -top-24 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 group cursor-pointer animate-scale-in"
               title="Create New Note"
             >
-              <div className="w-12 h-12 rounded-full flex items-center justify-center bg-orange-500 text-white border border-orange-400 shadow-[0_0_18px_rgba(249,115,22,0.6)] group-hover:scale-110 transition-transform">
+              <div className="w-13 h-13 rounded-full flex items-center justify-center bg-emerald-500 text-white border border-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.6)] group-hover:scale-110 transition-transform">
                 <FileText className="w-5 h-5 stroke-[2]" />
               </div>
-              <span className="text-xs font-semibold text-orange-300 tracking-wide bg-slate-900/90 px-2 py-0.5 rounded-full border border-orange-500/30">
+              <span className="text-xs font-semibold text-emerald-300 tracking-wide bg-slate-900/95 px-2.5 py-0.5 rounded-full border border-emerald-500/40 shadow-sm">
                 + Note
               </span>
             </button>
@@ -221,13 +226,13 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
             {/* RIGHT: + List */}
             <button
               onClick={(e) => handleQuickCreateClick(e, 'list')}
-              className="absolute top-1/2 -right-20 -translate-y-1/2 flex flex-col items-center gap-1 group cursor-pointer animate-scale-in"
+              className="absolute top-1/2 -right-24 -translate-y-1/2 flex flex-col items-center gap-1.5 group cursor-pointer animate-scale-in"
               title="Create New List"
             >
-              <div className="w-12 h-12 rounded-full flex items-center justify-center bg-amber-500 text-white border border-amber-400 shadow-[0_0_18px_rgba(245,158,11,0.6)] group-hover:scale-110 transition-transform">
+              <div className="w-13 h-13 rounded-full flex items-center justify-center bg-amber-500 text-white border border-amber-400 shadow-[0_0_20px_rgba(245,158,11,0.6)] group-hover:scale-110 transition-transform">
                 <List className="w-5 h-5 stroke-[2]" />
               </div>
-              <span className="text-xs font-semibold text-amber-300 tracking-wide bg-slate-900/90 px-2 py-0.5 rounded-full border border-amber-500/30">
+              <span className="text-xs font-semibold text-amber-300 tracking-wide bg-slate-900/95 px-2.5 py-0.5 rounded-full border border-amber-500/40 shadow-sm">
                 + List
               </span>
             </button>
@@ -235,20 +240,20 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
             {/* LEFT: + Vocab */}
             <button
               onClick={(e) => handleQuickCreateClick(e, 'vocab')}
-              className="absolute top-1/2 -left-20 -translate-y-1/2 flex flex-col items-center gap-1 group cursor-pointer animate-scale-in"
+              className="absolute top-1/2 -left-24 -translate-y-1/2 flex flex-col items-center gap-1.5 group cursor-pointer animate-scale-in"
               title="Add Vocabulary Card"
             >
-              <div className="w-12 h-12 rounded-full flex items-center justify-center bg-indigo-500 text-white border border-indigo-400 shadow-[0_0_18px_rgba(99,102,241,0.6)] group-hover:scale-110 transition-transform">
+              <div className="w-13 h-13 rounded-full flex items-center justify-center bg-indigo-500 text-white border border-indigo-400 shadow-[0_0_20px_rgba(99,102,241,0.6)] group-hover:scale-110 transition-transform">
                 <BookOpen className="w-5 h-5 stroke-[2]" />
               </div>
-              <span className="text-xs font-semibold text-indigo-300 tracking-wide bg-slate-900/90 px-2 py-0.5 rounded-full border border-indigo-500/30">
+              <span className="text-xs font-semibold text-indigo-300 tracking-wide bg-slate-900/95 px-2.5 py-0.5 rounded-full border border-indigo-500/40 shadow-sm">
                 + Vocab
               </span>
             </button>
           </div>
         )}
 
-        {/* --- 2. HOLD & AIM NAVIGATION NODES (Expanded on Swipe Drag or Home) --- */}
+        {/* --- 2. VIBRANT COLORED NAVIGATION NODES (Expanded on Hold) --- */}
         <div
           className={`absolute inset-0 transition-all duration-250 ${
             isNavVisible || isHomeCentered
@@ -256,12 +261,12 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
               : 'opacity-0 scale-90 pointer-events-none invisible'
           }`}
         >
-          {/* TOP: Notes (^ Up) */}
+          {/* TOP: Notes (Emerald Green) */}
           <button
             onClick={(e) => isHomeCentered && handleHomeNodeClick(e, 'notes')}
             disabled={!isNavVisible && !isHomeCentered}
-            className={`pointer-events-auto absolute -top-20 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 transition-all duration-150 group cursor-pointer ${
-              activeDirection === 'notes' ? 'scale-110' : 'opacity-70'
+            className={`pointer-events-auto absolute -top-24 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 transition-all duration-150 group cursor-pointer ${
+              activeDirection === 'notes' ? 'scale-115 z-10' : 'opacity-85'
             }`}
             title="Notes"
           >
@@ -273,31 +278,29 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
             )}
 
             <div
-              className={`w-12 h-12 rounded-full flex items-center justify-center border transition-all ${
-                !isHomeCentered && activeDirection === 'notes'
-                  ? 'bg-red-500/25 text-red-300 border-red-500 shadow-[0_0_16px_rgba(239,68,68,0.6)]'
-                  : 'bg-slate-900/90 text-white border-white/20 shadow-card backdrop-blur-md group-hover:border-orange-400'
+              className={`w-13 h-13 rounded-full flex items-center justify-center border transition-all ${
+                activeDirection === 'notes'
+                  ? 'bg-emerald-500 text-white border-emerald-300 shadow-[0_0_22px_rgba(16,185,129,0.8)] ring-2 ring-emerald-400'
+                  : 'bg-emerald-500/85 text-white border-emerald-400/60 shadow-[0_0_14px_rgba(16,185,129,0.4)] backdrop-blur-md group-hover:scale-105'
               }`}
             >
-              <FileText className="w-5 h-5 stroke-[1.75]" />
+              <FileText className="w-5.5 h-5.5 stroke-[2]" />
             </div>
             <span
               className={`text-xs font-semibold tracking-wide transition-colors ${
-                !isHomeCentered && activeDirection === 'notes'
-                  ? 'text-red-400'
-                  : 'text-slate-300 group-hover:text-white'
+                activeDirection === 'notes' ? 'text-emerald-300 font-bold' : 'text-slate-200'
               }`}
             >
               Notes
             </span>
           </button>
 
-          {/* RIGHT: Lists (> Right) */}
+          {/* RIGHT: Lists (Amber Yellow) */}
           <button
             onClick={(e) => isHomeCentered && handleHomeNodeClick(e, 'lists')}
             disabled={!isNavVisible && !isHomeCentered}
-            className={`pointer-events-auto absolute top-1/2 -right-20 -translate-y-1/2 flex flex-col items-center gap-1 transition-all duration-150 group cursor-pointer ${
-              activeDirection === 'lists' ? 'scale-110' : 'opacity-70'
+            className={`pointer-events-auto absolute top-1/2 -right-24 -translate-y-1/2 flex flex-col items-center gap-1 transition-all duration-150 group cursor-pointer ${
+              activeDirection === 'lists' ? 'scale-115 z-10' : 'opacity-85'
             }`}
             title="Lists"
           >
@@ -309,48 +312,44 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
             )}
 
             <div
-              className={`w-12 h-12 rounded-full flex items-center justify-center border transition-all ${
-                !isHomeCentered && activeDirection === 'lists'
-                  ? 'bg-red-500/25 text-red-300 border-red-500 shadow-[0_0_16px_rgba(239,68,68,0.6)]'
-                  : 'bg-slate-900/90 text-white border-white/20 shadow-card backdrop-blur-md group-hover:border-orange-400'
+              className={`w-13 h-13 rounded-full flex items-center justify-center border transition-all ${
+                activeDirection === 'lists'
+                  ? 'bg-amber-500 text-white border-amber-300 shadow-[0_0_22px_rgba(245,158,11,0.8)] ring-2 ring-amber-400'
+                  : 'bg-amber-500/85 text-white border-amber-400/60 shadow-[0_0_14px_rgba(245,158,11,0.4)] backdrop-blur-md group-hover:scale-105'
               }`}
             >
-              <List className="w-5 h-5 stroke-[1.75]" />
+              <List className="w-5.5 h-5.5 stroke-[2]" />
             </div>
             <span
               className={`text-xs font-semibold tracking-wide transition-colors ${
-                !isHomeCentered && activeDirection === 'lists'
-                  ? 'text-red-400'
-                  : 'text-slate-300 group-hover:text-white'
+                activeDirection === 'lists' ? 'text-amber-300 font-bold' : 'text-slate-200'
               }`}
             >
               Lists
             </span>
           </button>
 
-          {/* BOTTOM: Vocab (v Down) */}
+          {/* BOTTOM: Vocab (Purple / Indigo) */}
           <button
             onClick={(e) => isHomeCentered && handleHomeNodeClick(e, 'vocab')}
             disabled={!isNavVisible && !isHomeCentered}
-            className={`pointer-events-auto absolute -bottom-20 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 transition-all duration-150 group cursor-pointer ${
-              activeDirection === 'vocab' ? 'scale-110' : 'opacity-70'
+            className={`pointer-events-auto absolute -bottom-24 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 transition-all duration-150 group cursor-pointer ${
+              activeDirection === 'vocab' ? 'scale-115 z-10' : 'opacity-85'
             }`}
             title="Vocab"
           >
             <div
-              className={`w-12 h-12 rounded-full flex items-center justify-center border transition-all ${
-                !isHomeCentered && activeDirection === 'vocab'
-                  ? 'bg-red-500/25 text-red-300 border-red-500 shadow-[0_0_16px_rgba(239,68,68,0.6)]'
-                  : 'bg-slate-900/90 text-white border-white/20 shadow-card backdrop-blur-md group-hover:border-orange-400'
+              className={`w-13 h-13 rounded-full flex items-center justify-center border transition-all ${
+                activeDirection === 'vocab'
+                  ? 'bg-indigo-500 text-white border-indigo-300 shadow-[0_0_22px_rgba(99,102,241,0.8)] ring-2 ring-indigo-400'
+                  : 'bg-indigo-500/85 text-white border-indigo-400/60 shadow-[0_0_14px_rgba(99,102,241,0.4)] backdrop-blur-md group-hover:scale-105'
               }`}
             >
-              <BookOpen className="w-5 h-5 stroke-[1.75]" />
+              <BookOpen className="w-5.5 h-5.5 stroke-[2]" />
             </div>
             <span
               className={`text-xs font-semibold tracking-wide transition-colors ${
-                !isHomeCentered && activeDirection === 'vocab'
-                  ? 'text-red-400'
-                  : 'text-slate-300 group-hover:text-white'
+                activeDirection === 'vocab' ? 'text-indigo-300 font-bold' : 'text-slate-200'
               }`}
             >
               Vocab
@@ -364,12 +363,12 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
             )}
           </button>
 
-          {/* LEFT: Calendar (< Left) */}
+          {/* LEFT: Calendar (Orange Accent) */}
           <button
             onClick={(e) => isHomeCentered && handleHomeNodeClick(e, 'calendar')}
             disabled={!isNavVisible && !isHomeCentered}
-            className={`pointer-events-auto absolute top-1/2 -left-20 -translate-y-1/2 flex flex-col items-center gap-1 transition-all duration-150 group cursor-pointer ${
-              activeDirection === 'calendar' ? 'scale-110' : 'opacity-70'
+            className={`pointer-events-auto absolute top-1/2 -left-24 -translate-y-1/2 flex flex-col items-center gap-1 transition-all duration-150 group cursor-pointer ${
+              activeDirection === 'calendar' ? 'scale-115 z-10' : 'opacity-85'
             }`}
             title="Calendar"
           >
@@ -381,19 +380,17 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
             )}
 
             <div
-              className={`w-12 h-12 rounded-full flex items-center justify-center border transition-all ${
-                !isHomeCentered && activeDirection === 'calendar'
-                  ? 'bg-red-500/25 text-red-300 border-red-500 shadow-[0_0_16px_rgba(239,68,68,0.6)]'
-                  : 'bg-slate-900/90 text-white border-white/20 shadow-card backdrop-blur-md group-hover:border-orange-400'
+              className={`w-13 h-13 rounded-full flex items-center justify-center border transition-all ${
+                activeDirection === 'calendar'
+                  ? 'bg-orange-500 text-white border-orange-300 shadow-[0_0_22px_rgba(249,115,22,0.8)] ring-2 ring-orange-400'
+                  : 'bg-orange-500/85 text-white border-orange-400/60 shadow-[0_0_14px_rgba(249,115,22,0.4)] backdrop-blur-md group-hover:scale-105'
               }`}
             >
-              <Calendar className="w-5 h-5 stroke-[1.75]" />
+              <Calendar className="w-5.5 h-5.5 stroke-[2]" />
             </div>
             <span
               className={`text-xs font-semibold tracking-wide transition-colors ${
-                !isHomeCentered && activeDirection === 'calendar'
-                  ? 'text-red-400'
-                  : 'text-slate-300 group-hover:text-white'
+                activeDirection === 'calendar' ? 'text-orange-300 font-bold' : 'text-slate-200'
               }`}
             >
               Calendar
