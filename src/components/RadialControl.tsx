@@ -19,7 +19,6 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
 
   const containerRef = useRef<HTMLDivElement>(null);
   const touchStartPos = useRef<{ x: number; y: number } | null>(null);
-  const pressStartTimeRef = useRef<number>(0);
   const hasDraggedRef = useRef<boolean>(false);
   const isPointerDownRef = useRef<boolean>(false);
 
@@ -104,10 +103,9 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
     setCurrentView(view);
   };
 
-  // --- NON-HOME DUAL-MODE LOGIC (PENCIL & PLUS STATES) ---
-  const handleNonHomeStart = (clientX: number, clientY: number, pointerId?: number) => {
+  // --- NON-HOME DUAL-MODE GESTURE LOGIC ---
+  const handleNonHomeStart = (clientX: number, clientY: number) => {
     isPointerDownRef.current = true;
-    pressStartTimeRef.current = Date.now();
     touchStartPos.current = { x: clientX, y: clientY };
     hasDraggedRef.current = false;
 
@@ -118,14 +116,6 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
     } else {
       // Plus State: Prepare for Drag Creation
       setActiveCreateDirection(null);
-    }
-
-    if (containerRef.current && pointerId !== undefined && containerRef.current.setPointerCapture) {
-      try {
-        containerRef.current.setPointerCapture(pointerId);
-      } catch (err) {
-        // Fallback
-      }
     }
   };
 
@@ -154,17 +144,10 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
   const handleNonHomeEnd = () => {
     if (!isPointerDownRef.current) return;
     isPointerDownRef.current = false;
-    const duration = Date.now() - pressStartTimeRef.current;
 
     if (!isQuickCreateOpen) {
-      // --- PENCIL STATE RELEASE ---
-      if (!hasDraggedRef.current && duration < 250) {
-        // Quick Tap Pencil Dot -> Morph to Plus State!
-        setIsQuickCreateOpen(true);
-        setIsHoldingNav(false);
-        setActiveNavDirection(null);
-      } else if (hasDraggedRef.current && isHoldingNav) {
-        // Drag in Pencil State -> Perform Navigation!
+      // --- PENCIL STATE DRAG RELEASE ---
+      if (hasDraggedRef.current && isHoldingNav) {
         setIsHoldingNav(false);
         if (activeNavDirection === 'notes') setCurrentView('notes');
         else if (activeNavDirection === 'lists') setCurrentView('lists');
@@ -176,25 +159,44 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
         setActiveNavDirection(null);
       }
     } else {
-      // --- PLUS STATE RELEASE ---
-      if (!hasDraggedRef.current || !activeCreateDirection) {
-        // Click or release on + Center Dot without direction -> REWIND BACK TO PENCIL STATE!
-        setIsQuickCreateOpen(false);
-        setActiveCreateDirection(null);
-      } else if (hasDraggedRef.current && activeCreateDirection) {
-        // Drag in Plus State -> Perform Creation!
+      // --- PLUS STATE DRAG RELEASE ---
+      if (hasDraggedRef.current && activeCreateDirection) {
         const typeToCreate = activeCreateDirection;
         setIsQuickCreateOpen(false);
         setActiveCreateDirection(null);
         openNewEntry(typeToCreate);
       } else {
-        setIsQuickCreateOpen(false);
         setActiveCreateDirection(null);
       }
     }
 
     touchStartPos.current = null;
-    hasDraggedRef.current = false;
+    // Reset hasDraggedRef after short timeout to let onClick handler check drag state
+    setTimeout(() => {
+      hasDraggedRef.current = false;
+    }, 50);
+  };
+
+  // Center Button Click Handler (Handles Quick Taps & Rewind Toggles reliably!)
+  const handleCenterButtonClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    // If user was dragging, do not process single click toggle
+    if (hasDraggedRef.current) return;
+
+    if (isQuickCreateOpen) {
+      // REWIND BACK TO PENCIL STATE!
+      setIsQuickCreateOpen(false);
+      setIsHoldingNav(false);
+      setActiveCreateDirection(null);
+      setActiveNavDirection(null);
+    } else {
+      // QUICK TAP -> OPEN PLUS STATE!
+      setIsQuickCreateOpen(true);
+      setIsHoldingNav(false);
+      setActiveCreateDirection(null);
+      setActiveNavDirection(null);
+    }
   };
 
   // Quick Create Node Click Handler (Direct Tap on Popped Node Icon)
@@ -503,10 +505,10 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
           </button>
         </div>
 
-        {/* --- CENTER BUTTON (Prominent w-16 h-16 / 64px Radial Dot) --- */}
+        {/* --- CENTER BUTTON (Prominent w-16 h-16 / 64px Radial Dot with native onClick) --- */}
         {isHomeCentered ? (
           // Home Screen Center Control (Drag to create new entry)
-          <div
+          <button
             onPointerDown={(e) => handleHomeStart(e.clientX, e.clientY)}
             onPointerMove={(e) => handleHomeMove(e.clientX, e.clientY)}
             onPointerUp={handleHomeEnd}
@@ -525,11 +527,12 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
             title="Quick Capture (Drag to Notes, Lists, Vocab, or Calendar)"
           >
             <Pencil className="w-6 h-6 stroke-[2] transition-transform group-hover:rotate-12" />
-          </div>
+          </button>
         ) : (
-          // Non-Home Screen Dual-Mode Center Control
-          <div
-            onPointerDown={(e) => handleNonHomeStart(e.clientX, e.clientY, e.pointerId)}
+          // Non-Home Screen Dual-Mode Center Control with clean onClick rewind toggle!
+          <button
+            onClick={handleCenterButtonClick}
+            onPointerDown={(e) => handleNonHomeStart(e.clientX, e.clientY)}
             onPointerMove={(e) => handleNonHomeMove(e.clientX, e.clientY)}
             onPointerUp={handleNonHomeEnd}
             onPointerCancel={handleNonHomeEnd}
@@ -545,21 +548,21 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
             }}
             onTouchEnd={handleNonHomeEnd}
             onTouchCancel={handleNonHomeEnd}
-            className={`relative w-16 h-16 rounded-full text-white flex items-center justify-center shadow-float active:scale-95 transition-all duration-300 group touch-none cursor-pointer ${
+            className={`relative w-16 h-16 rounded-full text-white flex items-center justify-center shadow-float active:scale-95 transition-all duration-300 group touch-none cursor-pointer z-50 ${
               isQuickCreateOpen
                 ? 'bg-orange-500 ring-4 ring-orange-400/50 scale-105'
                 : isHoldingNav
                 ? 'bg-red-500 ring-4 ring-red-500/50 scale-105'
                 : 'bg-sage-500 hover:bg-sage-600'
             }`}
-            title="Quick Tap to Add Entry / Hold & Swipe to Navigate"
+            title={isQuickCreateOpen ? 'Click to Rewind Back to Pencil Dot' : 'Quick Tap for Entry Creation / Hold to Aim Navigation'}
           >
             {isQuickCreateOpen ? (
               <Plus className="w-7 h-7 stroke-[2.5] transition-transform rotate-90" />
             ) : (
               <Pencil className="w-6 h-6 stroke-[2] transition-transform group-hover:rotate-12" />
             )}
-          </div>
+          </button>
         )}
       </div>
     </>
