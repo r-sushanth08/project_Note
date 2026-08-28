@@ -1,41 +1,39 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { FileText, List, BookOpen, Calendar, Pencil } from 'lucide-react';
+import { FileText, List, BookOpen, Calendar, Pencil, ChevronUp, ChevronRight, ChevronDown, ChevronLeft } from 'lucide-react';
 import { useEntries } from '../context/EntryContext';
-import { ViewMode } from '../types/entry';
 
 interface RadialControlProps {
   isHomeCentered?: boolean;
 }
 
-type Direction = 'notes' | 'lists' | 'vocab' | 'calendar' | null;
+type Direction = 'notes' | 'lists' | 'vocab' | 'calendar';
 
 export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = false }) => {
-  const { openNewEntry, setCurrentView } = useEntries();
-  const [isOpen, setIsOpen] = useState(isHomeCentered);
-  const [activeDirection, setActiveDirection] = useState<Direction>(null);
+  const { setCurrentView } = useEntries();
+  const [isHolding, setIsHolding] = useState(false);
+  const [activeDirection, setActiveDirection] = useState<Direction>('notes');
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const touchStartPos = useRef<{ x: number; y: number } | null>(null);
-  const wasDraggedRef = useRef<boolean>(false);
+  const isPointerDownRef = useRef<boolean>(false);
 
-  // Calculate direction sector from coordinates relative to center of control
-  const calculateDirectionFromCoords = (clientX: number, clientY: number) => {
-    if (!containerRef.current) return null;
+  // Calculate direction sector based on pointer coordinates relative to center of control
+  const calculateDirectionFromCoords = (clientX: number, clientY: number): Direction => {
+    if (!containerRef.current) return 'notes';
     const rect = containerRef.current.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
 
     const deltaX = clientX - centerX;
     const deltaY = clientY - centerY;
-    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
-    if (distance < 25) {
-      return null;
-    }
 
     const angleRad = Math.atan2(deltaY, deltaX);
     const angleDeg = (angleRad * 180) / Math.PI;
 
+    // 4 Sectors:
+    // Top (-135 to -45 deg) -> Notes
+    // Right (-45 to 45 deg) -> Lists
+    // Bottom (45 to 135 deg) -> Vocab
+    // Left (135 to 180 or -180 to -135 deg) -> Calendar
     if (angleDeg >= -135 && angleDeg < -45) {
       return 'notes';
     } else if (angleDeg >= -45 && angleDeg < 45) {
@@ -47,236 +45,233 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
     }
   };
 
-  const handleStart = (clientX: number, clientY: number) => {
-    touchStartPos.current = { x: clientX, y: clientY };
-    wasDraggedRef.current = false;
-  };
+  // Hold Down Start Handler
+  const handleHoldStart = (pointerId?: number) => {
+    isPointerDownRef.current = true;
 
-  const handleMove = (clientX: number, clientY: number) => {
-    if (!touchStartPos.current) return;
-    const deltaX = clientX - touchStartPos.current.x;
-    const deltaY = clientY - touchStartPos.current.y;
-    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+    if (!isHomeCentered) {
+      setIsHolding(true);
+      // Default to Notes first when user starts holding down
+      setActiveDirection('notes');
+    }
 
-    if (distance > 15) {
-      wasDraggedRef.current = true;
-      if (!isOpen) setIsOpen(true);
-      const dir = calculateDirectionFromCoords(clientX, clientY);
-      setActiveDirection(dir);
+    if (containerRef.current && pointerId !== undefined && containerRef.current.setPointerCapture) {
+      try {
+        containerRef.current.setPointerCapture(pointerId);
+      } catch (err) {
+        // Fallback for non-pointer touch events
+      }
     }
   };
 
-  const handleEnd = () => {
-    if (wasDraggedRef.current && activeDirection) {
-      // Drag action -> Create New Entry
-      if (activeDirection === 'notes') openNewEntry('note');
-      else if (activeDirection === 'lists') openNewEntry('list');
-      else if (activeDirection === 'vocab') openNewEntry('vocab');
+  // Move Handler — Updates red arrow selection seamlessly with slight movement
+  const handleHoldMove = (clientX: number, clientY: number) => {
+    if (!isPointerDownRef.current && !isHomeCentered) return;
+
+    const dir = calculateDirectionFromCoords(clientX, clientY);
+    setActiveDirection(dir);
+  };
+
+  // Release Handler — Instantly navigates to active direction where red arrow was pointing
+  const handleHoldEnd = () => {
+    if (!isPointerDownRef.current && !isHomeCentered) return;
+    isPointerDownRef.current = false;
+
+    if (!isHomeCentered) {
+      setIsHolding(false);
+      // Navigate immediately to where the red arrow was last pointing
+      if (activeDirection === 'notes') setCurrentView('notes');
+      else if (activeDirection === 'lists') setCurrentView('lists');
+      else if (activeDirection === 'vocab') setCurrentView('vocab');
       else if (activeDirection === 'calendar') setCurrentView('calendar');
-
-      if (!isHomeCentered) setIsOpen(false);
     }
-
-    // Reset drag tracking state after short delay to allow click handler check
-    setTimeout(() => {
-      touchStartPos.current = null;
-      wasDraggedRef.current = false;
-      setActiveDirection(null);
-    }, 50);
-  };
-
-  const handleCenterButtonClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    // Only toggle open/close if the user tapped/clicked without dragging
-    if (!wasDraggedRef.current && !isHomeCentered) {
-      setIsOpen((prev) => !prev);
-    }
-  };
-
-  const handleNodeClick = (e: React.MouseEvent, view: ViewMode) => {
-    e.stopPropagation();
-    // Do not trigger node click if menu is collapsed
-    if (!isOpen && !isHomeCentered) return;
-
-    if (!isHomeCentered) setIsOpen(false);
-    setActiveDirection(null);
-    setCurrentView(view);
   };
 
   // Close menu on Escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        if (!isHomeCentered) setIsOpen(false);
-        setActiveDirection(null);
+        if (!isHomeCentered) setIsHolding(false);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isHomeCentered]);
 
-  const isMenuVisible = isOpen || isHomeCentered;
+  const isMenuVisible = isHolding || isHomeCentered;
 
   return (
     <>
-      {/* Background Overlay when expanded */}
-      {isOpen && !isHomeCentered && (
-        <div
-          className="fixed inset-0 bg-slate-950/40 backdrop-blur-[2px] z-40 transition-opacity duration-200"
-          onClick={() => setIsOpen(false)}
-        />
+      {/* Background Overlay when holding on non-home screens */}
+      {isHolding && !isHomeCentered && (
+        <div className="fixed inset-0 bg-slate-950/50 backdrop-blur-[3px] z-40 transition-opacity duration-200" />
       )}
 
       {/* Main Control Container */}
       <div
         ref={containerRef}
+        onPointerDown={(e) => handleHoldStart(e.pointerId)}
+        onPointerMove={(e) => handleHoldMove(e.clientX, e.clientY)}
+        onPointerUp={handleHoldEnd}
+        onPointerCancel={handleHoldEnd}
+        onTouchStart={() => {
+          handleHoldStart();
+        }}
+        onTouchMove={(e) => {
+          if (e.touches.length > 0) {
+            handleHoldMove(e.touches[0].clientX, e.touches[0].clientY);
+          }
+        }}
+        onTouchEnd={handleHoldEnd}
+        onTouchCancel={handleHoldEnd}
         className={`z-50 select-none touch-none ${
           isHomeCentered
             ? 'relative flex justify-center items-center'
             : 'fixed bottom-28 left-1/2 -translate-x-1/2 flex justify-center items-center'
         }`}
       >
-        {/* Radial Nodes Options (Pointer events completely disabled when hidden) */}
+        {/* Radial Nodes Options & Red Pointer Indicators */}
         <div
-          className={`absolute inset-0 transition-all duration-300 ${
+          className={`absolute inset-0 transition-all duration-250 ${
             isMenuVisible
               ? 'opacity-100 scale-100 pointer-events-auto'
               : 'opacity-0 scale-90 pointer-events-none invisible'
           }`}
         >
-          {/* TOP: Notes */}
-          <button
-            onClick={(e) => handleNodeClick(e, 'notes')}
-            disabled={!isMenuVisible}
-            className={`absolute -top-20 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 group transition-transform duration-150 ${
-              isMenuVisible ? 'pointer-events-auto' : 'pointer-events-none'
-            } ${activeDirection === 'notes' ? 'scale-110' : ''}`}
-            title="Click to browse Notes"
+          {/* TOP: Notes (^ Up) */}
+          <div
+            className={`absolute -top-20 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 transition-all duration-150 ${
+              activeDirection === 'notes' ? 'scale-110' : 'opacity-70'
+            }`}
           >
+            {/* Red Chevron Arrow Pointer (^ Up) */}
+            {!isHomeCentered && activeDirection === 'notes' && (
+              <div className="absolute -top-6 text-red-500 font-bold animate-bounce drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]">
+                <ChevronUp className="w-6 h-6 stroke-[3]" />
+              </div>
+            )}
+
             <div
               className={`w-12 h-12 rounded-full flex items-center justify-center border transition-all ${
                 activeDirection === 'notes'
-                  ? 'bg-orange-500 text-white border-orange-400 shadow-lg'
-                  : 'bg-slate-900/90 text-white border-white/20 shadow-card backdrop-blur-md group-hover:border-orange-400'
+                  ? 'bg-red-500/25 text-red-300 border-red-500 shadow-[0_0_16px_rgba(239,68,68,0.6)]'
+                  : 'bg-slate-900/90 text-white border-white/20 shadow-card backdrop-blur-md'
               }`}
             >
               <FileText className="w-5 h-5 stroke-[1.75]" />
             </div>
             <span
-              className={`text-xs font-medium tracking-wide transition-colors ${
-                activeDirection === 'notes' ? 'text-orange-400 font-semibold' : 'text-slate-300'
+              className={`text-xs font-semibold tracking-wide transition-colors ${
+                activeDirection === 'notes' ? 'text-red-400' : 'text-slate-300'
               }`}
             >
               Notes
             </span>
-          </button>
+          </div>
 
-          {/* RIGHT: Lists */}
-          <button
-            onClick={(e) => handleNodeClick(e, 'lists')}
-            disabled={!isMenuVisible}
-            className={`absolute top-1/2 -right-20 -translate-y-1/2 flex flex-col items-center gap-1 group transition-transform duration-150 ${
-              isMenuVisible ? 'pointer-events-auto' : 'pointer-events-none'
-            } ${activeDirection === 'lists' ? 'scale-110' : ''}`}
-            title="Click to browse Lists"
+          {/* RIGHT: Lists (> Right) */}
+          <div
+            className={`absolute top-1/2 -right-20 -translate-y-1/2 flex flex-col items-center gap-1 transition-all duration-150 ${
+              activeDirection === 'lists' ? 'scale-110' : 'opacity-70'
+            }`}
           >
+            {/* Red Chevron Arrow Pointer (> Right) */}
+            {!isHomeCentered && activeDirection === 'lists' && (
+              <div className="absolute -right-6 top-3 text-red-500 font-bold animate-bounce drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]">
+                <ChevronRight className="w-6 h-6 stroke-[3]" />
+              </div>
+            )}
+
             <div
               className={`w-12 h-12 rounded-full flex items-center justify-center border transition-all ${
                 activeDirection === 'lists'
-                  ? 'bg-orange-500 text-white border-orange-400 shadow-lg'
-                  : 'bg-slate-900/90 text-white border-white/20 shadow-card backdrop-blur-md group-hover:border-orange-400'
+                  ? 'bg-red-500/25 text-red-300 border-red-500 shadow-[0_0_16px_rgba(239,68,68,0.6)]'
+                  : 'bg-slate-900/90 text-white border-white/20 shadow-card backdrop-blur-md'
               }`}
             >
               <List className="w-5 h-5 stroke-[1.75]" />
             </div>
             <span
-              className={`text-xs font-medium tracking-wide transition-colors ${
-                activeDirection === 'lists' ? 'text-orange-400 font-semibold' : 'text-slate-300'
+              className={`text-xs font-semibold tracking-wide transition-colors ${
+                activeDirection === 'lists' ? 'text-red-400' : 'text-slate-300'
               }`}
             >
               Lists
             </span>
-          </button>
+          </div>
 
-          {/* BOTTOM: Vocab */}
-          <button
-            onClick={(e) => handleNodeClick(e, 'vocab')}
-            disabled={!isMenuVisible}
-            className={`absolute -bottom-20 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 group transition-transform duration-150 ${
-              isMenuVisible ? 'pointer-events-auto' : 'pointer-events-none'
-            } ${activeDirection === 'vocab' ? 'scale-110' : ''}`}
-            title="Click to browse Vocab"
+          {/* BOTTOM: Vocab (v Down) */}
+          <div
+            className={`absolute -bottom-20 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 transition-all duration-150 ${
+              activeDirection === 'vocab' ? 'scale-110' : 'opacity-70'
+            }`}
           >
             <div
               className={`w-12 h-12 rounded-full flex items-center justify-center border transition-all ${
                 activeDirection === 'vocab'
-                  ? 'bg-orange-500 text-white border-orange-400 shadow-lg'
-                  : 'bg-slate-900/90 text-white border-white/20 shadow-card backdrop-blur-md group-hover:border-orange-400'
+                  ? 'bg-red-500/25 text-red-300 border-red-500 shadow-[0_0_16px_rgba(239,68,68,0.6)]'
+                  : 'bg-slate-900/90 text-white border-white/20 shadow-card backdrop-blur-md'
               }`}
             >
               <BookOpen className="w-5 h-5 stroke-[1.75]" />
             </div>
             <span
-              className={`text-xs font-medium tracking-wide transition-colors ${
-                activeDirection === 'vocab' ? 'text-orange-400 font-semibold' : 'text-slate-300'
+              className={`text-xs font-semibold tracking-wide transition-colors ${
+                activeDirection === 'vocab' ? 'text-red-400' : 'text-slate-300'
               }`}
             >
               Vocab
             </span>
-          </button>
 
-          {/* LEFT: Calendar */}
-          <button
-            onClick={(e) => handleNodeClick(e, 'calendar')}
-            disabled={!isMenuVisible}
-            className={`absolute top-1/2 -left-20 -translate-y-1/2 flex flex-col items-center gap-1 group transition-transform duration-150 ${
-              isMenuVisible ? 'pointer-events-auto' : 'pointer-events-none'
-            } ${activeDirection === 'calendar' ? 'scale-110' : ''}`}
-            title="Click to view Calendar"
+            {/* Red Chevron Arrow Pointer (v Down) */}
+            {!isHomeCentered && activeDirection === 'vocab' && (
+              <div className="absolute -bottom-6 text-red-500 font-bold animate-bounce drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]">
+                <ChevronDown className="w-6 h-6 stroke-[3]" />
+              </div>
+            )}
+          </div>
+
+          {/* LEFT: Calendar (< Left) */}
+          <div
+            className={`absolute top-1/2 -left-20 -translate-y-1/2 flex flex-col items-center gap-1 transition-all duration-150 ${
+              activeDirection === 'calendar' ? 'scale-110' : 'opacity-70'
+            }`}
           >
+            {/* Red Chevron Arrow Pointer (< Left) */}
+            {!isHomeCentered && activeDirection === 'calendar' && (
+              <div className="absolute -left-6 top-3 text-red-500 font-bold animate-bounce drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]">
+                <ChevronLeft className="w-6 h-6 stroke-[3]" />
+              </div>
+            )}
+
             <div
               className={`w-12 h-12 rounded-full flex items-center justify-center border transition-all ${
                 activeDirection === 'calendar'
-                  ? 'bg-orange-500 text-white border-orange-400 shadow-lg'
-                  : 'bg-slate-900/90 text-white border-white/20 shadow-card backdrop-blur-md group-hover:border-orange-400'
+                  ? 'bg-red-500/25 text-red-300 border-red-500 shadow-[0_0_16px_rgba(239,68,68,0.6)]'
+                  : 'bg-slate-900/90 text-white border-white/20 shadow-card backdrop-blur-md'
               }`}
             >
               <Calendar className="w-5 h-5 stroke-[1.75]" />
             </div>
             <span
-              className={`text-xs font-medium tracking-wide transition-colors ${
-                activeDirection === 'calendar' ? 'text-orange-400 font-semibold' : 'text-slate-300'
+              className={`text-xs font-semibold tracking-wide transition-colors ${
+                activeDirection === 'calendar' ? 'text-red-400' : 'text-slate-300'
               }`}
             >
               Calendar
             </span>
-          </button>
+          </div>
         </div>
 
         {/* Center Pencil Dot Button */}
-        <button
-          onClick={handleCenterButtonClick}
-          onMouseDown={(e) => handleStart(e.clientX, e.clientY)}
-          onMouseMove={(e) => handleMove(e.clientX, e.clientY)}
-          onMouseUp={handleEnd}
-          onTouchStart={(e) => {
-            if (e.touches.length > 0) {
-              handleStart(e.touches[0].clientX, e.touches[0].clientY);
-            }
-          }}
-          onTouchMove={(e) => {
-            if (e.touches.length > 0) {
-              handleMove(e.touches[0].clientX, e.touches[0].clientY);
-            }
-          }}
-          onTouchEnd={handleEnd}
-          className={`relative w-16 h-16 rounded-full bg-sage-500 text-white flex items-center justify-center shadow-float hover:bg-sage-600 active:scale-95 transition-all duration-200 group touch-none ${
-            isOpen ? 'ring-4 ring-orange-400/40 scale-105 bg-orange-500' : ''
+        <div
+          className={`relative w-16 h-16 rounded-full bg-sage-500 text-white flex items-center justify-center shadow-float active:scale-95 transition-all duration-200 group touch-none cursor-pointer ${
+            isHolding ? 'ring-4 ring-red-500/50 scale-105 bg-red-500' : ''
           }`}
-          title="Click to toggle menu / Drag to create new entry"
+          title="Press & Hold to Aim Navigation with Red Arrow Indicator"
         >
           <Pencil className="w-6 h-6 stroke-[2] transition-transform group-hover:rotate-12" />
-        </button>
+        </div>
       </div>
     </>
   );

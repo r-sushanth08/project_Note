@@ -10,14 +10,17 @@ Calm, minimal, reflective, and distraction-free. The app is set against a **Dark
 - **Home Screen Aesthetic**: Text-only, minimalist layout — no heavy white cards on Home.
 - **Lexicon Count**: Displayed inside a sleek, semi-transparent boxed badge (`words logged`).
 
-## Radial Quick-Capture Control ("the dot") Interaction Modes
+## Hold & Aim Radial Navigation with Red Pointer (Non-Home Screens)
 
-1. **Home Screen (`isHomeCentered = true`)**: Center pencil dot with 4 radial nodes (`Notes`, `Lists`, `Vocab`, `Calendar`) displayed around it.
-2. **Non-Home Screens (`isHomeCentered = false`)**:
-   - **Collapsed State**: Only the center pencil dot is shown at `bottom-28`.
-   - **Tap Center Dot**: Toggles open/close the 4 radial nodes (`Notes`, `Lists`, `Vocab`, `Calendar`).
-   - **Click Node Icon Directly**: Navigates to that section screen (`Notes`, `Lists`, `Vocab`, `Calendar`).
-   - **Drag from Center Dot or Node**: Dragging in a direction and releasing opens fast NEW entry creation (`New Note`, `New List`, `New Vocab`, `Calendar`).
+- **Gesture**: Pressing and holding down on the central pencil dot on non-home screens (`isHomeCentered = false`) expands the 4 radial nodes (`Notes`, `Lists`, `Vocab`, `Calendar`).
+- **Initial Selection**: **Notes (`notes`) is selected by default first**, accompanied by a **vibrant red chevron arrow (`^`)** pointing to Notes.
+- **Dynamic Aiming**: Moving slightly in any direction updates the pointer indicator:
+  - **Up (`^`)**: Red chevron points to **Notes**
+  - **Left (`<`)**: Red chevron points to **Calendar**
+  - **Right (`>`)**: Red chevron points to **Lists**
+  - **Down (`v`)**: Red chevron points to **Vocab**
+- **Release Navigation**: Releasing the hold immediately navigates to the screen where the red arrow was pointing (`setCurrentView(activeDirection)`).
+- **Home Screen**: Unchanged.
 
 ## Larger Back Button Tap Target
 
@@ -42,11 +45,6 @@ Calm, minimal, reflective, and distraction-free. The app is set against a **Dark
 - **Static Orange Subheading**: The `LEXICON OF THE DAY` subheading with **vibrant orange underline** (`border-b-2 border-orange-500`) stays fixed at top and never shifts during swiping.
 - **Auto-Rotation**: Automatically rotates through the 3 daily Lexicon words every 6 seconds with smooth slide-in CSS transitions.
 - **Manual Override**: Touch swiping or clicking pagination dots pauses/resets the auto-rotation loop.
-
-## Calendar Entry Type Dropdown Filter
-
-- **Filter Dropdown**: Styled `<select>` dropdown in the Calendar subheader (`All Entries`, `Notes`, `Lists`, `Vocab`).
-- **Filtered View**: Filters both the passive day indicators in the month calendar grid and the expanded day details section below.
 
 ## Mobile Responsiveness & Touch Gestures
 
