@@ -95,6 +95,9 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
 
   const handleNodeClick = (e: React.MouseEvent, view: ViewMode) => {
     e.stopPropagation();
+    // Do not trigger node click if menu is collapsed
+    if (!isOpen && !isHomeCentered) return;
+
     if (!isHomeCentered) setIsOpen(false);
     setActiveDirection(null);
     setCurrentView(view);
@@ -111,6 +114,8 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isHomeCentered]);
+
+  const isMenuVisible = isOpen || isHomeCentered;
 
   return (
     <>
@@ -131,18 +136,21 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
             : 'fixed bottom-28 left-1/2 -translate-x-1/2 flex justify-center items-center'
         }`}
       >
-        {/* Radial Nodes Options */}
+        {/* Radial Nodes Options (Pointer events completely disabled when hidden) */}
         <div
-          className={`absolute inset-0 pointer-events-none transition-all duration-300 ${
-            isOpen || isHomeCentered ? 'opacity-100 scale-100' : 'opacity-0 scale-90'
+          className={`absolute inset-0 transition-all duration-300 ${
+            isMenuVisible
+              ? 'opacity-100 scale-100 pointer-events-auto'
+              : 'opacity-0 scale-90 pointer-events-none invisible'
           }`}
         >
           {/* TOP: Notes */}
           <button
             onClick={(e) => handleNodeClick(e, 'notes')}
-            className={`pointer-events-auto absolute -top-20 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 group transition-transform duration-150 ${
-              activeDirection === 'notes' ? 'scale-110' : ''
-            }`}
+            disabled={!isMenuVisible}
+            className={`absolute -top-20 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 group transition-transform duration-150 ${
+              isMenuVisible ? 'pointer-events-auto' : 'pointer-events-none'
+            } ${activeDirection === 'notes' ? 'scale-110' : ''}`}
             title="Click to browse Notes"
           >
             <div
@@ -166,9 +174,10 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
           {/* RIGHT: Lists */}
           <button
             onClick={(e) => handleNodeClick(e, 'lists')}
-            className={`pointer-events-auto absolute top-1/2 -right-20 -translate-y-1/2 flex flex-col items-center gap-1 group transition-transform duration-150 ${
-              activeDirection === 'lists' ? 'scale-110' : ''
-            }`}
+            disabled={!isMenuVisible}
+            className={`absolute top-1/2 -right-20 -translate-y-1/2 flex flex-col items-center gap-1 group transition-transform duration-150 ${
+              isMenuVisible ? 'pointer-events-auto' : 'pointer-events-none'
+            } ${activeDirection === 'lists' ? 'scale-110' : ''}`}
             title="Click to browse Lists"
           >
             <div
@@ -192,9 +201,10 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
           {/* BOTTOM: Vocab */}
           <button
             onClick={(e) => handleNodeClick(e, 'vocab')}
-            className={`pointer-events-auto absolute -bottom-20 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 group transition-transform duration-150 ${
-              activeDirection === 'vocab' ? 'scale-110' : ''
-            }`}
+            disabled={!isMenuVisible}
+            className={`absolute -bottom-20 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 group transition-transform duration-150 ${
+              isMenuVisible ? 'pointer-events-auto' : 'pointer-events-none'
+            } ${activeDirection === 'vocab' ? 'scale-110' : ''}`}
             title="Click to browse Vocab"
           >
             <div
@@ -218,9 +228,10 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
           {/* LEFT: Calendar */}
           <button
             onClick={(e) => handleNodeClick(e, 'calendar')}
-            className={`pointer-events-auto absolute top-1/2 -left-20 -translate-y-1/2 flex flex-col items-center gap-1 group transition-transform duration-150 ${
-              activeDirection === 'calendar' ? 'scale-110' : ''
-            }`}
+            disabled={!isMenuVisible}
+            className={`absolute top-1/2 -left-20 -translate-y-1/2 flex flex-col items-center gap-1 group transition-transform duration-150 ${
+              isMenuVisible ? 'pointer-events-auto' : 'pointer-events-none'
+            } ${activeDirection === 'calendar' ? 'scale-110' : ''}`}
             title="Click to view Calendar"
           >
             <div
