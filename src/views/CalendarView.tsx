@@ -45,12 +45,13 @@ export const CalendarView: React.FC = () => {
 
   return (
     <div className="w-full max-w-4xl mx-auto px-6 flex flex-col h-full overflow-y-auto no-scrollbar">
-      {/* Fixed Sticky Subheader Title & Dropdown Filter (Pinned at top, doesn't scroll offscreen) */}
-      <div className="sticky top-0 z-30 bg-slate-950/85 backdrop-blur-xl border-b border-white/10 -mx-6 px-6 pt-3 pb-4 mb-4 flex items-center justify-between flex-shrink-0">
+      {/* Subheader Title & Dropdown Filter */}
+      <div className="flex items-center justify-between border-b border-white/10 pt-3 pb-4 mb-4 flex-shrink-0">
         <div className="flex items-center gap-3">
           <button
             onClick={() => setCurrentView('home')}
-            className="w-8 h-8 rounded-full flex items-center justify-center bg-slate-900/80 border border-white/20 text-slate-300 hover:text-white hover:border-orange-400 transition-all shadow-sm"
+            className="w-11 h-11 rounded-full flex items-center justify-center bg-slate-900/90 border border-white/25 text-white font-bold text-2xl hover:border-orange-400 active:scale-95 transition-all shadow-md"
+            title="Back to Home"
           >
             ‹
           </button>

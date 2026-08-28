@@ -11,11 +11,14 @@ type Direction = 'notes' | 'lists' | 'vocab' | 'calendar' | null;
 
 export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = false }) => {
   const { openNewEntry, setCurrentView } = useEntries();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(isHomeCentered);
   const [activeDirection, setActiveDirection] = useState<Direction>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
 
-  // Core coordinate angle & direction calculation helper
+  const containerRef = useRef<HTMLDivElement>(null);
+  const touchStartPos = useRef<{ x: number; y: number } | null>(null);
+  const isDraggingRef = useRef<boolean>(false);
+
+  // Calculate direction sector from coordinates relative to center of control
   const calculateDirectionFromCoords = (clientX: number, clientY: number) => {
     if (!containerRef.current) return null;
     const rect = containerRef.current.getBoundingClientRect();
@@ -26,8 +29,8 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
     const deltaY = clientY - centerY;
     const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
-    // Dead zone check (< 35px)
-    if (distance < 35) {
+    // Dead zone check (< 30px)
+    if (distance < 30) {
       return null;
     }
 
@@ -50,29 +53,39 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
     }
   };
 
-  // Mouse / Pointer Move Handler
-  const handlePointerMove = (e: React.PointerEvent | PointerEvent) => {
-    if (!isOpen) return;
-    const dir = calculateDirectionFromCoords(e.clientX, e.clientY);
-    setActiveDirection(dir);
+  const handlePointerDown = (clientX: number, clientY: number) => {
+    touchStartPos.current = { x: clientX, y: clientY };
+    isDraggingRef.current = false;
   };
 
-  // Touch Move Handler (Mobile Fix for Touchscreens)
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isOpen) return;
-    if (e.touches.length > 0) {
-      const touch = e.touches[0];
-      const dir = calculateDirectionFromCoords(touch.clientX, touch.clientY);
+  const handlePointerMove = (clientX: number, clientY: number) => {
+    if (!touchStartPos.current) return;
+    const deltaX = clientX - touchStartPos.current.x;
+    const deltaY = clientY - touchStartPos.current.y;
+    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+    if (distance > 15) {
+      isDraggingRef.current = true;
+      if (!isOpen) setIsOpen(true);
+      const dir = calculateDirectionFromCoords(clientX, clientY);
       setActiveDirection(dir);
     }
   };
 
-  // Drag & Drop Release Handler -> Triggers New Entry Creation
-  const handleDragRelease = () => {
-    if (activeDirection) {
+  const handlePointerUp = () => {
+    if (isDraggingRef.current && activeDirection) {
+      // Drag & Drop Release -> Create New Entry
       executeDragAction(activeDirection);
+      if (!isHomeCentered) setIsOpen(false);
+    } else if (!isDraggingRef.current) {
+      // Single Click / Tap -> Toggle Expansion Menu
+      if (!isHomeCentered) {
+        setIsOpen((prev) => !prev);
+      }
     }
-    setIsOpen(false);
+
+    touchStartPos.current = null;
+    isDraggingRef.current = false;
     setActiveDirection(null);
   };
 
@@ -88,40 +101,36 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
     }
   };
 
-  // Direct Button Click Handler -> Triggers Section Browsing
+  // Direct Button Click Handler -> Navigates to Section Screen
   const handleDirectClick = (dir: ViewMode) => {
-    setIsOpen(false);
+    if (!isHomeCentered) setIsOpen(false);
     setActiveDirection(null);
     setCurrentView(dir);
   };
 
-  // Close overlay on Escape key
+  // Close menu on Escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        setIsOpen(false);
+        if (!isHomeCentered) setIsOpen(false);
         setActiveDirection(null);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [isHomeCentered]);
 
   return (
     <>
-      {/* Background Overlay when dragging or active */}
-      {isOpen && (
+      {/* Background Overlay when expanded */}
+      {isOpen && !isHomeCentered && (
         <div
           className="fixed inset-0 bg-slate-950/40 backdrop-blur-[2px] z-40 transition-opacity duration-200"
-          onPointerMove={handlePointerMove}
-          onPointerUp={handleDragRelease}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleDragRelease}
           onClick={() => setIsOpen(false)}
         />
       )}
 
-      {/* Main Container */}
+      {/* Main Control Container */}
       <div
         ref={containerRef}
         className={`z-50 select-none touch-none ${
@@ -130,7 +139,7 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
             : 'fixed bottom-28 left-1/2 -translate-x-1/2 flex justify-center items-center'
         }`}
       >
-        {/* Radial Directions Options */}
+        {/* Radial Nodes Options */}
         <div
           className={`absolute inset-0 pointer-events-none transition-all duration-300 ${
             isOpen || isHomeCentered ? 'opacity-100 scale-100' : 'opacity-0 scale-90'
@@ -241,21 +250,29 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
           </button>
         </div>
 
-        {/* Central Center Button */}
+        {/* Center Pencil Dot Button */}
         <button
           onPointerDown={(e) => {
-            setIsOpen(true);
+            handlePointerDown(e.clientX, e.clientY);
             (e.target as HTMLElement).setPointerCapture(e.pointerId);
           }}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handleDragRelease}
-          onTouchStart={() => setIsOpen(true)}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleDragRelease}
+          onPointerMove={(e) => handlePointerMove(e.clientX, e.clientY)}
+          onPointerUp={handlePointerUp}
+          onTouchStart={(e) => {
+            if (e.touches.length > 0) {
+              handlePointerDown(e.touches[0].clientX, e.touches[0].clientY);
+            }
+          }}
+          onTouchMove={(e) => {
+            if (e.touches.length > 0) {
+              handlePointerMove(e.touches[0].clientX, e.touches[0].clientY);
+            }
+          }}
+          onTouchEnd={handlePointerUp}
           className={`relative w-16 h-16 rounded-full bg-sage-500 text-white flex items-center justify-center shadow-float hover:bg-sage-600 active:scale-95 transition-all duration-200 group touch-none ${
             isOpen ? 'ring-4 ring-orange-400/40 scale-105 bg-orange-500' : ''
           }`}
-          title="Quick Capture (Drag to Notes, Lists, Vocab, or Calendar)"
+          title="Tap to toggle menu / Drag to create new entry"
         >
           <Pencil className="w-6 h-6 stroke-[2] transition-transform group-hover:rotate-12" />
         </button>

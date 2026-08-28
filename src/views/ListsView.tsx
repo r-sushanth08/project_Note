@@ -14,7 +14,8 @@ export const ListsView: React.FC = () => {
       <div className="flex items-center gap-3 border-b border-white/10 pt-3 pb-4 flex-shrink-0 z-10 bg-transparent">
         <button
           onClick={() => setCurrentView('home')}
-          className="w-8 h-8 rounded-full flex items-center justify-center bg-slate-900/80 border border-white/20 text-slate-300 hover:text-white hover:border-orange-400 transition-all shadow-sm"
+          className="w-11 h-11 rounded-full flex items-center justify-center bg-slate-900/90 border border-white/25 text-white font-bold text-2xl hover:border-orange-400 active:scale-95 transition-all shadow-md"
+          title="Back to Home"
         >
           ‹
         </button>

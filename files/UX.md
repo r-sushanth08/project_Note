@@ -10,6 +10,19 @@ Calm, minimal, reflective, and distraction-free. The app is set against a **Dark
 - **Home Screen Aesthetic**: Text-only, minimalist layout — no heavy white cards on Home.
 - **Lexicon Count**: Displayed inside a sleek, semi-transparent boxed badge (`words logged`).
 
+## Radial Quick-Capture Control ("the dot") Interaction Modes
+
+1. **Home Screen (`isHomeCentered = true`)**: Center pencil dot with 4 radial nodes (`Notes`, `Lists`, `Vocab`, `Calendar`) displayed around it.
+2. **Non-Home Screens (`isHomeCentered = false`)**:
+   - **Collapsed State**: Only the center pencil dot is shown at `bottom-28`.
+   - **Tap Center Dot**: Toggles open/close the 4 radial nodes (`Notes`, `Lists`, `Vocab`, `Calendar`).
+   - **Click Node Icon Directly**: Navigates to that section screen (`Notes`, `Lists`, `Vocab`, `Calendar`).
+   - **Drag from Center Dot or Node**: Dragging in a direction and releasing opens fast NEW entry creation (`New Note`, `New List`, `New Vocab`, `Calendar`).
+
+## Larger Back Button Tap Target
+
+- **Tap Target Size**: Increased back button to **`w-11 h-11`** (44px diameter) with bold `‹` chevron text (`text-2xl`) across all section views (`Notes`, `Lists`, `Vocab`, `Calendar`, `Search`) and editors (`NoteEditor`, `ListEditor`, `VocabEditor`).
+
 ## Horizontal Calendar Date Strip (Notes View)
 
 - **Date Strip Header**: Replaces tag bar in `NotesView.tsx`.
@@ -34,20 +47,6 @@ Calm, minimal, reflective, and distraction-free. The app is set against a **Dark
 
 - **Filter Dropdown**: Styled `<select>` dropdown in the Calendar subheader (`All Entries`, `Notes`, `Lists`, `Vocab`).
 - **Filtered View**: Filters both the passive day indicators in the month calendar grid and the expanded day details section below.
-
-## App Structure
-
-Four sections, plus Home:
-- **Home** — landing screen on every launch. Shows Lexicon Count box, orange-underlined Lexicon of the Day, and central quick-capture dot positioned in the upper-center viewport.
-- **Notes** — browse/view/edit existing notes (Diary, Brain Dump, Collections sub-types) with horizontal calendar date strip and folder deck stacking cards effect.
-- **Lists** — browse/view/edit existing living lists.
-- **Vocab** — browse/view/edit existing vocab entries via the **Folder Stacking Cards Deck**.
-- **Calendar** — month/year view with per-day activity indicators and dropdown type filter.
-
-## Radial Quick-Capture Control ("the dot") Interaction Modes
-
-1. **Direct Click (Tap button directly)**: Opens section browsing view (`Notes`, `Lists`, `Vocab`, `Calendar`).
-2. **Drag & Drop (Drag from center dot and release)**: Triggers fast new entry creation immediately.
 
 ## Mobile Responsiveness & Touch Gestures
 

@@ -89,10 +89,12 @@ export const NoteEditorView: React.FC<NoteEditorViewProps> = ({ note, onBack }) 
       <div className="flex items-center justify-between flex-shrink-0">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 text-sm text-slate-300 hover:text-white transition-colors"
+          className="flex items-center gap-2.5 text-sm text-slate-300 hover:text-white transition-colors"
         >
-          <span className="text-base font-semibold">‹</span>
-          <span className="font-medium">All Notes</span>
+          <span className="w-10 h-10 rounded-full flex items-center justify-center bg-slate-900/90 border border-white/25 text-white font-bold text-xl hover:border-orange-400 active:scale-95 transition-all shadow-md">
+            ‹
+          </span>
+          <span className="font-semibold text-base">All Notes</span>
         </button>
 
         <div className="flex items-center gap-4">
