@@ -10,17 +10,21 @@ Calm, minimal, reflective, and distraction-free. The app is set against a **Dark
 - **Home Screen Aesthetic**: Text-only, minimalist layout — no heavy white cards on Home.
 - **Lexicon Count**: Displayed inside a sleek, semi-transparent boxed badge (`words logged`).
 
-## Real-Time Directional Movement Tracking Navigation (Non-Home Screens)
+## Dual-Mode Radial Capture & Navigation (Non-Home Screens)
 
-- **Hold Gesture**: Pressing and holding down on the central pencil dot on non-home screens (`isHomeCentered = false`) expands the 4 radial nodes (`Notes`, `Lists`, `Vocab`, `Calendar`).
-- **Zero Default Selection**: When pressing down, **no node is selected by default (`activeDirection = null`)**. No red arrow appears initially until movement occurs.
-- **Real-Time Directional Tracking**: Moving your finger/cursor slightly away from the center dot (> 15px) dynamically selects the targeted direction:
-  - **Move Left (`<`)**: Highlights **Calendar** (`<`) with red chevron arrow pointer
-  - **Move Right (`>`)**: Highlights **Lists** (`>`) with red chevron arrow pointer
-  - **Move Up (`^`)**: Highlights **Notes** (`^`) with red chevron arrow pointer
-  - **Move Down (`v`)**: Highlights **Vocab** (`v`) with red chevron arrow pointer
-- **Release Navigation**: Releasing the hold while pointing at a direction instantly navigates to that screen (`setCurrentView`). Releasing inside the center dead zone closes the menu cleanly without triggering navigation.
-- **Home Screen**: Retains full click navigation and drag-to-create actions.
+- **Mode A: Quick Tap (< 250ms, < 12px movement) — Entry Creation Mode**:
+  - Tapping the center pencil dot morphs the pencil icon smoothly into an orange **`+` Plus Icon**.
+  - Expands **3 Creation Nodes**:
+    - **Top (`^`)**: `+ Note` (FileText + Plus)
+    - **Right (`>`)**: `+ List` (List + Plus)
+    - **Left (`<`)**: `+ Vocab` (BookOpen + Plus)
+    - *(Calendar excluded from creation mode)*.
+  - Tapping any creation node opens `openNewEntry` and closes menu.
+
+- **Mode B: Hold & Swipe Drag — Navigation Mode**:
+  - Pressing, holding & moving (> 12px distance) retains pencil icon.
+  - Expands **4 Navigation Nodes** (`Notes`, `Lists`, `Vocab`, `Calendar`) with **Red Chevron Pointer Indicator** (`^`, `>`, `v`, `<`).
+  - Releasing instantly navigates to `setCurrentView(activeDirection)`.
 
 ## Larger Back Button Tap Target
 

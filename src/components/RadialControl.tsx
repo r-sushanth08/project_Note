@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { FileText, List, BookOpen, Calendar, Pencil, ChevronUp, ChevronRight, ChevronDown, ChevronLeft } from 'lucide-react';
+import { FileText, List, BookOpen, Calendar, Pencil, Plus, ChevronUp, ChevronRight, ChevronDown, ChevronLeft } from 'lucide-react';
 import { useEntries } from '../context/EntryContext';
 import { ViewMode } from '../types/entry';
 
@@ -11,12 +11,14 @@ type Direction = 'notes' | 'lists' | 'vocab' | 'calendar' | null;
 
 export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = false }) => {
   const { openNewEntry, setCurrentView } = useEntries();
-  const [isHolding, setIsHolding] = useState(false);
+  const [isHoldingNav, setIsHoldingNav] = useState(false);
+  const [isQuickCreateOpen, setIsQuickCreateOpen] = useState(false);
   const [activeDirection, setActiveDirection] = useState<Direction>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const touchStartPos = useRef<{ x: number; y: number } | null>(null);
-  const isDraggingHomeRef = useRef<boolean>(false);
+  const pressStartTimeRef = useRef<number>(0);
+  const hasDraggedRef = useRef<boolean>(false);
   const isPointerDownRef = useRef<boolean>(false);
 
   // Calculate direction sector based on pointer coordinates relative to center of control
@@ -30,8 +32,8 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
     const deltaY = clientY - centerY;
     const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
-    // Dead zone check (< 15px from center)
-    if (distance < 15) {
+    // Dead zone check (< 12px from center)
+    if (distance < 12) {
       return null;
     }
 
@@ -57,7 +59,7 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
   // --- HOME SCREEN DRAG & CLICK LOGIC ---
   const handleHomeStart = (clientX: number, clientY: number) => {
     touchStartPos.current = { x: clientX, y: clientY };
-    isDraggingHomeRef.current = false;
+    hasDraggedRef.current = false;
   };
 
   const handleHomeMove = (clientX: number, clientY: number) => {
@@ -66,15 +68,15 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
     const deltaY = clientY - touchStartPos.current.y;
     const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
-    if (distance > 15) {
-      isDraggingHomeRef.current = true;
+    if (distance > 12) {
+      hasDraggedRef.current = true;
       const dir = calculateDirectionFromCoords(clientX, clientY);
       setActiveDirection(dir);
     }
   };
 
   const handleHomeEnd = () => {
-    if (isDraggingHomeRef.current && activeDirection) {
+    if (hasDraggedRef.current && activeDirection) {
       if (activeDirection === 'notes') openNewEntry('note');
       else if (activeDirection === 'lists') openNewEntry('list');
       else if (activeDirection === 'vocab') openNewEntry('vocab');
@@ -82,22 +84,22 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
     }
 
     touchStartPos.current = null;
-    isDraggingHomeRef.current = false;
+    hasDraggedRef.current = false;
     setActiveDirection(null);
   };
 
   // Direct Node Click Handler for Home Screen Navigation
-  const handleNodeClick = (e: React.MouseEvent, view: ViewMode) => {
+  const handleHomeNodeClick = (e: React.MouseEvent, view: ViewMode) => {
     e.stopPropagation();
     setCurrentView(view);
   };
 
-  // --- NON-HOME REAL-TIME MOVEMENT TRACKING LOGIC ---
-  const handleNonHomeHoldStart = (pointerId?: number) => {
+  // --- NON-HOME DUAL-MODE GESTURE LOGIC ---
+  const handleNonHomeStart = (clientX: number, clientY: number, pointerId?: number) => {
     isPointerDownRef.current = true;
-    setIsHolding(true);
-    // No default auto-selection when hold starts!
-    setActiveDirection(null);
+    pressStartTimeRef.current = Date.now();
+    touchStartPos.current = { x: clientX, y: clientY };
+    hasDraggedRef.current = false;
 
     if (containerRef.current && pointerId !== undefined && containerRef.current.setPointerCapture) {
       try {
@@ -108,45 +110,86 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
     }
   };
 
-  const handleNonHomeHoldMove = (clientX: number, clientY: number) => {
-    if (!isPointerDownRef.current) return;
-    const dir = calculateDirectionFromCoords(clientX, clientY);
-    setActiveDirection(dir);
+  const handleNonHomeMove = (clientX: number, clientY: number) => {
+    if (!isPointerDownRef.current || !touchStartPos.current) return;
+    const deltaX = clientX - touchStartPos.current.x;
+    const deltaY = clientY - touchStartPos.current.y;
+    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+    if (distance > 12) {
+      hasDraggedRef.current = true;
+      // Close quick create mode if user starts swiping/holding for navigation
+      if (isQuickCreateOpen) setIsQuickCreateOpen(false);
+
+      setIsHoldingNav(true);
+      const dir = calculateDirectionFromCoords(clientX, clientY);
+      setActiveDirection(dir);
+    }
   };
 
-  const handleNonHomeHoldEnd = () => {
+  const handleNonHomeEnd = () => {
     if (!isPointerDownRef.current) return;
     isPointerDownRef.current = false;
-    setIsHolding(false);
+    const duration = Date.now() - pressStartTimeRef.current;
 
-    // Instantly navigate to active direction if set
-    if (activeDirection === 'notes') setCurrentView('notes');
-    else if (activeDirection === 'lists') setCurrentView('lists');
-    else if (activeDirection === 'vocab') setCurrentView('vocab');
-    else if (activeDirection === 'calendar') setCurrentView('calendar');
+    if (!hasDraggedRef.current && duration < 250) {
+      // QUICK TAP -> Toggle Entry Creation Mode!
+      setIsQuickCreateOpen((prev) => !prev);
+      setIsHoldingNav(false);
+      setActiveDirection(null);
+    } else if (hasDraggedRef.current && isHoldingNav) {
+      // HOLD & SWIPE DRAG -> Perform Navigation!
+      setIsHoldingNav(false);
+      if (activeDirection === 'notes') setCurrentView('notes');
+      else if (activeDirection === 'lists') setCurrentView('lists');
+      else if (activeDirection === 'vocab') setCurrentView('vocab');
+      else if (activeDirection === 'calendar') setCurrentView('calendar');
+      setActiveDirection(null);
+    } else {
+      setIsHoldingNav(false);
+      setActiveDirection(null);
+    }
 
-    setActiveDirection(null);
+    touchStartPos.current = null;
+    hasDraggedRef.current = false;
+  };
+
+  // Quick Create Node Click Handler
+  const handleQuickCreateClick = (e: React.MouseEvent, type: 'note' | 'list' | 'vocab') => {
+    e.stopPropagation();
+    setIsQuickCreateOpen(false);
+    openNewEntry(type);
   };
 
   // Close menu on Escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        if (!isHomeCentered) setIsHolding(false);
-        setActiveDirection(null);
+        if (!isHomeCentered) {
+          setIsHoldingNav(false);
+          setIsQuickCreateOpen(false);
+          setActiveDirection(null);
+        }
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isHomeCentered]);
 
-  const isMenuVisible = isHolding || isHomeCentered;
+  const isNavVisible = isHoldingNav;
+  const isCreateVisible = isQuickCreateOpen && !isHomeCentered;
 
   return (
     <>
-      {/* Background Overlay when holding on non-home screens */}
-      {isHolding && !isHomeCentered && (
-        <div className="fixed inset-0 bg-slate-950/50 backdrop-blur-[3px] z-40 transition-opacity duration-200" />
+      {/* Background Overlay when Quick Create or Navigation active */}
+      {(isHoldingNav || isQuickCreateOpen) && !isHomeCentered && (
+        <div
+          className="fixed inset-0 bg-slate-950/50 backdrop-blur-[3px] z-40 transition-opacity duration-200"
+          onClick={() => {
+            setIsHoldingNav(false);
+            setIsQuickCreateOpen(false);
+          }}
+        />
       )}
 
       {/* Main Control Container */}
@@ -158,18 +201,65 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
             : 'fixed bottom-28 left-1/2 -translate-x-1/2 flex justify-center items-center'
         }`}
       >
-        {/* Radial Nodes Options */}
+        {/* --- 1. QUICK CREATE NODES (Expanded on Quick Tap) --- */}
+        {isCreateVisible && (
+          <div className="absolute inset-0 z-50 pointer-events-auto">
+            {/* TOP: + Note */}
+            <button
+              onClick={(e) => handleQuickCreateClick(e, 'note')}
+              className="absolute -top-20 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 group cursor-pointer animate-scale-in"
+              title="Create New Note"
+            >
+              <div className="w-12 h-12 rounded-full flex items-center justify-center bg-orange-500 text-white border border-orange-400 shadow-[0_0_18px_rgba(249,115,22,0.6)] group-hover:scale-110 transition-transform">
+                <FileText className="w-5 h-5 stroke-[2]" />
+              </div>
+              <span className="text-xs font-semibold text-orange-300 tracking-wide bg-slate-900/90 px-2 py-0.5 rounded-full border border-orange-500/30">
+                + Note
+              </span>
+            </button>
+
+            {/* RIGHT: + List */}
+            <button
+              onClick={(e) => handleQuickCreateClick(e, 'list')}
+              className="absolute top-1/2 -right-20 -translate-y-1/2 flex flex-col items-center gap-1 group cursor-pointer animate-scale-in"
+              title="Create New List"
+            >
+              <div className="w-12 h-12 rounded-full flex items-center justify-center bg-amber-500 text-white border border-amber-400 shadow-[0_0_18px_rgba(245,158,11,0.6)] group-hover:scale-110 transition-transform">
+                <List className="w-5 h-5 stroke-[2]" />
+              </div>
+              <span className="text-xs font-semibold text-amber-300 tracking-wide bg-slate-900/90 px-2 py-0.5 rounded-full border border-amber-500/30">
+                + List
+              </span>
+            </button>
+
+            {/* LEFT: + Vocab */}
+            <button
+              onClick={(e) => handleQuickCreateClick(e, 'vocab')}
+              className="absolute top-1/2 -left-20 -translate-y-1/2 flex flex-col items-center gap-1 group cursor-pointer animate-scale-in"
+              title="Add Vocabulary Card"
+            >
+              <div className="w-12 h-12 rounded-full flex items-center justify-center bg-indigo-500 text-white border border-indigo-400 shadow-[0_0_18px_rgba(99,102,241,0.6)] group-hover:scale-110 transition-transform">
+                <BookOpen className="w-5 h-5 stroke-[2]" />
+              </div>
+              <span className="text-xs font-semibold text-indigo-300 tracking-wide bg-slate-900/90 px-2 py-0.5 rounded-full border border-indigo-500/30">
+                + Vocab
+              </span>
+            </button>
+          </div>
+        )}
+
+        {/* --- 2. HOLD & AIM NAVIGATION NODES (Expanded on Swipe Drag or Home) --- */}
         <div
           className={`absolute inset-0 transition-all duration-250 ${
-            isMenuVisible
+            isNavVisible || isHomeCentered
               ? 'opacity-100 scale-100 pointer-events-auto'
               : 'opacity-0 scale-90 pointer-events-none invisible'
           }`}
         >
           {/* TOP: Notes (^ Up) */}
           <button
-            onClick={(e) => isHomeCentered && handleNodeClick(e, 'notes')}
-            disabled={!isMenuVisible}
+            onClick={(e) => isHomeCentered && handleHomeNodeClick(e, 'notes')}
+            disabled={!isNavVisible && !isHomeCentered}
             className={`pointer-events-auto absolute -top-20 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 transition-all duration-150 group cursor-pointer ${
               activeDirection === 'notes' ? 'scale-110' : 'opacity-70'
             }`}
@@ -204,8 +294,8 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
 
           {/* RIGHT: Lists (> Right) */}
           <button
-            onClick={(e) => isHomeCentered && handleNodeClick(e, 'lists')}
-            disabled={!isMenuVisible}
+            onClick={(e) => isHomeCentered && handleHomeNodeClick(e, 'lists')}
+            disabled={!isNavVisible && !isHomeCentered}
             className={`pointer-events-auto absolute top-1/2 -right-20 -translate-y-1/2 flex flex-col items-center gap-1 transition-all duration-150 group cursor-pointer ${
               activeDirection === 'lists' ? 'scale-110' : 'opacity-70'
             }`}
@@ -240,8 +330,8 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
 
           {/* BOTTOM: Vocab (v Down) */}
           <button
-            onClick={(e) => isHomeCentered && handleNodeClick(e, 'vocab')}
-            disabled={!isMenuVisible}
+            onClick={(e) => isHomeCentered && handleHomeNodeClick(e, 'vocab')}
+            disabled={!isNavVisible && !isHomeCentered}
             className={`pointer-events-auto absolute -bottom-20 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 transition-all duration-150 group cursor-pointer ${
               activeDirection === 'vocab' ? 'scale-110' : 'opacity-70'
             }`}
@@ -276,8 +366,8 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
 
           {/* LEFT: Calendar (< Left) */}
           <button
-            onClick={(e) => isHomeCentered && handleNodeClick(e, 'calendar')}
-            disabled={!isMenuVisible}
+            onClick={(e) => isHomeCentered && handleHomeNodeClick(e, 'calendar')}
+            disabled={!isNavVisible && !isHomeCentered}
             className={`pointer-events-auto absolute top-1/2 -left-20 -translate-y-1/2 flex flex-col items-center gap-1 transition-all duration-150 group cursor-pointer ${
               activeDirection === 'calendar' ? 'scale-110' : 'opacity-70'
             }`}
@@ -311,7 +401,7 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
           </button>
         </div>
 
-        {/* Center Pencil Dot Button */}
+        {/* --- CENTER BUTTON --- */}
         {isHomeCentered ? (
           // Home Screen Center Control (Drag to create new entry)
           <div
@@ -335,26 +425,38 @@ export const RadialControl: React.FC<RadialControlProps> = ({ isHomeCentered = f
             <Pencil className="w-6 h-6 stroke-[2] transition-transform group-hover:rotate-12" />
           </div>
         ) : (
-          // Non-Home Screen Center Control (Real-Time Movement Tracking Navigation)
+          // Non-Home Screen Dual-Mode Center Control
           <div
-            onPointerDown={(e) => handleNonHomeHoldStart(e.pointerId)}
-            onPointerMove={(e) => handleNonHomeHoldMove(e.clientX, e.clientY)}
-            onPointerUp={handleNonHomeHoldEnd}
-            onPointerCancel={handleNonHomeHoldEnd}
-            onTouchStart={() => handleNonHomeHoldStart()}
-            onTouchMove={(e) => {
+            onPointerDown={(e) => handleNonHomeStart(e.clientX, e.clientY, e.pointerId)}
+            onPointerMove={(e) => handleNonHomeMove(e.clientX, e.clientY)}
+            onPointerUp={handleNonHomeEnd}
+            onPointerCancel={handleNonHomeEnd}
+            onTouchStart={(e) => {
               if (e.touches.length > 0) {
-                handleNonHomeHoldMove(e.touches[0].clientX, e.touches[0].clientY);
+                handleNonHomeStart(e.touches[0].clientX, e.touches[0].clientY);
               }
             }}
-            onTouchEnd={handleNonHomeHoldEnd}
-            onTouchCancel={handleNonHomeHoldEnd}
-            className={`relative w-16 h-16 rounded-full bg-sage-500 text-white flex items-center justify-center shadow-float active:scale-95 transition-all duration-200 group touch-none cursor-pointer ${
-              isHolding ? 'ring-4 ring-red-500/50 scale-105 bg-red-500' : ''
+            onTouchMove={(e) => {
+              if (e.touches.length > 0) {
+                handleNonHomeMove(e.touches[0].clientX, e.touches[0].clientY);
+              }
+            }}
+            onTouchEnd={handleNonHomeEnd}
+            onTouchCancel={handleNonHomeEnd}
+            className={`relative w-16 h-16 rounded-full text-white flex items-center justify-center shadow-float active:scale-95 transition-all duration-300 group touch-none cursor-pointer ${
+              isQuickCreateOpen
+                ? 'bg-orange-500 ring-4 ring-orange-400/50 scale-105 rotate-90'
+                : isHoldingNav
+                ? 'bg-red-500 ring-4 ring-red-500/50 scale-105'
+                : 'bg-sage-500 hover:bg-sage-600'
             }`}
-            title="Hold & Move to Aim Navigation"
+            title="Quick Tap to Add Entry / Hold & Swipe to Navigate"
           >
-            <Pencil className="w-6 h-6 stroke-[2] transition-transform group-hover:rotate-12" />
+            {isQuickCreateOpen ? (
+              <Plus className="w-7 h-7 stroke-[2.5] transition-transform" />
+            ) : (
+              <Pencil className="w-6 h-6 stroke-[2] transition-transform group-hover:rotate-12" />
+            )}
           </div>
         )}
       </div>
