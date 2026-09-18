@@ -53,7 +53,7 @@ export interface VocabEntry extends BaseEntry {
 
 export type Entry = NoteEntry | ListEntry | VocabEntry;
 
-export type ViewMode = 'home' | 'notes' | 'lists' | 'vocab' | 'calendar' | 'search';
+export type ViewMode = 'home' | 'notes' | 'lists' | 'vocab' | 'calendar' | 'search' | 'focus';
 
 export const DEFAULT_BUILTIN_TAGS = [
   'Work',

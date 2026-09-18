@@ -1,5 +1,5 @@
 import React from 'react';
-import { Settings, Search } from 'lucide-react';
+import { Settings, Clock } from 'lucide-react';
 import { useEntries } from '../context/EntryContext';
 
 interface HeaderProps {
@@ -34,13 +34,14 @@ export const Header: React.FC<HeaderProps> = ({ onBack, backLabel }) => {
       {/* Right: Actions (Reflect / Search & Settings) */}
       <div className="flex items-center gap-5">
         <button
-          onClick={() => setCurrentView('search')}
+          onClick={() => setCurrentView('focus')}
           className={`flex items-center gap-2 text-sm font-medium transition-colors ${
-            currentView === 'search' ? 'text-orange-400 font-semibold' : 'text-slate-300 hover:text-white'
+            currentView === 'focus' ? 'text-orange-400 font-semibold' : 'text-slate-300 hover:text-white'
           }`}
+          title="Rhythmic Focus Timer"
         >
-          <Search className="w-4 h-4 stroke-[2]" />
-          <span>Reflect</span>
+          <Clock className="w-4 h-4 stroke-[2]" />
+          <span>Focus</span>
         </button>
 
         <button

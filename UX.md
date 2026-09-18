@@ -10,6 +10,34 @@ Calm, minimal, reflective, and distraction-free. The app is set against a **Dark
 - **Home Screen Aesthetic**: Text-only, minimalist layout — no heavy white cards on Home.
 - **Lexicon Count**: Displayed inside a sleek, semi-transparent boxed badge (`words logged`).
 
+## Top Navigation Header
+
+- **Brand Logo**: "Jrnl." text logo on the left; clicking navigates back to Home.
+- **Clock Focus Button**: Positioned on the right, replacing the legacy search button with a **Clock icon button** (`<Clock className="w-4 h-4" /> Focus`) that navigates to the **Hypnotic Rhythmic Focus Timer** (`FocusTimerView`).
+
+## Hypnotic Rhythmic Focus Timer (`FocusTimerView`)
+
+Specialized meditation and focus timer utilizing auditory entrainment via a continuous, highly customizable rhythmic ticking sound to enhance attention, retention, and calm focus.
+
+- **Auditory Entrainment Engine (`focusAudioEngine.ts`)**:
+  - Sample-accurate, zero-latency Web Audio API synthesis running 100% offline.
+  - **Acoustic Profiles**:
+    1. **Mechanical Wristwatch**: Crisp, high-frequency metallic escapement click.
+    2. **Grandfather Clock**: Deeper, resonant wood-and-escapement swing.
+    3. **Zen Woodblock**: Organic, soft, low-resonance percussion sound.
+    4. **Session Completion Chime**: Tibetan singing bowl / ambient chime harmonic chord ($216\text{Hz}, 432\text{Hz}, 648\text{Hz}, 864\text{Hz}$) with 4.5s decay when the session ends at `00:00`.
+- **Total Duration Selector (`time_period`)**:
+  - 1-minute steps up to 15 minutes (`1m`, `2m`, `3m` ... `15m`).
+  - 5-minute steps up to 60 minutes (`20m`, `25m`, `30m` ... `60m`).
+  - Default: 25 minutes.
+- **Tick Frequency Control (`repetition_period`)**:
+  - Slider and quick preset buttons from 40 BPM (slow, deep hypnotic pulse) to 120 BPM (high-alert focus pace).
+  - Default: 60 BPM (matching a resting heartbeat).
+- **Circular Progress Ring & Playback Controls**:
+  - SVG progress ring displaying elapsed / remaining time with glowing orange trail and pulse synced to current BPM.
+  - Prominent Start / Pause button and Reset button.
+  - Standard `w-11 h-11` back button to return to Home.
+
 ## Comprehensive Summary of Radial Control Trigger Actions & Behaviors
 
 The floating radial control ("the dot") supports 3 distinct interaction modes:
@@ -48,7 +76,7 @@ The floating radial control ("the dot") supports 3 distinct interaction modes:
 
 ## Larger Back Button Tap Target
 
-- **Tap Target Size**: Increased back button to **`w-11 h-11`** (44px diameter) with bold `‹` chevron text (`text-2xl`) across all section views (`Notes`, `Lists`, `Vocab`, `Calendar`, `Search`) and editors (`NoteEditor`, `ListEditor`, `VocabEditor`).
+- **Tap Target Size**: Standardized back button to **`w-11 h-11`** (44px diameter) with bold `‹` chevron text (`text-2xl`) across all section views (`Notes`, `Lists`, `Vocab`, `Calendar`, `Search`, `Focus`) and editors (`NoteEditor`, `ListEditor`, `VocabEditor`).
 
 ## Horizontal Calendar Date Strip (Notes View)
 

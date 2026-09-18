@@ -12,6 +12,7 @@ import { ListsView } from './views/ListsView';
 import { ListEditorView } from './views/ListEditorView';
 import { CalendarView } from './views/CalendarView';
 import { SearchView } from './views/SearchView';
+import { FocusTimerView } from './views/FocusTimerView';
 import { NoteEntry, ListEntry, VocabEntry } from './types/entry';
 
 const MainContent: React.FC = () => {
@@ -54,6 +55,7 @@ const MainContent: React.FC = () => {
       {currentView === 'lists' && <ListsView />}
       {currentView === 'calendar' && <CalendarView />}
       {currentView === 'search' && <SearchView />}
+      {currentView === 'focus' && <FocusTimerView />}
     </>
   );
 };
