@@ -68,28 +68,28 @@ export const HomeView: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-6 flex flex-col justify-between items-center h-[calc(100dvh-70px)] select-none overflow-hidden overscroll-none touch-none pb-8 pt-1">
+    <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 flex flex-col justify-between items-center h-full flex-1 min-h-0 select-none pb-4 sm:pb-8 pt-1 overflow-y-auto sm:overflow-hidden">
       {/* 1. Top Element: Lexicon Count Box */}
-      <div className="flex-shrink-0">
+      <div className="flex-shrink-0 mt-1 mb-2">
         <div
           onClick={() => setCurrentView('vocab')}
-          className="bg-slate-900/60 backdrop-blur-md border border-white/20 rounded-2xl px-6 py-2.5 shadow-card hover:border-orange-400/60 hover:bg-slate-900/80 transition-all cursor-pointer flex items-center gap-3 group"
+          className="bg-slate-900/60 backdrop-blur-md border border-white/20 rounded-2xl px-5 sm:px-6 py-2 sm:py-2.5 shadow-card hover:border-orange-400/60 hover:bg-slate-900/80 active:scale-95 transition-all cursor-pointer flex items-center gap-2.5 sm:gap-3 group"
           title="View All Vocabulary"
         >
-          <span className="text-3xl font-serif text-white font-normal group-hover:text-orange-400 transition-colors">
+          <span className="text-2xl sm:text-3xl font-serif text-white font-normal group-hover:text-orange-400 transition-colors">
             {vocabCount}
           </span>
-          <span className="text-xs uppercase tracking-wider font-semibold text-slate-300">
+          <span className="text-[11px] sm:text-xs uppercase tracking-wider font-semibold text-slate-300">
             words logged
           </span>
         </div>
       </div>
 
       {/* 2. Middle Section: Lexicon of the Day (3 Words Auto-Rotating Carousel) */}
-      <div className="flex-1 min-h-0 flex flex-col items-center justify-center text-center max-w-xl px-4 my-auto w-full">
+      <div className="flex-1 min-h-0 flex flex-col items-center justify-center text-center max-w-xl px-2 sm:px-4 my-auto w-full">
         {/* FIXED SUBHEADING: Never moves or changes during swiping */}
-        <div className="border-b-2 border-orange-500 pb-1 mb-3 inline-block flex-shrink-0">
-          <span className="text-xs font-semibold uppercase tracking-widest text-orange-400">
+        <div className="border-b-2 border-orange-500 pb-1 mb-2.5 inline-block flex-shrink-0">
+          <span className="text-[11px] sm:text-xs font-semibold uppercase tracking-widest text-orange-400">
             Lexicon of the Day
           </span>
         </div>
@@ -111,30 +111,30 @@ export const HomeView: React.FC = () => {
                 slideDirection === 'right' ? 'animate-slide-in-right' : 'animate-slide-in-left'
               }`}
             >
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-medium text-white tracking-wide group-hover:text-orange-300 transition-colors line-clamp-1">
+              <h2 className="text-2xl sm:text-4xl md:text-5xl font-serif font-medium text-white tracking-wide group-hover:text-orange-300 transition-colors line-clamp-1">
                 {currentVocab.word}
               </h2>
 
               {(currentVocab.phonetic || currentVocab.partOfSpeech) && (
-                <p className="text-xs italic font-serif text-slate-300 mt-1">
+                <p className="text-[11px] sm:text-xs italic font-serif text-slate-300 mt-0.5 sm:mt-1">
                   {currentVocab.phonetic} {currentVocab.partOfSpeech ? `· ${currentVocab.partOfSpeech}` : ''}
                 </p>
               )}
 
-              <p className="mt-2.5 text-sm sm:text-base text-slate-200 font-sans leading-relaxed max-w-md line-clamp-2">
+              <p className="mt-2 text-xs sm:text-base text-slate-200 font-sans leading-relaxed max-w-md line-clamp-2">
                 {currentVocab.meaning}
               </p>
             </div>
           </div>
         ) : (
-          <p className="text-sm text-slate-400 italic mt-2">
+          <p className="text-xs sm:text-sm text-slate-400 italic mt-2">
             No words in your lexicon yet. Drag the dot below to add one!
           </p>
         )}
 
         {/* 3 PAGINATION INDICATOR DOTS BELOW LEXICON */}
         {totalDailyWords > 1 && (
-          <div className="flex items-center justify-center gap-2.5 mt-4 flex-shrink-0">
+          <div className="flex items-center justify-center gap-2.5 mt-3 sm:mt-4 flex-shrink-0">
             {vocabOfTheDayList.map((wordItem, idx) => {
               const isActive = idx === activeWordIndex;
               return (
@@ -144,7 +144,7 @@ export const HomeView: React.FC = () => {
                     e.stopPropagation();
                     handleDotClick(idx);
                   }}
-                  className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                  className={`w-2.5 h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
                     isActive
                       ? 'bg-white scale-125 shadow-[0_0_10px_rgba(255,255,255,0.9)] opacity-100'
                       : 'bg-white/30 hover:bg-white/60 opacity-60'
@@ -158,7 +158,7 @@ export const HomeView: React.FC = () => {
       </div>
 
       {/* 3. Radial Quick-Capture Control Positioned Below Carousel */}
-      <div className="flex-shrink-0 h-[210px] min-h-[210px] w-full flex items-center justify-center pb-8">
+      <div className="flex-shrink-0 h-[190px] sm:h-[210px] min-h-[190px] sm:min-h-[210px] w-full flex items-center justify-center pb-4 sm:pb-8">
         <RadialControl isHomeCentered={true} />
       </div>
     </div>
