@@ -13,30 +13,26 @@ Calm, minimal, reflective, and distraction-free. The app is set against a **Dark
 ## Top Navigation Header
 
 - **Brand Logo**: "Jrnl." text logo on the left; clicking navigates back to Home.
-- **Clock Focus Button**: Positioned on the right, replacing the legacy search button with a **Clock icon button** (`<Clock className="w-4 h-4" /> Focus`) that navigates to the **Hypnotic Rhythmic Focus Timer** (`FocusTimerView`).
+- **Clock Focus Button**: Positioned on the right, replacing the legacy search button with a **Clock icon button** (`<Clock className="w-4 h-4" /> Focus`) that navigates to the **Cognitive Audio Entrainment Focus Timer** (`FocusTimerView`).
 
-## Hypnotic Rhythmic Focus Timer (`FocusTimerView`)
+## Cognitive Audio Profile Matrix & Entrainment Engine (`FocusTimerView`)
 
-Specialized meditation and focus timer utilizing auditory entrainment via a continuous, highly customizable rhythmic ticking sound to enhance attention, retention, and calm focus.
+Specialized cognitive entrainment and focus timer integrating the full **Cognitive Audio Matrix** that maps brainwave frequency bands, target cognitive states, tempos (BPM), carrier waves, and recommended acoustic textures to distinct user use-cases with smart safety duration caps.
 
-- **Auditory Entrainment Engine (`focusAudioEngine.ts`)**:
-  - Sample-accurate, zero-latency Web Audio API synthesis running 100% offline.
-  - **Acoustic Profiles**:
-    1. **Mechanical Wristwatch**: Crisp, high-frequency metallic escapement click.
-    2. **Grandfather Clock**: Deeper, resonant wood-and-escapement swing.
-    3. **Zen Woodblock**: Organic, soft, low-resonance percussion sound.
-    4. **Session Completion Chime**: Tibetan singing bowl / ambient chime harmonic chord ($216\text{Hz}, 432\text{Hz}, 648\text{Hz}, 864\text{Hz}$) with 4.5s decay when the session ends at `00:00`.
-- **Total Duration Selector (`time_period`)**:
-  - 1-minute steps up to 15 minutes (`1m`, `2m`, `3m` ... `15m`).
-  - 5-minute steps up to 60 minutes (`20m`, `25m`, `30m` ... `60m`).
-  - Default: 25 minutes.
-- **Tick Frequency Control (`repetition_period`)**:
-  - Slider and quick preset buttons from 40 BPM (slow, deep hypnotic pulse) to 120 BPM (high-alert focus pace).
-  - Default: 60 BPM (matching a resting heartbeat).
-- **Circular Progress Ring & Playback Controls**:
-  - SVG progress ring displaying elapsed / remaining time with glowing orange trail and pulse synced to current BPM.
-  - Prominent Start / Pause button and Reset button.
-  - Standard `w-11 h-11` back button to return to Home.
+### 🧠 Cognitive Audio Data Matrix Table
+
+| Brainwave State | Frequency ($\Delta f$) | Targets | BPM Range & Default | Recommended Rhythmic Sounds | Carrier Tone | Max Duration Limit |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Beta ($\beta$)** | 14–30 Hz (20 Hz) | High alertness, executive function, problem solving | 90–120 BPM (Default: 100) | Fast Metronome, Rapid Temple Blocks, Crisp Metallic Click | 216 Hz + 20 Hz carrier | **Max 30 mins** *(Safety overstimulation cap)* |
+| **Alpha ($\alpha$)** | 8–13 Hz (10 Hz) | Calm focus, relaxed alertness, creative flow | 60–80 BPM (Default: 70) | Standard Clock, Steady Wood Chimes, Gentle Hand Drums | 432 Hz + 10 Hz carrier | **Max 30 mins** *(Safety overstimulation cap)* |
+| **Theta ($\theta$)** | 4–7 Hz (6 Hz) | Deep meditation, hypnagogia, subconscious insight | 40–60 BPM (Default: 50) | Slow Singing Bowl, Shamanic Drumbeat, Ocean Pulse | 432 Hz + 6 Hz carrier | **Up to 8 hours / Continuous** |
+| **Delta ($\delta$)** | 0.5–4 Hz (2 Hz) | Deep sleep, cellular repair, mental detachment | 20–40 BPM (Default: 24) | Spaced-Out Gong Strikes, 432Hz/528Hz Solfeggio Carrier | 528 Hz + 2 Hz Solfeggio | **Up to 8 hours / Continuous** |
+
+### 🛠️ Key Engine & UI Features
+- **Dynamic Binaural Carrier Wave**: Synthesizes a subtle, customizable carrier wave ($f_{\text{base}} + \Delta f_{\text{brainwave}}$) in stereo underneath the rhythmic acoustic textures, complete with toggle and volume controls.
+- **Smart Safety Restrictions**: Automatically restricts Beta & Alpha sessions to $\le 30$ minutes with a mindful overstimulation warning badge, while unlocking multi-hour and continuous overnight modes for Theta and Delta.
+- **Goal Quick Presets**: Instant one-tap configuration for "Intense Study & Work", "Fight Fatigue", "Creative Flow", "Post-Stress Reset", "Deep Meditation", "Sleep Prep", "Insomnia Relief", and "Physical Recovery".
+- **Visual Circular Progress Ring & Waveforms**: Real-time SVG circular countdown ring with rhythmic pulse glow synchronized to the audio ticks and carrier frequency.
 
 ## Comprehensive Summary of Radial Control Trigger Actions & Behaviors
 
